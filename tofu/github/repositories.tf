@@ -1,6 +1,6 @@
 resource "github_repository" "homelab" {
-  name        = "homelab"
-  description = "Self-hosted services and infrastructure managed with Docker Compose, Ansible, and OpenTofu"
+  name        = "tofu-configuration"
+  description = "OpenTofu configuration for homelab infrastructure"
   visibility  = "public"
 
   has_issues    = true
