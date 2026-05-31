@@ -96,3 +96,15 @@ variable "mastodon_media_custom_domain" {
   type        = string
   default     = null
 }
+
+variable "nix_cache_custom_domain" {
+  description = "Nix cache 用カスタムドメイン"
+  type        = string
+  default     = null
+}
+
+variable "tunnel_secret" {
+  description = "Cloudflare Tunnel シークレット（ランダムな 32 バイトの 16 進数文字列）"
+  type        = string
+  sensitive   = true
+}

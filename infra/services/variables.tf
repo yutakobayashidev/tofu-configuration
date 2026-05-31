@@ -21,6 +21,12 @@ variable "mastodon_media_custom_domain" {
   default     = null
 }
 
+variable "nix_cache_custom_domain" {
+  description = "Nix cache 用カスタムドメイン"
+  type        = string
+  default     = null
+}
+
 variable "domain" {
   description = "Root domain name"
   type        = string

@@ -42,6 +42,8 @@ module "nix_cache" {
   cloudflare_account_id = var.cloudflare_account_id
   r2_location           = "APAC"
   bucket_name           = "nix-cache-niks3"
+  custom_domain         = var.nix_cache_custom_domain
+  zone_id               = var.cloudflare_zone_id
 }
 
 # Cloudflare R2 Access Token - Nix cache

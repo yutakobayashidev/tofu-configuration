@@ -44,16 +44,19 @@ provider "aws" {
 module "services" {
   source = "../services"
 
-  cloudflare_account_id       = var.cloudflare_account_id
-  cloudflare_zone_id          = var.cloudflare_zone_id
-  mastodon_media_bucket_name  = var.mastodon_media_bucket_name
+  cloudflare_account_id        = var.cloudflare_account_id
+  cloudflare_zone_id           = var.cloudflare_zone_id
+  mastodon_media_bucket_name   = var.mastodon_media_bucket_name
   mastodon_media_custom_domain = var.mastodon_media_custom_domain
-  domain                      = var.domain
+  nix_cache_custom_domain      = var.nix_cache_custom_domain
+  domain                       = var.domain
 }
 
 module "yutakobayashi_com" {
   source = "./domains/yutakobayashi-com"
 
-  cloudflare_zone_id = var.cloudflare_zone_id
-  mastodon_ip        = var.mastodon_ip
+  cloudflare_zone_id       = var.cloudflare_zone_id
+  cloudflare_account_id    = var.cloudflare_account_id
+  mastodon_ip              = var.mastodon_ip
+  tunnel_secret            = var.tunnel_secret
 }

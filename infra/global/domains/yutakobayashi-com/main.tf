@@ -39,6 +39,22 @@ locals {
 
 # fedi-files CNAME is auto-managed by R2 custom domain (module.mastodon_media)
 
+# Cloudflare Tunnel for niks3
+resource "cloudflare_zero_trust_tunnel_cloudflared" "niks3" {
+  account_id    = var.cloudflare_account_id
+  name          = "niks3"
+  tunnel_secret = var.tunnel_secret
+}
+
+resource "cloudflare_dns_record" "niks3" {
+  zone_id = local.zone_id
+  name    = "niks3"
+  content = "${cloudflare_zero_trust_tunnel_cloudflared.niks3.id}.cfargotunnel.com"
+  type    = "CNAME"
+  proxied = true
+  ttl     = 1
+}
+
 resource "cloudflare_dns_record" "record" {
   for_each = local.records
   zone_id  = local.zone_id
