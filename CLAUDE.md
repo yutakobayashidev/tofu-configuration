@@ -25,10 +25,10 @@ Homelab infrastructure repository.
 
 ## Directory Layout
 
-- `tofu/` — Main infrastructure (Cloudflare DNS/R2, AWS SES, DO)
-- `tofu/tfe/` — HCP Terraform self-management (org, workspaces)
-- `tofu/github/` — GitHub repository settings
-- `tofu/modules/` — Reusable modules (cloudflare-r2, cloudflare-account-token)
+- `infra/` — Main infrastructure (Cloudflare DNS/R2, AWS SES, DO)
+- `infra/tfe/` — HCP Terraform self-management (org, workspaces)
+- `infra/github/` — GitHub repository settings
+- `infra/modules/` — Reusable modules (cloudflare-r2, cloudflare-account-token)
 - `ansible/` — Playbooks and roles for server provisioning
 - `docker/local/` — Docker Compose for local services
 
@@ -36,12 +36,12 @@ Homelab infrastructure repository.
 
 ```bash
 # OpenTofu (each workspace is independent)
-cd tofu && tofu init && tofu plan && tofu apply
-cd tofu/tfe && tofu init && tofu plan && tofu apply
-cd tofu/github && tofu init && tofu plan && tofu apply
+cd infra && tofu init && tofu plan && tofu apply
+cd infra/tfe && tofu init && tofu plan && tofu apply
+cd infra/github && tofu init && tofu plan && tofu apply
 
 # TFLint
-cd tofu && tflint --init && tflint
+cd infra && tflint --init && tflint
 
 # Local server provisioning
 cd ansible && ansible-playbook playbooks/site.yml

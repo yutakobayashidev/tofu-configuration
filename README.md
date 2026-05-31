@@ -54,12 +54,12 @@ Three independent workspaces:
 
 | Directory | Workspace | Manages |
 |-----------|-----------|---------|
-| `tofu/` | homelab | Cloudflare DNS/R2, AWS SES, DO |
-| `tofu/tfe/` | tfe | HCP Terraform organization, workspaces |
-| `tofu/github/` | github | GitHub repository settings |
+| `infra/` | homelab | Cloudflare DNS/R2, AWS SES, DO |
+| `infra/tfe/` | tfe | HCP Terraform organization, workspaces |
+| `infra/github/` | github | GitHub repository settings |
 
 ```bash
-cd tofu  # or tofu/tfe, tofu/github
+cd infra  # or infra/tfe, infra/github
 
 # Create and edit variables file
 cp terraform.tfvars.example terraform.tfvars
@@ -70,7 +70,7 @@ tofu plan
 tofu apply
 ```
 
-#### Required Secrets (`tofu/terraform.tfvars`)
+#### Required Secrets (`infra/terraform.tfvars`)
 
 | Variable | Description |
 |----------|-------------|
@@ -83,7 +83,7 @@ tofu apply
 | `domain` | Root domain name |
 | `do_token` | DigitalOcean API token |
 
-#### Required Secrets (`tofu/github/terraform.tfvars`)
+#### Required Secrets (`infra/github/terraform.tfvars`)
 
 | Variable | Description |
 |----------|-------------|
@@ -92,7 +92,7 @@ tofu apply
 ## Directory Structure
 
 ```
-tofu/                              # OpenTofu - infrastructure
+infra/                              # OpenTofu - infrastructure
 ├── main.tf                        # providers, R2 buckets, tokens
 ├── dns.tf                         # Cloudflare DNS records
 ├── ses.tf                         # AWS SES (email)
