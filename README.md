@@ -97,31 +97,27 @@ infra/                              # OpenTofu configuration
 │   ├── main.tf
 │   ├── variables.tf
 │   ├── outputs.tf
-│   └── terraform.tfvars.example
-├── services/                       # Service resources (R2 buckets, tokens, SES)
-│   ├── main.tf
+│   ├── terraform.tfvars.example
+│   └── domains/
+│       └── yutakobayashi-com/      # DNS records
+│           ├── main.tf
+│           └── variables.tf
+├── services/                       # Service resources + workspaces
+│   ├── main.tf                     # R2 buckets, tokens, SES
 │   ├── ses.tf
-│   └── variables.tf
-├── domains/
-│   └── yutakobayashi-com/          # DNS records
-│       ├── main.tf
-│       └── variables.tf
-├── modules/
-│   ├── cloudflare-r2/              # R2 bucket + custom domain
-│   └── cloudflare-account-token/   # R2 API token
-├── services/                        # Service resources + workspaces
-│   ├── main.tf                      # R2 buckets, tokens, SES
-│   ├── ses.tf
-│   ├── variables.tf
-│   ├── tfe/                         # HCP Terraform self-management
+│   ├── variables.tf / outputs.tf
+│   ├── tfe/                        # HCP Terraform self-management
 │   │   ├── main.tf
 │   │   ├── organization.tf
 │   │   ├── projects.tf
 │   │   └── workspaces.tf
-│   └── github/                      # GitHub repository management
+│   └── github/                     # GitHub repository management
 │       ├── main.tf
 │       ├── variables.tf
 │       └── repositories.tf
+├── modules/
+│   ├── cloudflare-r2/              # R2 bucket + custom domain
+│   └── cloudflare-account-token/   # R2 API token
 ```
 
 ## Managed Resources

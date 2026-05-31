@@ -52,7 +52,7 @@ module "services" {
 }
 
 module "yutakobayashi_com" {
-  source = "../domains/yutakobayashi-com"
+  source = "./domains/yutakobayashi-com"
 
   cloudflare_zone_id = var.cloudflare_zone_id
   mastodon_ip        = var.mastodon_ip
