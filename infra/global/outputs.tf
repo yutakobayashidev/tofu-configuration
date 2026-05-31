@@ -1,12 +1,12 @@
 # Mastodon R2
 output "mastodon_r2_access_key_id" {
   description = "Mastodon 用 R2 アクセスキー ID"
-  value       = module.mastodon_r2_token.access_key_id
+  value       = module.services.mastodon_r2_access_key_id
 }
 
 output "mastodon_r2_secret_access_key" {
   description = "Mastodon 用 R2 シークレットアクセスキー"
-  value       = module.mastodon_r2_token.secret_access_key
+  value       = module.services.mastodon_r2_secret_access_key
   sensitive   = true
 }
 
@@ -17,23 +17,17 @@ output "mastodon_r2_endpoint" {
 
 output "mastodon_r2_bucket_name" {
   description = "Mastodon メディア R2 バケット名"
-  value       = module.mastodon_media.bucket_name
+  value       = module.services.mastodon_media_bucket_name
 }
 
 # Obsidian R2
 output "obsidian_r2_access_key_id" {
   description = "Obsidian 用 R2 アクセスキー ID"
-  value       = module.obsidian_r2_token.access_key_id
+  value       = module.services.obsidian_r2_access_key_id
 }
 
 output "obsidian_r2_secret_access_key" {
   description = "Obsidian 用 R2 シークレットアクセスキー"
-  value       = module.obsidian_r2_token.secret_access_key
+  value       = module.services.obsidian_r2_secret_access_key
   sensitive   = true
 }
-
-# TODO: Add outputs when Mastodon Droplet is created
-# output "mastodon_ip" {
-#   description = "Mastodon Droplet public IP"
-#   value       = digitalocean_droplet.mastodon.ipv4_address
-# }

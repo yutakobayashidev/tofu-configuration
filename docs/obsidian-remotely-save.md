@@ -4,11 +4,11 @@ Sync Obsidian vaults to Cloudflare R2 using the [Remotely Save](https://github.c
 
 ## Prerequisites
 
-- R2 bucket `obsidian` and access token are managed by OpenTofu (`infra/main.tf`)
+- R2 bucket `obsidian` and access token are managed by OpenTofu (`infra/global/main.tf` calls `infra/services/`)
 - Retrieve credentials from OpenTofu outputs:
 
 ```bash
-cd infra
+cd infra/global
 
 # Access Key ID
 tofu output obsidian_r2_access_key_id

@@ -54,12 +54,12 @@ Three independent workspaces:
 
 | Directory | Workspace | Manages |
 |-----------|-----------|---------|
-| `infra/` | homelab | Cloudflare DNS/R2, AWS SES, DO |
-| `infra/tfe/` | tfe | HCP Terraform organization, workspaces |
-| `infra/github/` | github | GitHub repository settings |
+| `infra/global/` | homelab | Cloudflare DNS/R2, AWS SES, DO |
+| `infra/services/tfe/` | tfe | HCP Terraform organization, workspaces |
+| `infra/services/github/` | github | GitHub repository settings |
 
 ```bash
-cd infra  # or infra/tfe, infra/github
+cd infra/global  # or infra/services/tfe, infra/services/github
 
 # Create and edit variables file
 cp terraform.tfvars.example terraform.tfvars
@@ -70,7 +70,7 @@ tofu plan
 tofu apply
 ```
 
-#### Required Secrets (`infra/terraform.tfvars`)
+#### Required Secrets (`infra/global/terraform.tfvars`)
 
 | Variable | Description |
 |----------|-------------|
@@ -83,7 +83,7 @@ tofu apply
 | `domain` | Root domain name |
 | `do_token` | DigitalOcean API token |
 
-#### Required Secrets (`infra/github/terraform.tfvars`)
+#### Required Secrets (`infra/services/github/terraform.tfvars`)
 
 | Variable | Description |
 |----------|-------------|
@@ -92,24 +92,36 @@ tofu apply
 ## Directory Structure
 
 ```
-infra/                              # OpenTofu - infrastructure
-├── main.tf                        # providers, R2 buckets, tokens
-├── dns.tf                         # Cloudflare DNS records
-├── ses.tf                         # AWS SES (email)
-├── variables.tf / outputs.tf
-├── .tflint.hcl
+infra/                              # OpenTofu configuration
+├── global/                         # Root module (providers, backend, variables, outputs)
+│   ├── main.tf
+│   ├── variables.tf
+│   ├── outputs.tf
+│   └── terraform.tfvars.example
+├── services/                       # Service resources (R2 buckets, tokens, SES)
+│   ├── main.tf
+│   ├── ses.tf
+│   └── variables.tf
+├── domains/
+│   └── yutakobayashi-com/          # DNS records
+│       ├── main.tf
+│       └── variables.tf
 ├── modules/
-│   ├── cloudflare-r2/             # R2 bucket + custom domain
-│   └── cloudflare-account-token/  # R2 API token
-├── tfe/                           # HCP Terraform self-management
-│   ├── main.tf                    # tfe provider
-│   ├── organization.tf            # org settings (2FA mandatory)
-│   ├── projects.tf
-│   └── workspaces.tf              # homelab, github workspaces
-└── github/                        # GitHub repository management
-    ├── main.tf                    # github provider
-    ├── variables.tf
-    └── repositories.tf            # repo settings, topics
+│   ├── cloudflare-r2/              # R2 bucket + custom domain
+│   └── cloudflare-account-token/   # R2 API token
+├── services/                        # Service resources + workspaces
+│   ├── main.tf                      # R2 buckets, tokens, SES
+│   ├── ses.tf
+│   ├── variables.tf
+│   ├── tfe/                         # HCP Terraform self-management
+│   │   ├── main.tf
+│   │   ├── organization.tf
+│   │   ├── projects.tf
+│   │   └── workspaces.tf
+│   └── github/                      # GitHub repository management
+│       ├── main.tf
+│       ├── variables.tf
+│       └── repositories.tf
 ```
 
 ## Managed Resources
