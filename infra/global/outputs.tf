@@ -31,3 +31,20 @@ output "obsidian_r2_secret_access_key" {
   value       = module.services.obsidian_r2_secret_access_key
   sensitive   = true
 }
+
+# Nix cache R2
+output "nix_cache_access_key_id" {
+  description = "Nix cache 用 R2 アクセスキー ID"
+  value       = module.services.nix_cache_access_key_id
+}
+
+output "nix_cache_secret_access_key" {
+  description = "Nix cache 用 R2 シークレットアクセスキー"
+  value       = module.services.nix_cache_secret_access_key
+  sensitive   = true
+}
+
+output "nix_cache_bucket_name" {
+  description = "Nix cache R2 バケット名"
+  value       = module.services.nix_cache_bucket_name
+}

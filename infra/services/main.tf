@@ -35,3 +35,21 @@ module "obsidian_r2_token" {
   bucket_name           = module.obsidian_r2.bucket_name
   cloudflare_account_id = var.cloudflare_account_id
 }
+
+# Cloudflare R2 - Nix cache
+module "nix_cache" {
+  source                = "../modules/cloudflare-r2"
+  cloudflare_account_id = var.cloudflare_account_id
+  r2_location           = "APAC"
+  bucket_name           = "nix-cache-niks3"
+}
+
+# Cloudflare R2 Access Token - Nix cache
+module "nix_cache_token" {
+  source                = "../modules/cloudflare-account-token"
+  project_name          = "homelab"
+  environment           = "prod"
+  token_name            = "nix-cache"
+  bucket_name           = module.nix_cache.bucket_name
+  cloudflare_account_id = var.cloudflare_account_id
+}
