@@ -34,8 +34,14 @@ locals {
       proxied = false
       type    = "CNAME"
     }
+    git = {
+      content = "${cloudflare_zero_trust_tunnel_cloudflared.b450m_pro4.id}.cfargotunnel.com"
+      name    = "git"
+      proxied = true
+      type    = "CNAME"
+    }
     niks3 = {
-      content = "${cloudflare_zero_trust_tunnel_cloudflared.niks3.id}.cfargotunnel.com"
+      content = "${cloudflare_zero_trust_tunnel_cloudflared.b450m_pro4.id}.cfargotunnel.com"
       name    = "niks3"
       proxied = true
       type    = "CNAME"
@@ -46,11 +52,16 @@ locals {
 # fedi-files CNAME is auto-managed by R2 custom domain (module.mastodon_media)
 # nix-cache CNAME is auto-managed by R2 custom domain (module.nix_cache)
 
-# Cloudflare Tunnel for niks3
-resource "cloudflare_zero_trust_tunnel_cloudflared" "niks3" {
+# Cloudflare Tunnel for B450M-Pro4
+resource "cloudflare_zero_trust_tunnel_cloudflared" "b450m_pro4" {
   account_id    = var.cloudflare_account_id
-  name          = "niks3"
+  name          = "B450M-Pro4"
   tunnel_secret = var.tunnel_secret
+}
+
+moved {
+  from = cloudflare_zero_trust_tunnel_cloudflared.niks3
+  to   = cloudflare_zero_trust_tunnel_cloudflared.b450m_pro4
 }
 
 resource "cloudflare_dns_record" "record" {

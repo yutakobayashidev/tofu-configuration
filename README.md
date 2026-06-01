@@ -124,7 +124,7 @@ infra/                              # OpenTofu configuration
 
 | Provider | Resource | Details |
 |----------|----------|---------|
-| Cloudflare | DNS records | fedi.yutakobayashi.com (A), SES DKIM (CNAME x3) |
+| Cloudflare | DNS records | fedi.yutakobayashi.com (A), git.yutakobayashi.com (CNAME), niks3.yutakobayashi.com (CNAME), SES DKIM (CNAME x3) |
 | Cloudflare | R2 buckets | fediverse (Mastodon media), obsidian (backup) |
 | Cloudflare | R2 tokens | mastodon-r2, obsidian-r2 |
 | Cloudflare | R2 custom domain | fedi-files.yutakobayashi.com |
