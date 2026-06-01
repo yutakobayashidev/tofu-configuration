@@ -145,6 +145,23 @@ resource "github_repository_topics" "ava" {
   topics     = ["adhd", "ai", "devtools", "hono", "mcp", "mcp-server", "model-context-protocol", "neurodiversity", "nextjs", "productivity"]
 }
 
+resource "github_repository" "skills" {
+  name        = "skills"
+  description = "Agent skills collection for AI coding agents"
+  visibility  = "public"
+
+  has_issues    = true
+  has_projects  = true
+  has_wiki      = true
+  has_downloads = true
+
+  allow_merge_commit = true
+  allow_squash_merge = true
+  allow_rebase_merge = true
+
+  delete_branch_on_merge = true
+}
+
 resource "github_repository" "kokkai_agent" {
   name       = "kokkai-agent"
   visibility = "private"
