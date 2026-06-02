@@ -10,7 +10,6 @@ terraform {
 locals {
   records = {
     notes = {
-      comment = "Created during Cloudflare Rules deployment process for page_rules"
       content = "192.0.2.1"
       name    = "notes"
       proxied = true
