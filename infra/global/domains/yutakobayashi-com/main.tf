@@ -46,6 +46,45 @@ locals {
       proxied = true
       type    = "CNAME"
     }
+    bluesky = {
+      comment = "Bluesky"
+      content = "\"did=did:plc:vbnh7xdksftiiad7b2la4jqe\""
+      name    = "_atproto"
+      proxied = false
+      type    = "TXT"
+    }
+    ses_mail_from_mx = {
+      content  = "feedback-smtp.ap-northeast-1.amazonses.com"
+      name     = "send"
+      priority = 10
+      proxied  = false
+      ttl      = 3600
+      type     = "MX"
+    }
+    ses_mail_from_spf = {
+      content = "\"v=spf1 include:amazonses.com ~all\""
+      name    = "send"
+      proxied = false
+      ttl     = 3600
+      type    = "TXT"
+    }
+    letsencrypt = {
+      data = {
+        flags = 0
+        tag   = "issue"
+        value = "letsencrypt.org"
+      }
+      name    = "yutakobayashi.com"
+      proxied = false
+      type    = "CAA"
+    }
+    resend_dkim = {
+      content = "\"p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDFRap4FHOA66lWS2sOqb4umU/3d20PZVnOTMdFFQ4D6myval+cBLORQODY+2MAy+JLmS4ahxIT7Qf3K8yDYWFm+OSVLTSnVsUOflbubzGmNjPW3vpA/os9ywpLOFK+7DGzei0R5tXVwaTzKEc30T4Y3CMCtdBt+MJC/9ztOrTS9wIDAQAB\""
+      name    = "resend._domainkey"
+      proxied = false
+      ttl     = 3600
+      type    = "TXT"
+    }
   }
 }
 
@@ -59,17 +98,15 @@ resource "cloudflare_zero_trust_tunnel_cloudflared" "b450m_pro4" {
   tunnel_secret = var.tunnel_secret
 }
 
-moved {
-  from = cloudflare_zero_trust_tunnel_cloudflared.niks3
-  to   = cloudflare_zero_trust_tunnel_cloudflared.b450m_pro4
-}
-
 resource "cloudflare_dns_record" "record" {
   for_each = local.records
   zone_id  = local.zone_id
-  content  = each.value.content
+  comment  = try(each.value.comment, null)
+  content  = try(each.value.content, null)
+  data     = try(each.value.data, null)
   name     = each.value.name
+  priority = try(each.value.priority, null)
   proxied  = each.value.proxied
-  ttl      = 1
+  ttl      = try(each.value.ttl, 1)
   type     = each.value.type
 }

@@ -104,7 +104,7 @@ infra/                              # OpenTofu configuration
 │       │   ├── main.tf
 │       │   ├── email.tf
 │       │   └── variables.tf
-│       └── yutakobayashi-dev/      # Email Routing rules
+│       └── yutakobayashi-dev/      # DNS records and Email Routing rules
 │           ├── main.tf
 │           └── variables.tf
 ├── services/                       # Service resources + workspaces
@@ -129,7 +129,8 @@ infra/                              # OpenTofu configuration
 
 | Provider | Resource | Details |
 |----------|----------|---------|
-| Cloudflare | DNS records | fedi.yutakobayashi.com (A), git.yutakobayashi.com (CNAME), niks3.yutakobayashi.com (CNAME), SES DKIM (CNAME x3) |
+| Cloudflare | DNS records | fedi.yutakobayashi.com (A), git.yutakobayashi.com (CNAME), niks3.yutakobayashi.com (CNAME), SES DKIM (CNAME x3), SES MAIL FROM (MX + TXT), Resend DKIM (TXT), Bluesky DID (TXT) |
+| Cloudflare | DNS records | yutakobayashi.dev web endpoints, service verification records, and CAA |
 | Cloudflare | Email Routing | hi@yutakobayashi.com and hi@yutakobayashi.dev to Worker core, disabled catch-all rules |
 | Cloudflare | R2 buckets | fediverse (Mastodon media), obsidian (backup) |
 | Cloudflare | R2 tokens | mastodon-r2, obsidian-r2 |

@@ -26,7 +26,7 @@ OpenTofu configurations for managing homelab infrastructure.
 - `infra/services/tfe/` — HCP Terraform self-management (org, workspaces)
 - `infra/services/github/` — GitHub repository settings
 - `infra/global/domains/yutakobayashi-com/` — DNS records and Email Routing rules for yutakobayashi.com
-- `infra/global/domains/yutakobayashi-dev/` — Email Routing rules for yutakobayashi.dev
+- `infra/global/domains/yutakobayashi-dev/` — DNS records and Email Routing rules for yutakobayashi.dev
 - `infra/modules/` — Reusable modules (cloudflare-r2, cloudflare-account-token)
 
 ## Commands

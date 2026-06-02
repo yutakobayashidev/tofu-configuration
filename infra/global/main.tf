@@ -55,10 +55,10 @@ module "services" {
 module "yutakobayashi_com" {
   source = "./domains/yutakobayashi-com"
 
-  cloudflare_zone_id       = var.cloudflare_zone_id
-  cloudflare_account_id    = var.cloudflare_account_id
-  mastodon_ip              = var.mastodon_ip
-  tunnel_secret            = var.tunnel_secret
+  cloudflare_zone_id    = var.cloudflare_zone_id
+  cloudflare_account_id = var.cloudflare_account_id
+  mastodon_ip           = var.mastodon_ip
+  tunnel_secret         = var.tunnel_secret
 }
 
 data "cloudflare_zones" "yutakobayashi_dev" {
