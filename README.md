@@ -7,6 +7,7 @@ OpenTofu configurations for managing homelab infrastructure.
 ```
 Cloudflare
 ├── DNS (yutakobayashi.com)
+├── Email Routing
 ├── R2 (Mastodon media / Obsidian backup)
 └── API Tokens
 
@@ -74,7 +75,7 @@ tofu apply
 
 | Variable | Description |
 |----------|-------------|
-| `cloudflare_api_token` | Cloudflare API token (Zone:DNS:Edit, Zone:Zone:Read) |
+| `cloudflare_api_token` | Cloudflare API token (Zone:DNS:Edit, Zone:Zone:Read, Zone:Email Routing Rules:Edit) |
 | `cloudflare_account_id` | Cloudflare account ID |
 | `cloudflare_zone_id` | Cloudflare Zone ID |
 | `aws_access_key` | AWS access key (for SES) |
@@ -99,7 +100,11 @@ infra/                              # OpenTofu configuration
 │   ├── outputs.tf
 │   ├── terraform.tfvars.example
 │   └── domains/
-│       └── yutakobayashi-com/      # DNS records
+│       ├── yutakobayashi-com/      # DNS records and Email Routing rules
+│       │   ├── main.tf
+│       │   ├── email.tf
+│       │   └── variables.tf
+│       └── yutakobayashi-dev/      # Email Routing rules
 │           ├── main.tf
 │           └── variables.tf
 ├── services/                       # Service resources + workspaces
@@ -125,6 +130,7 @@ infra/                              # OpenTofu configuration
 | Provider | Resource | Details |
 |----------|----------|---------|
 | Cloudflare | DNS records | fedi.yutakobayashi.com (A), git.yutakobayashi.com (CNAME), niks3.yutakobayashi.com (CNAME), SES DKIM (CNAME x3) |
+| Cloudflare | Email Routing | hi@yutakobayashi.com and hi@yutakobayashi.dev to Worker core, disabled catch-all rules |
 | Cloudflare | R2 buckets | fediverse (Mastodon media), obsidian (backup) |
 | Cloudflare | R2 tokens | mastodon-r2, obsidian-r2 |
 | Cloudflare | R2 custom domain | fedi-files.yutakobayashi.com |

@@ -48,3 +48,8 @@ output "nix_cache_bucket_name" {
   description = "Nix cache R2 バケット名"
   value       = module.services.nix_cache_bucket_name
 }
+
+output "yutakobayashi_dev_zone_id" {
+  description = "yutakobayashi.dev Cloudflare Zone ID"
+  value       = one(data.cloudflare_zones.yutakobayashi_dev.result).id
+}

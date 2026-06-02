@@ -60,3 +60,16 @@ module "yutakobayashi_com" {
   mastodon_ip              = var.mastodon_ip
   tunnel_secret            = var.tunnel_secret
 }
+
+data "cloudflare_zones" "yutakobayashi_dev" {
+  account = {
+    id = var.cloudflare_account_id
+  }
+  name = "yutakobayashi.dev"
+}
+
+module "yutakobayashi_dev" {
+  source = "./domains/yutakobayashi-dev"
+
+  cloudflare_zone_id = one(data.cloudflare_zones.yutakobayashi_dev.result).id
+}

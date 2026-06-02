@@ -5,7 +5,7 @@ OpenTofu configurations for managing homelab infrastructure.
 ## Architecture
 
 - **DigitalOcean**: Mastodon (future migration from Vultr), managed by OpenTofu
-- **Cloudflare**: DNS, R2 (Mastodon media + Obsidian backup), API tokens
+- **Cloudflare**: DNS, Email Routing, R2 (Mastodon media + Obsidian backup), API tokens
 - **AWS SES**: Mastodon email delivery (ap-northeast-1)
 - **HCP Terraform**: Remote state management
 - **GitHub**: Repository settings managed via OpenTofu
@@ -25,7 +25,8 @@ OpenTofu configurations for managing homelab infrastructure.
 - `infra/services/` — Service resources (R2 buckets, tokens, SES)
 - `infra/services/tfe/` — HCP Terraform self-management (org, workspaces)
 - `infra/services/github/` — GitHub repository settings
-- `infra/global/domains/yutakobayashi-com/` — DNS records for yutakobayashi.com
+- `infra/global/domains/yutakobayashi-com/` — DNS records and Email Routing rules for yutakobayashi.com
+- `infra/global/domains/yutakobayashi-dev/` — Email Routing rules for yutakobayashi.dev
 - `infra/modules/` — Reusable modules (cloudflare-r2, cloudflare-account-token)
 
 ## Commands
