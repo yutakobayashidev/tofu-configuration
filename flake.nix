@@ -1,5 +1,5 @@
 {
-  description = "Homelab infrastructure: Docker Compose + Ansible + OpenTofu";
+  description = "Homelab infrastructure managed with OpenTofu";
 
   inputs = {
     nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
@@ -101,7 +101,13 @@
 
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
-              opentofu
+              (opentofu.withPlugins (p: [
+                p.cloudflare_cloudflare
+                p.digitalocean_digitalocean
+                p.hashicorp_aws
+                p.integrations_github
+                p.hashicorp_tfe
+              ]))
               docker-compose
               tflint
             ];

@@ -2,7 +2,7 @@
 *.tfstate
 *.tfstate.*
 .terraform/
-.terraform.lock.hcl
+# .terraform.lock.hcl は Git 管理対象（provider version 固定のため）
 terraform.tfvars
 crash.log
 

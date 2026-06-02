@@ -39,6 +39,7 @@ HCP Terraform
 nix develop
 
 # MCP servers and agent skills are auto-configured via shellHook
+# OpenTofu providers are bundled in the dev shell
 ```
 
 ### 2. HCP Terraform
