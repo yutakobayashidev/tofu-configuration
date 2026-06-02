@@ -95,6 +95,32 @@ resource "cloudflare_dns_record" "record" {
   type     = each.value.type
 }
 
+resource "cloudflare_page_rule" "redirect_dev_to_com" {
+  zone_id  = var.cloudflare_zone_id
+  target   = "yutakobayashi.dev/*"
+  priority = 1
+  status   = "active"
+  actions = {
+    forwarding_url = {
+      url         = "https://yutakobayashi.com/$1"
+      status_code = 301
+    }
+  }
+}
+
+resource "cloudflare_page_rule" "redirect_notes" {
+  zone_id  = var.cloudflare_zone_id
+  target   = "notes.yutakobayashi.dev/*"
+  priority = 2
+  status   = "active"
+  actions = {
+    forwarding_url = {
+      url         = "https://notes.yutakobayashi.com/$1"
+      status_code = 301
+    }
+  }
+}
+
 resource "cloudflare_email_routing_catch_all" "this" {
   zone_id = var.cloudflare_zone_id
 
