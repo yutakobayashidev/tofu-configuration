@@ -43,12 +43,6 @@ locals {
       proxied = false
       type    = "CNAME"
     }
-    bluesky = {
-      content = "did=did:plc:vbnh7xdksftiiad7b2la4jqe"
-      name    = "_atproto"
-      proxied = false
-      type    = "TXT"
-    }
     discord = {
       content = "dh=93c3c3ec6efe8ca5c32cbfa2e0ebcc8d51eb8227"
       name    = "_discord"
