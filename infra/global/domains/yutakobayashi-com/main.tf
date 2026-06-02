@@ -85,6 +85,12 @@ locals {
       ttl     = 3600
       type    = "TXT"
     }
+    dmarc = {
+      content = "\"v=DMARC1; p=none;\""
+      name    = "_dmarc"
+      proxied = false
+      type    = "TXT"
+    }
   }
 }
 

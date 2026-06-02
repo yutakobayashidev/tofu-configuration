@@ -26,7 +26,15 @@
   };
 
   outputs =
-    { flake-parts, mcp-servers-nix, agent-skills-nix, cloudflare-skills, hashicorp-agent-skills, aws-agent-skills, ... }@inputs:
+    {
+      flake-parts,
+      mcp-servers-nix,
+      agent-skills-nix,
+      cloudflare-skills,
+      hashicorp-agent-skills,
+      aws-agent-skills,
+      ...
+    }@inputs:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [ mcp-servers-nix.flakeModule ];
 
@@ -65,7 +73,9 @@
           };
           bundle = agentLib.mkBundle { inherit pkgs selection; };
           localTargets = {
-            claude = agentLib.defaultLocalTargets.claude // { enable = true; };
+            claude = agentLib.defaultLocalTargets.claude // {
+              enable = true;
+            };
           };
         in
         {
@@ -92,7 +102,6 @@
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
               opentofu
-              ansible
               docker-compose
               tflint
             ];
