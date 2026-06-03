@@ -110,6 +110,7 @@
                 p.hashicorp_tfe
               ]))
               docker-compose
+              rclone
               tflint
             ];
             buildInputs = config.mcp-servers.packages;

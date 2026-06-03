@@ -32,3 +32,5 @@ output "nix_cache_secret_access_key" {
 output "nix_cache_bucket_name" {
   value = module.nix_cache.bucket_name
 }
+
+
