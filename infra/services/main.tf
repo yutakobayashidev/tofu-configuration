@@ -56,10 +56,5 @@ module "nix_cache_token" {
   cloudflare_account_id = var.cloudflare_account_id
 }
 
-# Cloudflare R2 - file-bucket
-resource "cloudflare_r2_bucket" "file_bucket" {
-  account_id = var.cloudflare_account_id
-  name       = "file-bucket"
-}
 
 
