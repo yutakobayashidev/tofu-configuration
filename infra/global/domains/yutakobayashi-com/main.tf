@@ -137,18 +137,6 @@ resource "cloudflare_zero_trust_tunnel_cloudflared" "b450m_pro4" {
   tunnel_secret = var.tunnel_secret
 }
 
-resource "cloudflare_zero_trust_tunnel_cloudflared" "eagle" {
-  account_id = var.cloudflare_account_id
-  name       = "eagle"
-  config_src = "local"
-}
-
-resource "cloudflare_zero_trust_tunnel_cloudflared" "my_staging_tunnel" {
-  account_id = var.cloudflare_account_id
-  name       = "my-staging-tunnel"
-  config_src = "local"
-}
-
 resource "cloudflare_dns_record" "record" {
   for_each = local.records
   zone_id  = local.zone_id
