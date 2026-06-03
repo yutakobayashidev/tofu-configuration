@@ -91,6 +91,39 @@ locals {
       proxied = false
       type    = "TXT"
     }
+    email_routing_mx1 = {
+      content  = "route1.mx.cloudflare.net"
+      name     = "yutakobayashi.com"
+      priority = 18
+      proxied  = false
+      type     = "MX"
+    }
+    email_routing_mx2 = {
+      content  = "route2.mx.cloudflare.net"
+      name     = "yutakobayashi.com"
+      priority = 64
+      proxied  = false
+      type     = "MX"
+    }
+    email_routing_mx3 = {
+      content  = "route3.mx.cloudflare.net"
+      name     = "yutakobayashi.com"
+      priority = 93
+      proxied  = false
+      type     = "MX"
+    }
+    cloudflare_dkim = {
+      content = "\"v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiweykoi+o48IOGuP7GR3X0MOExCUDY/BCRHoWBnh3rChl7WhdyCxW3jgq1daEjPPqoi7sJvdg5hEQVsgVRQP4DcnQDVjGMbASQtrY4WmB1VebF+RPJB2ECPsEDTpeiI5ZyUAwJaVX7r6bznU67g7LvFq35yIo4sdlmtZGV+i0H4cpYH9+3JJ78k\" \"m4KXwaf9xUJCWF6nxeD+qG6Fyruw1Qlbds2r85U9dkNDVAS3gioCvELryh1TxKGiVTkg4wqHTyHfWsp7KD3WQHYJn0RyfJJu6YEmL77zonn7p2SRMvTMP3ZEXibnC9gz3nnhR6wcYL8Q7zXypKTMD58bTixDSJwIDAQAB\""
+      name    = "cf2024-1._domainkey"
+      proxied = false
+      type    = "TXT"
+    }
+    cloudflare_spf = {
+      content = "\"v=spf1 include:_spf.mx.cloudflare.net ~all\""
+      name    = "yutakobayashi.com"
+      proxied = false
+      type    = "TXT"
+    }
   }
 }
 
@@ -102,6 +135,18 @@ resource "cloudflare_zero_trust_tunnel_cloudflared" "b450m_pro4" {
   account_id    = var.cloudflare_account_id
   name          = "B450M-Pro4"
   tunnel_secret = var.tunnel_secret
+}
+
+resource "cloudflare_zero_trust_tunnel_cloudflared" "eagle" {
+  account_id = var.cloudflare_account_id
+  name       = "eagle"
+  config_src = "local"
+}
+
+resource "cloudflare_zero_trust_tunnel_cloudflared" "my_staging_tunnel" {
+  account_id = var.cloudflare_account_id
+  name       = "my-staging-tunnel"
+  config_src = "local"
 }
 
 resource "cloudflare_dns_record" "record" {

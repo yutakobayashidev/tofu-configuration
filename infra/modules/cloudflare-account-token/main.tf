@@ -8,9 +8,9 @@ locals {
     local.r2_api_permissions["Workers R2 Storage Bucket Item Write"]
   ]
 
-  resources = {
+  resources = jsonencode({
     "com.cloudflare.edge.r2.bucket.${var.cloudflare_account_id}_default_${var.bucket_name}" = "*"
-  }
+  })
 }
 
 resource "cloudflare_api_token" "this" {

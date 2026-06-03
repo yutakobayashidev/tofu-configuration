@@ -55,3 +55,27 @@ module "nix_cache_token" {
   bucket_name           = module.nix_cache.bucket_name
   cloudflare_account_id = var.cloudflare_account_id
 }
+
+# Cloudflare R2 - file-bucket
+resource "cloudflare_r2_bucket" "file_bucket" {
+  account_id = var.cloudflare_account_id
+  name       = "file-bucket"
+}
+
+# Cloudflare R2 - oripa
+resource "cloudflare_r2_bucket" "oripa" {
+  account_id = var.cloudflare_account_id
+  name       = "oripa"
+}
+
+# Cloudflare R2 - ticket
+resource "cloudflare_r2_bucket" "ticket" {
+  account_id = var.cloudflare_account_id
+  name       = "ticket"
+}
+
+# Cloudflare R2 - ticket-dev
+resource "cloudflare_r2_bucket" "ticket_dev" {
+  account_id = var.cloudflare_account_id
+  name       = "ticket-dev"
+}
