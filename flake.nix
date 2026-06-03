@@ -49,6 +49,7 @@
         { config, pkgs, ... }:
         let
           agentLib = agent-skills-nix.lib.agent-skills;
+          mkProvider = pkgs.opentofu.plugins.mkProvider;
 
           sources = {
             cloudflare = {
@@ -108,6 +109,17 @@
                 p.hashicorp_aws
                 p.integrations_github
                 p.hashicorp_tfe
+                (mkProvider {
+                  mkProviderGoModule = pkgs.buildGo126Module;
+                  owner = "Lucky3028";
+                  repo = "terraform-provider-discord";
+                  rev = "v2.7.0";
+                  hash = "sha256-e+LqaGjj8dqVZG8xOqcvz6ZS8XM3xoybJBusCA7xe1M=";
+                  vendorHash = "sha256-lb2FVsNak7USqUmzV++zQ0htNHPEYnCUZgTdw3sm7ag=";
+                  spdx = "GPL-3.0-only";
+                  homepage = "https://registry.terraform.io/providers/Lucky3028/discord";
+                  provider-source-address = "registry.terraform.io/Lucky3028/discord";
+                })
               ]))
               docker-compose
               rclone
