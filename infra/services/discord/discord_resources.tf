@@ -547,28 +547,28 @@ resource "discord_text_channel" "txt_ch502387" {
 }
 resource "discord_channel_permission" "txt_ch424587_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch424587.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 2048
 }
 resource "discord_channel_permission" "vc_YUTASTUDIO_perm_22328094" {
   channel_id   = discord_voice_channel.vc_YUTASTUDIO.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 1024
   deny         = 1048576
 }
 resource "discord_channel_permission" "txt_ch801860_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch801860.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 2048
   deny         = 0
 }
 resource "discord_channel_permission" "vc_MemberCount111_perm_22328094" {
   channel_id   = discord_voice_channel.vc_MemberCount111.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 1024
   deny         = 1048576
@@ -582,126 +582,126 @@ resource "discord_channel_permission" "vc_MemberCount111_perm_07919639" {
 }
 resource "discord_channel_permission" "txt_ch776213_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch776213.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 2048
 }
 resource "discord_channel_permission" "vc_ch894141_perm_22328094" {
   channel_id   = discord_voice_channel.vc_ch894141.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 1048576
   deny         = 2048
 }
 resource "discord_channel_permission" "vc_ch894141_perm_98715412" {
   channel_id   = discord_voice_channel.vc_ch894141.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 1051648
   deny         = 0
 }
 resource "discord_channel_permission" "vc_AFK_perm_22328094" {
   channel_id   = discord_voice_channel.vc_AFK.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 1048576
   deny         = 2048
 }
 resource "discord_channel_permission" "vc_AFK_perm_98715412" {
   channel_id   = discord_voice_channel.vc_AFK.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 1051648
   deny         = 0
 }
 resource "discord_channel_permission" "txt_ch121728_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch121728.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 2048
 }
 resource "discord_channel_permission" "txt_ch696981_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch696981.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 1024
 }
 resource "discord_channel_permission" "ann_ch112660_perm_22328094" {
   channel_id   = discord_news_channel.ann_ch112660.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 2048
   deny         = 0
 }
 resource "discord_channel_permission" "txt_sns_perm_22328094" {
   channel_id   = discord_text_channel.txt_sns.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 2048
 }
 resource "discord_channel_permission" "txt_ch497822_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch497822.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 1048576
   deny         = 2048
 }
 resource "discord_channel_permission" "txt_ch497822_perm_98715412" {
   channel_id   = discord_text_channel.txt_ch497822.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 1051648
   deny         = 0
 }
 resource "discord_channel_permission" "txt_tw_perm_22328094" {
   channel_id   = discord_text_channel.txt_tw.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 1048576
   deny         = 2048
 }
 resource "discord_channel_permission" "txt_tw_perm_98715412" {
   channel_id   = discord_text_channel.txt_tw.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 1051648
   deny         = 0
 }
 resource "discord_channel_permission" "txt_dtv_perm_22328094" {
   channel_id   = discord_text_channel.txt_dtv.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 1048576
   deny         = 2048
 }
 resource "discord_channel_permission" "txt_dtv_perm_98715412" {
   channel_id   = discord_text_channel.txt_dtv.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 1051648
   deny         = 0
 }
 resource "discord_channel_permission" "txt_splatoon_perm_22328094" {
   channel_id   = discord_text_channel.txt_splatoon.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 0
 }
 resource "discord_channel_permission" "txt_splatoon_perm_98715412" {
   channel_id   = discord_text_channel.txt_splatoon.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 1049600
   deny         = 0
 }
 resource "discord_channel_permission" "txt_ch881792_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch881792.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 1048576
   deny         = 3072
@@ -709,147 +709,147 @@ resource "discord_channel_permission" "txt_ch881792_perm_22328094" {
 
 resource "discord_channel_permission" "txt_ch465618_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch465618.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 1048576
   deny         = 2048
 }
 resource "discord_channel_permission" "txt_ch465618_perm_98715412" {
   channel_id   = discord_text_channel.txt_ch465618.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 1051648
   deny         = 0
 }
 resource "discord_channel_permission" "txt_ch923220_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch923220.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 1048576
   deny         = 2048
 }
 resource "discord_channel_permission" "txt_ch923220_perm_98715412" {
   channel_id   = discord_text_channel.txt_ch923220.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 1051648
   deny         = 0
 }
 resource "discord_channel_permission" "txt_gif_perm_22328094" {
   channel_id   = discord_text_channel.txt_gif.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 1048576
   deny         = 2048
 }
 resource "discord_channel_permission" "txt_gif_perm_98715412" {
   channel_id   = discord_text_channel.txt_gif.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 1051648
   deny         = 0
 }
 resource "discord_channel_permission" "txt_status_perm_22328094" {
   channel_id   = discord_text_channel.txt_status.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 1048576
   deny         = 2048
 }
 resource "discord_channel_permission" "txt_status_perm_98715412" {
   channel_id   = discord_text_channel.txt_status.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 1051648
   deny         = 0
 }
 resource "discord_channel_permission" "txt_commands_perm_22328094" {
   channel_id   = discord_text_channel.txt_commands.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 1048576
   deny         = 2048
 }
 resource "discord_channel_permission" "txt_commands_perm_98715412" {
   channel_id   = discord_text_channel.txt_commands.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 1051648
   deny         = 0
 }
 resource "discord_channel_permission" "txt_ch309525_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch309525.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_ch039184_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch039184.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 1048576
   deny         = 2048
 }
 resource "discord_channel_permission" "txt_ch039184_perm_98715412" {
   channel_id   = discord_text_channel.txt_ch039184.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 1051648
   deny         = 0
 }
 resource "discord_channel_permission" "txt_toolchain_perm_22328094" {
   channel_id   = discord_text_channel.txt_toolchain.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 1048576
   deny         = 2048
 }
 resource "discord_channel_permission" "txt_toolchain_perm_98715412" {
   channel_id   = discord_text_channel.txt_toolchain.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 1051648
   deny         = 0
 }
 resource "discord_channel_permission" "txt_feeds_perm_22328094" {
   channel_id   = discord_text_channel.txt_feeds.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 1048576
   deny         = 2048
 }
 resource "discord_channel_permission" "txt_feeds_perm_98715412" {
   channel_id   = discord_text_channel.txt_feeds.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 1051648
   deny         = 0
 }
 resource "discord_channel_permission" "ann_safety_perm_22328094" {
   channel_id   = discord_news_channel.ann_safety.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 0
 }
 resource "discord_channel_permission" "ann_safety_perm_98715412" {
   channel_id   = discord_news_channel.ann_safety.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 1049600
   deny         = 0
 }
 resource "discord_channel_permission" "ann_hackernews_perm_22328094" {
   channel_id   = discord_news_channel.ann_hackernews.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 2048
 }
 resource "discord_channel_permission" "ann_todaydoodle_perm_22328094" {
   channel_id   = discord_news_channel.ann_todaydoodle.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 1048576
   deny         = 2048
@@ -864,7 +864,7 @@ resource "discord_channel_permission" "ann_todaydoodle_perm_13807872" {
 
 resource "discord_channel_permission" "txt_times_perm_22328094" {
   channel_id   = discord_text_channel.txt_times.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 16
   deny         = 1024
@@ -878,14 +878,14 @@ resource "discord_channel_permission" "ann_news_perm_98233693" {
 }
 resource "discord_channel_permission" "ann_ch788992_perm_22328094" {
   channel_id   = discord_news_channel.ann_ch788992.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 2048
 }
 resource "discord_channel_permission" "ann_ch788992_perm_98715412" {
   channel_id   = discord_news_channel.ann_ch788992.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 2048
   deny         = 0
@@ -893,42 +893,42 @@ resource "discord_channel_permission" "ann_ch788992_perm_98715412" {
 
 resource "discord_channel_permission" "txt_zatsudan_perm_22328094" {
   channel_id   = discord_text_channel.txt_zatsudan.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 16
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_bot_perm_22328094" {
   channel_id   = discord_text_channel.txt_bot.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 16
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_address_perm_22328094" {
   channel_id   = discord_text_channel.txt_address.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 16
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_ch272522_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch272522.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 16
 }
 resource "discord_channel_permission" "txt_ch094218_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch094218.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 16
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_ch210378_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch210378.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 16
   deny         = 1024
@@ -936,56 +936,56 @@ resource "discord_channel_permission" "txt_ch210378_perm_22328094" {
 
 resource "discord_channel_permission" "txt_ch350366_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch350366.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 16
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_notion_perm_22328094" {
   channel_id   = discord_text_channel.txt_notion.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 16
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_ch444885_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch444885.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 16
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_ch603581_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch603581.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 16
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_ch630996_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch630996.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 16
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_db_perm_22328094" {
   channel_id   = discord_text_channel.txt_db.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 16
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_gitupdates_perm_22328094" {
   channel_id   = discord_text_channel.txt_gitupdates.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_mcchangelog_perm_22328094" {
   channel_id   = discord_text_channel.txt_mcchangelog.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 1024
@@ -999,91 +999,91 @@ resource "discord_channel_permission" "txt_mcchangelog_perm_70375178" {
 }
 resource "discord_channel_permission" "txt_mcchangelog_perm_98715412" {
   channel_id   = discord_text_channel.txt_mcchangelog.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 1024
   deny         = 2048
 }
 resource "discord_channel_permission" "txt_pricetracker_perm_22328094" {
   channel_id   = discord_text_channel.txt_pricetracker.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_webclips_perm_22328094" {
   channel_id   = discord_text_channel.txt_webclips.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_music_perm_22328094" {
   channel_id   = discord_text_channel.txt_music.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_ch248970_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch248970.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 2048
 }
 resource "discord_channel_permission" "txt_ch686130_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch686130.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 2048
 }
 resource "discord_channel_permission" "txt_ch686130_perm_98715412" {
   channel_id   = discord_text_channel.txt_ch686130.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 1024
   deny         = 0
 }
 resource "discord_channel_permission" "txt_ch705907_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch705907.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_webupdates_perm_22328094" {
   channel_id   = discord_text_channel.txt_webupdates.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 3072
 }
 resource "discord_channel_permission" "txt_webupdates_perm_98715412" {
   channel_id   = discord_text_channel.txt_webupdates.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 0
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_partymode_perm_22328094" {
   channel_id   = discord_text_channel.txt_partymode.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_ch502387_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch502387.id
-  overwrite_id = "895564066922328094"
+  overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 0
   deny         = 1024
 }
 resource "discord_channel_permission" "txt_ch502387_perm_98715412" {
   channel_id   = discord_text_channel.txt_ch502387.id
-  overwrite_id = "914810396198715412"
+  overwrite_id = discord_role.verified.id
   type         = "role"
   allow        = 1048576
   deny         = 1024
