@@ -8,12 +8,12 @@ resource "discord_server" "main" {
   description               = "$argon2id$v=19$m=64,t=512,p=2$6DFi/R8hte2hwOoluD5Ipg$tFGm2m5P2sb5hQ57ORCbWQ"
 }
 resource "discord_category_channel" "cat_Welcome" {
-  name      = "Welcome"
+  name      = "welcome"
   server_id = "895564066922328094"
   position  = 0
 }
 resource "discord_category_channel" "cat_ChatRoom" {
-  name      = "Chat Room"
+  name      = "chat-room"
   server_id = "895564066922328094"
   position  = 1
 }
@@ -23,22 +23,22 @@ resource "discord_category_channel" "cat_feed" {
   position  = 2
 }
 resource "discord_category_channel" "cat_Projects" {
-  name      = "Projects"
+  name      = "projects"
   server_id = "895564066922328094"
   position  = 3
 }
 resource "discord_category_channel" "cat_ch971904" {
-  name      = "アーカイブ"
+  name      = "topics"
   server_id = "895564066922328094"
   position  = 4
 }
 resource "discord_category_channel" "cat_ARCHIVE" {
-  name      = "ARCHIVE"
+  name      = "archive"
   server_id = "895564066922328094"
   position  = 5
 }
 resource "discord_text_channel" "txt_ch424587" {
-  name      = "はじめに"
+  name      = "introduction"
   server_id = "895564066922328094"
   position  = 0
   topic     = "\u3067\u3093\u305b\u3064\u306e\u306f\u3058\u307e\u308a"
@@ -54,7 +54,7 @@ resource "discord_voice_channel" "vc_YUTASTUDIO" {
   sync_perms_with_category = false
 }
 resource "discord_text_channel" "txt_ch801860" {
-  name      = "ようこそ"
+  name      = "welcome"
   server_id = "895564066922328094"
   position  = 1
   topic     = "#\u306f\u3058\u3081\u306b\u3067\u30ed\u30fc\u30eb\u3092\u53d7\u3051\u53d6\u3063\u3066\u304f\u3060\u3055\u3044\uff01"
@@ -71,7 +71,7 @@ resource "discord_voice_channel" "vc_MemberCount111" {
   sync_perms_with_category = false
 }
 resource "discord_text_channel" "txt_ch776213" {
-  name      = "サーバー特典"
+  name      = "server-perks"
   server_id = "895564066922328094"
   position  = 2
   topic     = ""
@@ -79,7 +79,7 @@ resource "discord_text_channel" "txt_ch776213" {
   category = discord_category_channel.cat_Welcome.id
 }
 resource "discord_voice_channel" "vc_ch894141" {
-  name      = "一般"
+  name      = "general"
   server_id = "895564066922328094"
   position  = 2
   bitrate    = 64000
@@ -95,7 +95,7 @@ resource "discord_voice_channel" "vc_AFK" {
   category = discord_category_channel.cat_ChatRoom.id
 }
 resource "discord_text_channel" "txt_ch121728" {
-  name      = "ロール付与"
+  name      = "roles"
   server_id = "895564066922328094"
   position  = 3
   topic     = "\u8208\u5473\u306e\u3042\u308b\u3082\u306e\u304c\u3042\u308c\u3070\u9078\u629e\u3057\u3066\u304f\u3060\u3055\u3044\uff01"
@@ -103,7 +103,7 @@ resource "discord_text_channel" "txt_ch121728" {
   category = discord_category_channel.cat_Welcome.id
 }
 resource "discord_text_channel" "txt_ch696981" {
-  name      = "モデレーター"
+  name      = "moderator"
   server_id = "895564066922328094"
   position  = 4
   topic     = ""
@@ -112,7 +112,7 @@ resource "discord_text_channel" "txt_ch696981" {
   sync_perms_with_category = false
 }
 resource "discord_news_channel" "ann_ch112660" {
-  name      = "お知らせ"
+  name      = "announcements"
   server_id = "895564066922328094"
   position  = 5
   topic     = ""
@@ -129,7 +129,7 @@ resource "discord_text_channel" "txt_sns" {
   category = discord_category_channel.cat_Welcome.id
 }
 resource "discord_text_channel" "txt_ch497822" {
-  name      = "雑談"
+  name      = "chat"
   server_id = "895564066922328094"
   position  = 7
   topic     = "\u30e2\u30ce\u30ed\u30fc\u30b0\u3092\u5782\u308c\u6d41\u3059\u30c1\u30e3\u30f3\u30cd\u30eb\u3067\u3059 Slack: https://dub.sh/slack-times"
@@ -162,7 +162,7 @@ resource "discord_text_channel" "txt_splatoon" {
   sync_perms_with_category = false
 }
 resource "discord_text_channel" "txt_ch881792" {
-  name      = "お仕事・統計"
+  name      = "work-stats"
   server_id = "895564066922328094"
   position  = 13
   topic     = ""
@@ -172,7 +172,7 @@ resource "discord_text_channel" "txt_ch881792" {
 }
 
 resource "discord_text_channel" "txt_ch465618" {
-  name      = "謎技術・ニュース・論文共有"
+  name      = "tech-news-papers"
   server_id = "895564066922328094"
   position  = 15
   topic     = ""
@@ -180,7 +180,7 @@ resource "discord_text_channel" "txt_ch465618" {
   category = discord_category_channel.cat_ChatRoom.id
 }
 resource "discord_text_channel" "txt_ch923220" {
-  name      = "リンク・宣伝"
+  name      = "links-promo"
   server_id = "895564066922328094"
   position  = 16
   topic     = "\u5ba3\u4f1d\u3084\u30b5\u30fc\u30d3\u30b9\u7d39\u4ecb\u306a\u3069\uff01"
@@ -212,7 +212,7 @@ resource "discord_text_channel" "txt_commands" {
   category = discord_category_channel.cat_ChatRoom.id
 }
 resource "discord_text_channel" "txt_ch309525" {
-  name      = "メモ"
+  name      = "notes"
   server_id = "895564066922328094"
   position  = 20
   topic     = ""
@@ -221,7 +221,7 @@ resource "discord_text_channel" "txt_ch309525" {
   sync_perms_with_category = false
 }
 resource "discord_text_channel" "txt_ch039184" {
-  name      = "ドメイン監視"
+  name      = "domain-monitoring"
   server_id = "895564066922328094"
   position  = 22
   topic     = ""
@@ -229,7 +229,7 @@ resource "discord_text_channel" "txt_ch039184" {
   category = discord_category_channel.cat_ChatRoom.id
 }
 resource "discord_text_channel" "txt_toolchain" {
-  name      = "tool-chain"
+  name      = "toolchain"
   server_id = "895564066922328094"
   position  = 23
   topic     = ""
@@ -329,7 +329,7 @@ resource "discord_text_channel" "txt_spotifylog" {
 }
 
 resource "discord_text_channel" "txt_times" {
-  name      = "timesについて"
+  name      = "about-times"
   server_id = "895564066922328094"
   position  = 39
   topic     = ""
@@ -346,7 +346,7 @@ resource "discord_news_channel" "ann_news" {
   sync_perms_with_category = false
 }
 resource "discord_news_channel" "ann_ch788992" {
-  name      = "お知らせ"
+  name      = "all-announcements"
   server_id = "895564066922328094"
   position  = 43
   topic     = "\u5168\u4f53\u30a2\u30ca\u30a6\u30f3\u30b9"
@@ -380,7 +380,7 @@ resource "discord_text_channel" "txt_address" {
   category = discord_category_channel.cat_ch971904.id
 }
 resource "discord_text_channel" "txt_ch272522" {
-  name      = "サーバーの一般公開化について"
+  name      = "about-public-server"
   server_id = "895564066922328094"
   position  = 50
   topic     = ""
@@ -388,7 +388,7 @@ resource "discord_text_channel" "txt_ch272522" {
   category = discord_category_channel.cat_ch971904.id
 }
 resource "discord_text_channel" "txt_ch094218" {
-  name      = "プログラミング"
+  name      = "programming"
   server_id = "895564066922328094"
   position  = 51
   topic     = "\u5236\u4f5c\u7269\u3068\u304b\u30d8\u30eb\u30d7\u3068\u304b"
@@ -396,7 +396,7 @@ resource "discord_text_channel" "txt_ch094218" {
   category = discord_category_channel.cat_ch971904.id
 }
 resource "discord_text_channel" "txt_ch210378" {
-  name      = "サイエンス"
+  name      = "science"
   server_id = "895564066922328094"
   position  = 52
   topic     = ""
@@ -405,7 +405,7 @@ resource "discord_text_channel" "txt_ch210378" {
 }
 
 resource "discord_text_channel" "txt_ch350366" {
-  name      = "勉強"
+  name      = "study"
   server_id = "895564066922328094"
   position  = 54
   topic     = "\u4e0d\u767b\u6821\u6b743\u5e74\u306b\u3088\u308b\u52c9\u5f37\u4f1a"
@@ -421,7 +421,7 @@ resource "discord_text_channel" "txt_notion" {
   category = discord_category_channel.cat_ch971904.id
 }
 resource "discord_text_channel" "txt_ch444885" {
-  name      = "天文・宇宙"
+  name      = "astronomy"
   server_id = "895564066922328094"
   position  = 56
   topic     = ""
@@ -429,7 +429,7 @@ resource "discord_text_channel" "txt_ch444885" {
   category = discord_category_channel.cat_ch971904.id
 }
 resource "discord_text_channel" "txt_ch603581" {
-  name      = "音楽"
+  name      = "music"
   server_id = "895564066922328094"
   position  = 57
   topic     = ""
@@ -437,7 +437,7 @@ resource "discord_text_channel" "txt_ch603581" {
   category = discord_category_channel.cat_ch971904.id
 }
 resource "discord_text_channel" "txt_ch630996" {
-  name      = "ゲーム"
+  name      = "games"
   server_id = "895564066922328094"
   position  = 58
   topic     = ""
@@ -445,7 +445,7 @@ resource "discord_text_channel" "txt_ch630996" {
   category = discord_category_channel.cat_ch971904.id
 }
 resource "discord_text_channel" "txt_db" {
-  name      = "プロセカdb"
+  name      = "proseka-db"
   server_id = "895564066922328094"
   position  = 59
   topic     = ""
@@ -494,7 +494,7 @@ resource "discord_text_channel" "txt_music" {
   category = discord_category_channel.cat_ARCHIVE.id
 }
 resource "discord_text_channel" "txt_ch248970" {
-  name      = "脱退"
+  name      = "leave"
   server_id = "895564066922328094"
   position  = 67
   topic     = ""
@@ -503,7 +503,7 @@ resource "discord_text_channel" "txt_ch248970" {
   sync_perms_with_category = false
 }
 resource "discord_text_channel" "txt_ch686130" {
-  name      = "入室"
+  name      = "join"
   server_id = "895564066922328094"
   position  = 68
   topic     = "Welcome!"
@@ -512,7 +512,7 @@ resource "discord_text_channel" "txt_ch686130" {
   sync_perms_with_category = false
 }
 resource "discord_text_channel" "txt_ch705907" {
-  name      = "総合"
+  name      = "general"
   server_id = "895564066922328094"
   position  = 69
   topic     = "\u7dcf\u5408"
@@ -537,7 +537,7 @@ resource "discord_text_channel" "txt_partymode" {
   category = discord_category_channel.cat_ARCHIVE.id
 }
 resource "discord_text_channel" "txt_ch502387" {
-  name      = "自己紹介"
+  name      = "self-introduction"
   server_id = "895564066922328094"
   position  = 76
   topic     = "\u4efb\u610f"
