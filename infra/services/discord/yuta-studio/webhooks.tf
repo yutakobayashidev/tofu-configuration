@@ -1,3 +1,8 @@
+resource "discord_webhook" "uptime" {
+  channel_id = discord_text_channel.txt_status.id
+  name       = "Uptime"
+}
+
 resource "discord_webhook" "zapier" {
   channel_id = discord_text_channel.txt_webupdates.id
   name       = "Zapier"
