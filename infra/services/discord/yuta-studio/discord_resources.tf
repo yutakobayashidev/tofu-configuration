@@ -62,14 +62,6 @@ resource "discord_text_channel" "txt_ch801860" {
   category                 = discord_category_channel.cat_Welcome.id
   sync_perms_with_category = false
 }
-resource "discord_voice_channel" "vc_MemberCount111" {
-  name                     = "Member Count: 111"
-  server_id                = "895564066922328094"
-  position                 = 1
-  bitrate                  = 64000
-  user_limit               = 0
-  sync_perms_with_category = false
-}
 resource "discord_text_channel" "txt_ch776213" {
   name      = "server-perks"
   server_id = "895564066922328094"
@@ -565,20 +557,6 @@ resource "discord_channel_permission" "txt_ch801860_perm_22328094" {
   overwrite_id = discord_role_everyone.main.id
   type         = "role"
   allow        = 2048
-  deny         = 0
-}
-resource "discord_channel_permission" "vc_MemberCount111_perm_22328094" {
-  channel_id   = discord_voice_channel.vc_MemberCount111.id
-  overwrite_id = discord_role_everyone.main.id
-  type         = "role"
-  allow        = 1024
-  deny         = 1048576
-}
-resource "discord_channel_permission" "vc_MemberCount111_perm_07919639" {
-  channel_id   = discord_voice_channel.vc_MemberCount111.id
-  overwrite_id = "432533456807919639"
-  type         = "user"
-  allow        = 1048576
   deny         = 0
 }
 resource "discord_channel_permission" "txt_ch776213_perm_22328094" {
