@@ -386,6 +386,7 @@ resource "discord_text_channel" "txt_ch272522" {
   topic     = ""
   nsfw      = false
   category = discord_category_channel.cat_ch971904.id
+  sync_perms_with_category = false
 }
 resource "discord_text_channel" "txt_ch094218" {
   name      = "programming"
