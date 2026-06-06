@@ -3,10 +3,9 @@ resource "github_repository" "homelab" {
   description = "OpenTofu configuration for homelab infrastructure"
   visibility  = "public"
 
-  has_issues    = true
-  has_projects  = true
-  has_wiki      = true
-  has_downloads = true
+  has_issues   = true
+  has_projects = true
+  has_wiki     = true
 
   allow_merge_commit = true
   allow_squash_merge = true
@@ -19,10 +18,9 @@ resource "github_repository" "dotnix" {
   name       = "dotnix"
   visibility = "public"
 
-  has_issues    = true
-  has_projects  = true
-  has_wiki      = true
-  has_downloads = true
+  has_issues   = true
+  has_projects = true
+  has_wiki     = true
 
   allow_merge_commit = true
   allow_squash_merge = true
@@ -36,10 +34,9 @@ resource "github_repository" "repiq" {
   description = "Fetch objective metrics for OSS repositories. Built for AI agents."
   visibility  = "public"
 
-  has_issues    = true
-  has_projects  = true
-  has_wiki      = true
-  has_downloads = true
+  has_issues   = true
+  has_projects = true
+  has_wiki     = true
 
   allow_merge_commit = false
   allow_squash_merge = true
@@ -54,27 +51,9 @@ resource "github_repository" "ava" {
   homepage_url = "https://ava-dusky-gamma.vercel.app"
   visibility   = "public"
 
-  has_issues    = true
-  has_projects  = true
-  has_wiki      = true
-  has_downloads = true
-
-  allow_merge_commit = true
-  allow_squash_merge = true
-  allow_rebase_merge = true
-
-  delete_branch_on_merge = true
-}
-
-resource "github_repository" "kaikei" {
-  name        = "kaikei"
-  description = "確定申告・請求書管理"
-  visibility  = "private"
-
-  has_issues    = true
-  has_projects  = false
-  has_wiki      = false
-  has_downloads = true
+  has_issues   = true
+  has_projects = true
+  has_wiki     = true
 
   allow_merge_commit = true
   allow_squash_merge = true
@@ -87,10 +66,9 @@ resource "github_repository" "talks" {
   name       = "talks"
   visibility = "public"
 
-  has_issues    = true
-  has_projects  = true
-  has_wiki      = true
-  has_downloads = true
+  has_issues   = true
+  has_projects = true
+  has_wiki     = true
 
   allow_merge_commit = true
   allow_squash_merge = true
@@ -104,10 +82,9 @@ resource "github_repository" "google_apps_script" {
   description = "Code-managed Google Apps Script monorepo using pnpm, clasp, and TypeScript"
   visibility  = "public"
 
-  has_issues    = true
-  has_projects  = true
-  has_wiki      = true
-  has_downloads = true
+  has_issues   = true
+  has_projects = true
+  has_wiki     = true
 
   allow_merge_commit = true
   allow_squash_merge = true
@@ -123,10 +100,9 @@ resource "github_repository" "contest" {
   name       = "contest"
   visibility = "public"
 
-  has_issues    = true
-  has_projects  = true
-  has_wiki      = true
-  has_downloads = true
+  has_issues   = true
+  has_projects = true
+  has_wiki     = true
 
   allow_merge_commit = true
   allow_squash_merge = true
@@ -150,10 +126,9 @@ resource "github_repository" "skills" {
   description = "Agent skills collection for AI coding agents"
   visibility  = "public"
 
-  has_issues    = true
-  has_projects  = true
-  has_wiki      = true
-  has_downloads = true
+  has_issues   = true
+  has_projects = true
+  has_wiki     = true
 
   allow_merge_commit = true
   allow_squash_merge = true
@@ -166,10 +141,9 @@ resource "github_repository" "kokkai_agent" {
   name       = "kokkai-agent"
   visibility = "private"
 
-  has_issues    = true
-  has_projects  = true
-  has_wiki      = true
-  has_downloads = true
+  has_issues   = true
+  has_projects = true
+  has_wiki     = true
 
   allow_merge_commit = true
   allow_squash_merge = true
