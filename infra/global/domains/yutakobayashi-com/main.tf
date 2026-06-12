@@ -46,6 +46,12 @@ locals {
       proxied = true
       type    = "CNAME"
     }
+    nostr = {
+      content = "${cloudflare_zero_trust_tunnel_cloudflared.b450m_pro4.id}.cfargotunnel.com"
+      name    = "nostr"
+      proxied = true
+      type    = "CNAME"
+    }
     bluesky = {
       comment = "Bluesky"
       content = "\"did=did:plc:vbnh7xdksftiiad7b2la4jqe\""
