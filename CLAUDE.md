@@ -1,6 +1,9 @@
 # tofu-configuration
 
-OpenTofu configurations for managing homelab infrastructure.
+OpenTofu configurations for managing cloud infrastructure.
+
+> [!NOTE]
+> Homelab infrastructure (Discord etc.) is managed in [yutakobayashidev/dotnix](https://github.com/yutakobayashidev/dotnix).
 
 ## Architecture
 
@@ -12,12 +15,12 @@ OpenTofu configurations for managing homelab infrastructure.
 
 ## Stack
 
-| Layer | Tool | Purpose |
-|-------|------|---------|
-| Infrastructure | OpenTofu | DO, Cloudflare, AWS SES, GitHub, HCP Terraform |
-| State | HCP Terraform | Remote state storage (3 workspaces) |
-| Lint | TFLint | OpenTofu static analysis |
-| Dev Environment | Nix flake-parts | Tools, MCP servers, agent skills |
+| Layer           | Tool            | Purpose                                        |
+| --------------- | --------------- | ---------------------------------------------- |
+| Infrastructure  | OpenTofu        | DO, Cloudflare, AWS SES, GitHub, HCP Terraform |
+| State           | HCP Terraform   | Remote state storage (2 workspaces)            |
+| Lint            | TFLint          | OpenTofu static analysis                       |
+| Dev Environment | Nix flake-parts | Tools, MCP servers, agent skills               |
 
 ## Directory Layout
 

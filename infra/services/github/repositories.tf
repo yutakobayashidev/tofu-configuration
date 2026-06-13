@@ -1,6 +1,6 @@
 resource "github_repository" "homelab" {
   name        = "tofu-configuration"
-  description = "OpenTofu configuration for homelab infrastructure"
+  description = "OpenTofu configuration for cloud infrastructure"
   visibility  = "public"
 
   has_issues   = true
