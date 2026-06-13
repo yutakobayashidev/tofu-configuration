@@ -56,5 +56,22 @@ module "nix_cache_token" {
   cloudflare_account_id = var.cloudflare_account_id
 }
 
+# Cloudflare R2 - Homelab infra state
+module "homelab_infra_state" {
+  source                = "../modules/cloudflare-r2"
+  cloudflare_account_id = var.cloudflare_account_id
+  r2_location           = "APAC"
+  bucket_name           = "homelab-infra-state"
+}
+
+# Cloudflare R2 Access Token - Homelab infra state
+module "homelab_infra_state_token" {
+  source                = "../modules/cloudflare-account-token"
+  project_name          = "homelab"
+  environment           = "prod"
+  token_name            = "homelab-infra-state-r2"
+  bucket_name           = module.homelab_infra_state.bucket_name
+  cloudflare_account_id = var.cloudflare_account_id
+}
 
 

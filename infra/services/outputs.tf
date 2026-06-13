@@ -33,4 +33,15 @@ output "nix_cache_bucket_name" {
   value = module.nix_cache.bucket_name
 }
 
+output "homelab_infra_state_access_key_id" {
+  value = module.homelab_infra_state_token.access_key_id
+}
 
+output "homelab_infra_state_secret_access_key" {
+  value     = module.homelab_infra_state_token.secret_access_key
+  sensitive = true
+}
+
+output "homelab_infra_state_bucket_name" {
+  value = module.homelab_infra_state.bucket_name
+}
