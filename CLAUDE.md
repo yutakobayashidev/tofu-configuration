@@ -3,7 +3,7 @@
 OpenTofu configurations for managing cloud infrastructure.
 
 > [!NOTE]
-> Homelab infrastructure (Discord etc.) is managed in [yutakobayashidev/dotnix](https://github.com/yutakobayashidev/dotnix).
+> Self-hosted services (Gitea, Uptime Kuma, Tailscale etc.) are managed in [yutakobayashidev/dotnix](https://github.com/yutakobayashidev/dotnix).
 
 ## Architecture
 
@@ -18,7 +18,7 @@ OpenTofu configurations for managing cloud infrastructure.
 | Layer           | Tool            | Purpose                                        |
 | --------------- | --------------- | ---------------------------------------------- |
 | Infrastructure  | OpenTofu        | DO, Cloudflare, AWS SES, GitHub, HCP Terraform |
-| State           | HCP Terraform   | Remote state storage (2 workspaces)            |
+| State           | HCP Terraform   | Remote state storage (3 workspaces)            |
 | Lint            | TFLint          | OpenTofu static analysis                       |
 | Dev Environment | Nix flake-parts | Tools, MCP servers, agent skills               |
 

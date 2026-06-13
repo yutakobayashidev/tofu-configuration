@@ -3,7 +3,7 @@
 OpenTofu configurations for managing cloud infrastructure.
 
 > [!NOTE]
-> Homelab infrastructure (Discord etc.) is managed in [yutakobayashidev/dotnix](https://github.com/yutakobayashidev/dotnix).
+> Self-hosted services (Gitea, Uptime Kuma, Tailscale etc.) are managed in [yutakobayashidev/dotnix](https://github.com/yutakobayashidev/dotnix).
 
 ## Architecture
 
