@@ -1,6 +1,9 @@
 # tofu-configuration
 
-OpenTofu configurations for managing homelab infrastructure.
+OpenTofu configurations for managing cloud infrastructure.
+
+> [!NOTE]
+> Homelab infrastructure (Discord etc.) is managed in [yutakobayashidev/dotnix](https://github.com/yutakobayashidev/dotnix).
 
 ## Architecture
 
