@@ -83,16 +83,9 @@
         in
         {
           mcp-servers = {
+            programs.terraform.enable = true;
+
             settings.servers = {
-              terraform = {
-                command = "docker";
-                args = [
-                  "run"
-                  "-i"
-                  "--rm"
-                  "hashicorp/terraform-mcp-server"
-                ];
-              };
               cloudflare-docs = {
                 type = "http";
                 url = "https://docs.mcp.cloudflare.com/mcp";
@@ -123,7 +116,6 @@
                   provider-source-address = "registry.terraform.io/Lucky3028/discord";
                 })
               ]))
-              docker-compose
               rclone
               tflint
             ];
