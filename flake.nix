@@ -73,11 +73,13 @@
             skills = { };
           };
           bundle = agentLib.mkBundle { inherit pkgs selection; };
-          localTargets = {
-            claude = agentLib.defaultLocalTargets.claude // {
+          localTargets = builtins.mapAttrs (
+            _: target:
+            target
+            // {
               enable = true;
-            };
-          };
+            }
+          ) agentLib.defaultLocalTargets;
         in
         {
           mcp-servers = {
