@@ -40,6 +40,12 @@ locals {
       proxied = true
       type    = "CNAME"
     }
+    git_ssh = {
+      content = "${cloudflare_zero_trust_tunnel_cloudflared.b450m_pro4.id}.cfargotunnel.com"
+      name    = "git-ssh"
+      proxied = true
+      type    = "CNAME"
+    }
     niks3 = {
       content = "${cloudflare_zero_trust_tunnel_cloudflared.b450m_pro4.id}.cfargotunnel.com"
       name    = "niks3"
