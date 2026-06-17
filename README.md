@@ -53,6 +53,8 @@ State is managed by [HCP Terraform](https://app.terraform.io/). Authenticate onc
 tofu login app.terraform.io
 ```
 
+The workspaces managed from `infra/services/tfe` are VCS-connected to this repository through the Terraform Cloud GitHub App. Install the app for the `yutakobayashidev` GitHub account or organization before relying on automated runs.
+
 ### 3. OpenTofu
 
 Three independent workspaces:

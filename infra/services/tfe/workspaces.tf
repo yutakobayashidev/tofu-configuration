@@ -6,13 +6,20 @@ resource "tfe_workspace" "homelab" {
   project_id   = tfe_project.default.id
   description  = "Homelab infrastructure (DO, Cloudflare, AWS)"
 
-  file_triggers_enabled = false
-  queue_all_runs        = false
+  working_directory     = "infra/global"
+  file_triggers_enabled = true
+  queue_all_runs        = true
+
+  vcs_repo {
+    identifier                 = "yutakobayashidev/tofu-configuration"
+    branch                     = "main"
+    github_app_installation_id = data.tfe_github_app_installation.github.id
+  }
 }
 
 resource "tfe_workspace_settings" "homelab" {
   workspace_id   = tfe_workspace.homelab.id
-  execution_mode = "local"
+  execution_mode = "remote"
 }
 
 resource "tfe_workspace" "github" {
@@ -21,13 +28,20 @@ resource "tfe_workspace" "github" {
   project_id   = tfe_project.default.id
   description  = "GitHub repositories and settings"
 
-  file_triggers_enabled = false
-  queue_all_runs        = false
+  working_directory     = "infra/services/github"
+  file_triggers_enabled = true
+  queue_all_runs        = true
+
+  vcs_repo {
+    identifier                 = "yutakobayashidev/tofu-configuration"
+    branch                     = "main"
+    github_app_installation_id = data.tfe_github_app_installation.github.id
+  }
 }
 
 resource "tfe_workspace_settings" "github" {
   workspace_id   = tfe_workspace.github.id
-  execution_mode = "local"
+  execution_mode = "remote"
 }
 
 resource "tfe_workspace" "discord" {
@@ -36,11 +50,18 @@ resource "tfe_workspace" "discord" {
   project_id   = tfe_project.default.id
   description  = "Discord server settings, channels, roles, and permissions"
 
-  file_triggers_enabled = false
-  queue_all_runs        = false
+  working_directory     = "infra/services/discord"
+  file_triggers_enabled = true
+  queue_all_runs        = true
+
+  vcs_repo {
+    identifier                 = "yutakobayashidev/tofu-configuration"
+    branch                     = "main"
+    github_app_installation_id = data.tfe_github_app_installation.github.id
+  }
 }
 
 resource "tfe_workspace_settings" "discord" {
   workspace_id   = tfe_workspace.discord.id
-  execution_mode = "local"
+  execution_mode = "remote"
 }

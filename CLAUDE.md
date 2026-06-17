@@ -10,7 +10,7 @@ OpenTofu configurations for managing cloud infrastructure.
 - **DigitalOcean**: Mastodon (future migration from Vultr), managed by OpenTofu
 - **Cloudflare**: DNS, Email Routing, R2 (Mastodon media + Obsidian backup), API tokens
 - **AWS SES**: Mastodon email delivery (ap-northeast-1)
-- **HCP Terraform**: Remote state management
+- **HCP Terraform**: Remote state management and VCS-connected workspaces
 - **GitHub**: Repository settings managed via OpenTofu
 
 ## Stack
@@ -26,7 +26,7 @@ OpenTofu configurations for managing cloud infrastructure.
 
 - `infra/global/` — Root module (providers, backend, variables, outputs)
 - `infra/services/` — Service resources (R2 buckets, tokens, SES)
-- `infra/services/tfe/` — HCP Terraform self-management (org, workspaces)
+- `infra/services/tfe/` — HCP Terraform self-management (org, VCS-connected workspaces)
 - `infra/services/github/` — GitHub repository settings
 - `infra/global/domains/yutakobayashi-com/` — DNS records and Email Routing rules for yutakobayashi.com
 - `infra/global/domains/yutakobayashi-dev/` — DNS records and Email Routing rules for yutakobayashi.dev
@@ -43,3 +43,5 @@ cd infra/services/github && tofu init && tofu plan && tofu apply
 # TFLint
 cd infra/global && tflint --init && tflint
 ```
+
+The workspaces managed from `infra/services/tfe` are connected to `yutakobayashidev/tofu-configuration` through the Terraform Cloud GitHub App.
