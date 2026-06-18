@@ -66,8 +66,13 @@ output "homelab_infra_state_bucket_name" {
   value       = module.services.homelab_infra_state_bucket_name
 }
 
+output "gitea_email_sending_token" {
+  description = "Cloudflare Email Sending API token for Gitea SMTP"
+  value       = module.services.gitea_email_sending_token
+  sensitive   = true
+}
+
 output "yutakobayashi_dev_zone_id" {
   description = "yutakobayashi.dev Cloudflare Zone ID"
   value       = one(data.cloudflare_zones.yutakobayashi_dev.result).id
 }
-

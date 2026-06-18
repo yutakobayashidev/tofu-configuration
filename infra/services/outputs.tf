@@ -45,3 +45,9 @@ output "homelab_infra_state_secret_access_key" {
 output "homelab_infra_state_bucket_name" {
   value = module.homelab_infra_state.bucket_name
 }
+
+output "gitea_email_sending_token" {
+  description = "Cloudflare Email Sending API token for Gitea SMTP"
+  value       = cloudflare_api_token.gitea_email_sending.value
+  sensitive   = true
+}
