@@ -98,6 +98,7 @@
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
               cf-terraforming
+              conftest
               (opentofu.withPlugins (p: [
                 p.cloudflare_cloudflare
                 p.digitalocean_digitalocean
