@@ -33,6 +33,21 @@ any_deny_hyphen_in_resource_name if {
 			}),
 		},
 		{
+			"exp": set(), "msg": "nested resource values are ignored",
+			"input": wrap_single_resource({
+				"address": "example_resource.test",
+				"mode":    "managed",
+				"name":    "test",
+				"values": {
+					"nested": {
+						"address": "not_a_resource.test-1",
+						"mode":    "managed",
+						"name":    "test-1",
+					},
+				},
+			}),
+		},
+		{
 			"exp": {"module.example.google_project_iam_member.test-1: [リソース名にハイフン (-) が含まれています。Terraform のベストプラクティスに従い、アンダースコア (_) を使用してください。](https://github.com/yutakobayashidev/tofu-configuration/blob/main/policy/terraform/hyphen_in_resource_name.rego)"}, "msg": "managed resource in a child module is denied",
 			"input": {
 				"planned_values": {

@@ -4,7 +4,7 @@
 
 **Goal:** Reject managed OpenTofu resources whose local resource name contains a hyphen.
 
-**Architecture:** Conftest evaluates the `name` and `mode` fields in OpenTofu plan JSON resources. A table-driven Rego test covers managed resources, data resources, and child modules without parsing opaque resource addresses.
+**Architecture:** Conftest evaluates the `name` and `mode` fields in OpenTofu plan JSON resources. Resource paths are restricted to module `resources` arrays so nested provider values cannot be mistaken for resources. A table-driven Rego test covers managed resources, data resources, nested values, and child modules without parsing opaque resource addresses.
 
 **Tech Stack:** OpenTofu plan JSON, Conftest, OPA Rego v1
 
@@ -58,6 +58,21 @@ any_deny_hyphen_in_resource_name if {
 				"address": "data.google_project.test-1",
 				"mode":    "data",
 				"name":    "test-1",
+			}),
+		},
+		{
+			"exp": set(), "msg": "nested resource values are ignored",
+			"input": wrap_single_resource({
+				"address": "example_resource.test",
+				"mode":    "managed",
+				"name":    "test",
+				"values": {
+					"nested": {
+						"address": "not_a_resource.test-1",
+						"mode":    "managed",
+						"name":    "test-1",
+					},
+				},
 			}),
 		},
 		{
@@ -125,7 +140,8 @@ package main
 import rego.v1
 
 deny_hyphen_in_resource_name contains message if {
-	walk(input.planned_values.root_module, [_, value])
+	walk(input.planned_values.root_module, [path, value])
+	is_resource_path(path)
 	value.mode == "managed"
 	contains(value.name, "-")
 	message := sprintf(
@@ -136,6 +152,20 @@ deny_hyphen_in_resource_name contains message if {
 			"https://github.com/yutakobayashidev/tofu-configuration/blob/main/policy/terraform/hyphen_in_resource_name.rego",
 		],
 	)
+}
+
+is_resource_path(path) if {
+	count(path) == 2
+	path[0] == "resources"
+}
+
+is_resource_path(path) if {
+	count(path) > 2
+	count(path) % 2 == 0
+	path[count(path) - 2] == "resources"
+	every i in numbers.range(0, (count(path) - 4) / 2) {
+		path[i * 2] == "child_modules"
+	}
 }
 ```
 

@@ -23,8 +23,10 @@ The policy evaluates OpenTofu plan JSON produced by:
 tofu show -json tfplan
 ```
 
-It walks `input.planned_values.root_module` recursively so resources in child
-modules are included.
+It walks `input.planned_values.root_module` recursively and accepts only paths
+matching `resources[index]` or
+`child_modules[index]...resources[index]`. This includes resources in child
+modules without inspecting arbitrary objects inside resource values.
 
 ## Detection
 
@@ -70,6 +72,7 @@ Use a table-driven Rego unit test covering:
 - managed resource named `test`: allowed
 - managed resource named `test-1`: denied
 - data resource named `test-1`: allowed
+- managed resource with a resource-shaped object in its values: allowed
 - managed resource named `test-1` inside a child module: denied
 
 The child-module case uses a representative nested plan input rather than the
