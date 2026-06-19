@@ -16,14 +16,14 @@ any_deny_github_issue_label_description if {
 			},
 		},
 		{
-			"exp": {"github_issue_label.main: [github_issue_label's description is required](https://github.com/yutakobayashidev/tofu-configuration/blob/main/policy/terraform/github_issue_label_description.rego)"}, "msg": "descriptoin is empty",
+			"exp": {"github_issue_label.main: [github_issue_label's description is required](https://github.com/yutakobayashidev/tofu-configuration/blob/main/policy/terraform/github_issue_label_description.rego)"}, "msg": "description is empty",
 			"resource": {
 				"address": "github_issue_label.main", "type": "github_issue_label",
 				"values": {"description": ""},
 			},
 		},
 		{
-			"exp": {"github_issue_label.main: [github_issue_label's description is required](https://github.com/yutakobayashidev/tofu-configuration/blob/main/policy/terraform/github_issue_label_description.rego)"}, "msg": "descriptoin is null",
+			"exp": {"github_issue_label.main: [github_issue_label's description is required](https://github.com/yutakobayashidev/tofu-configuration/blob/main/policy/terraform/github_issue_label_description.rego)"}, "msg": "description is null",
 			"resource": {
 				"address": "github_issue_label.main", "type": "github_issue_label",
 				"values": {"description": null},
