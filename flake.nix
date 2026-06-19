@@ -27,6 +27,10 @@
       url = "github:yutakobayashidev/nur-packages";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    git-hooks = {
+      url = "github:cachix/git-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -38,10 +42,14 @@
       hashicorp-agent-skills,
       aws-agent-skills,
       nur-packages,
+      git-hooks,
       ...
     }@inputs:
     flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = [ mcp-servers-nix.flakeModule ];
+      imports = [
+        mcp-servers-nix.flakeModule
+        git-hooks.flakeModule
+      ];
 
       systems = [
         "x86_64-linux"
@@ -97,7 +105,17 @@
               };
             };
 
-            flavors.claude-code.enable = true;
+            flavors = {
+              claude-code.enable = true;
+              opencode.enable = true;
+            };
+          };
+
+          pre-commit = {
+            check.enable = false;
+            settings.hooks = {
+              convco.enable = true;
+            };
           };
 
           devShells.default = pkgs.mkShellNoCC {
