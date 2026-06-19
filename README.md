@@ -32,6 +32,7 @@ HCP Terraform
 - [Nix](https://nixos.org/) (recommended) or install manually:
   - [OpenTofu](https://opentofu.org/) >= 1.6
   - [TFLint](https://github.com/terraform-linters/tflint)
+  - [Conftest](https://www.conftest.dev/)
 
 ## Setup
 
@@ -96,6 +97,18 @@ tofu apply
 | -------------- | ---------------------------- |
 | `github_token` | GitHub Personal Access Token |
 
+## Policy Checks
+
+Conftest evaluates saved OpenTofu plan JSON against the policies in `policy/terraform`.
+
+```bash
+tofu -chdir=infra/services/github plan -out=tfplan
+tofu -chdir=infra/services/github show -json tfplan | conftest test --policy policy/terraform -
+
+# Run policy unit tests
+conftest verify --policy policy/terraform
+```
+
 ## Directory Structure
 
 ```
@@ -129,6 +142,8 @@ infra/                              # OpenTofu configuration
 ├── modules/
 │   ├── cloudflare-r2/              # R2 bucket + custom domain
 │   └── cloudflare-account-token/   # R2 API token
+policy/
+└── terraform/                       # Conftest policies and unit tests
 ```
 
 ## Managed Resources
