@@ -59,7 +59,12 @@
       ];
 
       perSystem =
-        { config, pkgs, ... }:
+        {
+          config,
+          pkgs,
+          system,
+          ...
+        }:
         let
           agentLib = agent-skills-nix.lib.agent-skills;
           mkProvider = pkgs.opentofu.plugins.mkProvider;
@@ -95,6 +100,15 @@
           ) agentLib.defaultLocalTargets;
         in
         {
+          _module.args.pkgs = import inputs.nixpkgs {
+            inherit system;
+            config = {
+              permittedInsecurePackages = [
+                "python3.13-ecdsa-0.19.2"
+              ];
+            };
+          };
+
           mcp-servers = {
             programs.terraform.enable = true;
 
