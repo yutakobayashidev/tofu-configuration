@@ -125,6 +125,9 @@
               rclone
               tflint
               nur-packages.packages.${pkgs.system}.tfmv
+              checkov
+              trivy
+              nur-packages.packages.${pkgs.system}.pike
             ];
             buildInputs = config.mcp-servers.packages;
             shellHook =
