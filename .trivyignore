@@ -1,0 +1,4 @@
+# Public OSS repos are intentionally public
+AVD-GIT-0001
+# Vulnerability alerts managed outside of Terraform
+AVD-GIT-0003

@@ -13,7 +13,7 @@ module "mastodon_r2_token" {
   source                = "../modules/cloudflare-account-token"
   project_name          = "homelab"
   environment           = "prod"
-  token_name            = "mastodon-r2"
+  token_name            = "mastodon-r2" # checkov:skip=CKV_SECRET_6:token_name_is_not_a_secret
   bucket_name           = module.mastodon_media.bucket_name
   cloudflare_account_id = var.cloudflare_account_id
 }
@@ -31,7 +31,7 @@ module "obsidian_r2_token" {
   source                = "../modules/cloudflare-account-token"
   project_name          = "homelab"
   environment           = "prod"
-  token_name            = "obsidian-r2"
+  token_name            = "obsidian-r2" # checkov:skip=CKV_SECRET_6:token_name_is_not_a_secret
   bucket_name           = module.obsidian_r2.bucket_name
   cloudflare_account_id = var.cloudflare_account_id
 }
@@ -69,7 +69,7 @@ module "homelab_infra_state_token" {
   source                = "../modules/cloudflare-account-token"
   project_name          = "homelab"
   environment           = "prod"
-  token_name            = "homelab-infra-state-r2"
+  token_name            = "homelab-infra-state-r2" # checkov:skip=CKV_SECRET_6:token_name_is_not_a_secret
   bucket_name           = module.homelab_infra_state.bucket_name
   cloudflare_account_id = var.cloudflare_account_id
 }
