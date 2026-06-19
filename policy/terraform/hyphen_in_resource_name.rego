@@ -11,7 +11,7 @@ deny_hyphen_in_resource_name contains message if {
 		"%s: [%s](%s)",
 		[
 			value.address,
-			"リソース名にハイフン (-) が含まれています。Terraform のベストプラクティスに従い、アンダースコア (_) を使用してください。",
+			"リソース名にハイフン (-) が含まれています。アンダースコア (_) を使用してください。`tfmv -r '-/_'` で一括修正できます。 参照: https://developer.hashicorp.com/terraform/language/style#resource-naming https://docs.cloud.google.com/docs/terraform/best-practices/general-style-structure?hl=ja",
 			"https://github.com/yutakobayashidev/tofu-configuration/blob/main/policy/terraform/hyphen_in_resource_name.rego",
 		],
 	)

@@ -159,16 +159,38 @@
     },
     "nixpkgs_2": {
       "locked": {
-        "lastModified": 1773122722,
-        "narHash": "sha256-FIqHByVqxCprNjor1NqF80F2QQoiiyqanNNefdlvOg4=",
-        "rev": "62dc67aa6a52b4364dd75994ec00b51fbf474e50",
-        "revCount": 961274,
-        "type": "tarball",
-        "url": "https://api.flakehub.com/f/pinned/NixOS/nixpkgs/0.1.961274%2Brev-62dc67aa6a52b4364dd75994ec00b51fbf474e50/019ce10c-4cfe-748f-9b4e-6faba8c0de34/source.tar.gz"
+        "lastModified": 1781577229,
+        "narHash": "sha256-lrp67w8AulE9Ks53n27I45ADSzbOCn4H+CNW1Ck8B+8=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "567a49d1913ce81ac6e9582e3553dd90a955875f",
+        "type": "github"
       },
       "original": {
-        "type": "tarball",
-        "url": "https://flakehub.com/f/NixOS/nixpkgs/0.1"
+        "owner": "NixOS",
+        "ref": "nixos-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nur-packages": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1781836200,
+        "narHash": "sha256-4vCVMFQCwUprflClosHWPWBLhPmL9e7MFcVfIfWO0zk=",
+        "owner": "yutakobayashidev",
+        "repo": "nur-packages",
+        "rev": "5060f4cd7ffb1f27567f0b8a4adbfc0f519aec6e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "yutakobayashidev",
+        "repo": "nur-packages",
+        "type": "github"
       }
     },
     "root": {
@@ -179,7 +201,8 @@
         "flake-parts": "flake-parts",
         "hashicorp-agent-skills": "hashicorp-agent-skills",
         "mcp-servers-nix": "mcp-servers-nix",
-        "nixpkgs": "nixpkgs_2"
+        "nixpkgs": "nixpkgs_2",
+        "nur-packages": "nur-packages"
       }
     }
   },

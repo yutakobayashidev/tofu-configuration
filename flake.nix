@@ -2,7 +2,7 @@
   description = "Homelab infrastructure managed with OpenTofu";
 
   inputs = {
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     mcp-servers-nix = {
       url = "github:natsukium/mcp-servers-nix";
@@ -23,6 +23,10 @@
       url = "github:itsmostafa/aws-agent-skills";
       flake = false;
     };
+    nur-packages = {
+      url = "github:yutakobayashidev/nur-packages";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -33,6 +37,7 @@
       cloudflare-skills,
       hashicorp-agent-skills,
       aws-agent-skills,
+      nur-packages,
       ...
     }@inputs:
     flake-parts.lib.mkFlake { inherit inputs; } {
@@ -119,6 +124,7 @@
               ]))
               rclone
               tflint
+              nur-packages.packages.${pkgs.system}.tfmv
             ];
             buildInputs = config.mcp-servers.packages;
             shellHook =
