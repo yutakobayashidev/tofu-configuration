@@ -36,6 +36,24 @@ module "obsidian_r2_token" {
   cloudflare_account_id = var.cloudflare_account_id
 }
 
+# Cloudflare R2 - r2-image-worker images
+module "images" {
+  source                = "../modules/cloudflare-r2"
+  cloudflare_account_id = var.cloudflare_account_id
+  r2_location           = "APAC"
+  bucket_name           = "images"
+}
+
+# Cloudflare R2 Access Token - r2-image-worker
+module "images_r2_token" {
+  source                = "../modules/cloudflare-account-token"
+  project_name          = "homelab"
+  environment           = "prod"
+  token_name            = "images-r2" # checkov:skip=CKV_SECRET_6:token_name_is_not_a_secret
+  bucket_name           = module.images.bucket_name
+  cloudflare_account_id = var.cloudflare_account_id
+}
+
 # Cloudflare R2 - Nix cache
 module "nix_cache" {
   source                = "../modules/cloudflare-r2"

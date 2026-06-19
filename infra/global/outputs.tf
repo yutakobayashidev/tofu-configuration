@@ -32,6 +32,23 @@ output "obsidian_r2_secret_access_key" {
   sensitive   = true
 }
 
+# Images R2
+output "images_r2_access_key_id" {
+  description = "r2-image-worker 用 R2 アクセスキー ID"
+  value       = module.services.images_r2_access_key_id
+}
+
+output "images_r2_secret_access_key" {
+  description = "r2-image-worker 用 R2 シークレットアクセスキー"
+  value       = module.services.images_r2_secret_access_key
+  sensitive   = true
+}
+
+output "images_bucket_name" {
+  description = "r2-image-worker 画像 R2 バケット名"
+  value       = module.services.images_bucket_name
+}
+
 # Nix cache R2
 output "nix_cache_access_key_id" {
   description = "Nix cache 用 R2 アクセスキー ID"

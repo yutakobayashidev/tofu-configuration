@@ -20,6 +20,19 @@ output "obsidian_r2_secret_access_key" {
   sensitive = true
 }
 
+output "images_r2_access_key_id" {
+  value = module.images_r2_token.access_key_id
+}
+
+output "images_r2_secret_access_key" {
+  value     = module.images_r2_token.secret_access_key
+  sensitive = true
+}
+
+output "images_bucket_name" {
+  value = module.images.bucket_name
+}
+
 output "nix_cache_access_key_id" {
   value = module.nix_cache_token.access_key_id
 }
