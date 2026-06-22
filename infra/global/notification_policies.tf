@@ -83,21 +83,6 @@ locals {
   )
 }
 
-moved {
-  from = cloudflare_notification_policy.billing_usage["r2_storage"]
-  to   = cloudflare_notification_policy.billing_usage["r2_storage_80"]
-}
-
-moved {
-  from = cloudflare_notification_policy.billing_usage["r2_class_a_operations"]
-  to   = cloudflare_notification_policy.billing_usage["r2_class_a_50"]
-}
-
-moved {
-  from = cloudflare_notification_policy.billing_usage["r2_class_b_operations"]
-  to   = cloudflare_notification_policy.billing_usage["r2_class_b_50"]
-}
-
 resource "cloudflare_notification_policy_webhooks" "discord_status" {
   account_id = var.cloudflare_account_id
   name       = "Discord Status"
