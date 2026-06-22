@@ -18,7 +18,7 @@ locals {
       description = "Receive regular Web Analytics metrics updates by email"
     }
     # Avoid unnoticed Images Transformations spikes from crawlers hitting Next.js image optimization URLs.
-    # Context: https://x.com/unvalley_/status/2050212616119939084
+    # Context: https://twitter.com/unvalley_/status/2050212616119939084
     image_resizing = {
       alert_type  = "image_resizing_notification"
       name        = "Image Transformation Quota Alert"
