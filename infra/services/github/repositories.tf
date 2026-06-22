@@ -154,7 +154,7 @@ resource "github_repository" "kokkai_agent" {
 
 resource "github_repository" "webhashtag_rust_server" {
   name       = "webhashtag-rust-server"
-  visibility = "private"
+  visibility = "public"
 
   has_issues   = true
   has_projects = true
