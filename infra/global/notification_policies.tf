@@ -115,14 +115,15 @@ resource "cloudflare_notification_policy" "this" {
   alert_type  = each.value.alert_type
   name        = each.value.name
   description = each.value.description
-  mechanisms = {
+  mechanisms = merge(each.key == "incident" ? {} : {
     email = [{
       id = local.notification_email
     }]
+    }, {
     webhooks = [{
       id = cloudflare_notification_policy_webhooks.discord_status.id
     }]
-  }
+  })
 }
 
 resource "cloudflare_notification_policy" "tunnel_health" {
