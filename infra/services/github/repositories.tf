@@ -151,3 +151,18 @@ resource "github_repository" "kokkai_agent" {
 
   delete_branch_on_merge = true
 }
+
+resource "github_repository" "webhashtag_rust_server" {
+  name       = "webhashtag-rust-server"
+  visibility = "private"
+
+  has_issues   = true
+  has_projects = true
+  has_wiki     = false
+
+  allow_merge_commit = true
+  allow_squash_merge = true
+  allow_rebase_merge = true
+
+  delete_branch_on_merge = true
+}
