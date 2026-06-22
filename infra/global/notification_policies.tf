@@ -17,6 +17,21 @@ locals {
       name        = "Web Analytics Metrics Update"
       description = "Receive regular Web Analytics metrics updates by email"
     }
+    universal_ssl = {
+      alert_type  = "universal_ssl_event_type"
+      name        = "Universal SSL Alert"
+      description = "Receive Cloudflare Universal SSL certificate alerts"
+    }
+    maintenance_event = {
+      alert_type  = "maintenance_event_notification"
+      name        = "Cloudflare Maintenance Event"
+      description = "Receive Cloudflare maintenance event notifications"
+    }
+    incident = {
+      alert_type  = "incident_alert"
+      name        = "Cloudflare Incident Alert"
+      description = "Receive Cloudflare incident notifications"
+    }
     # Avoid unnoticed Images Transformations spikes from crawlers hitting Next.js image optimization URLs.
     # Context: https://twitter.com/unvalley_/status/2050212616119939084
     image_resizing = {
