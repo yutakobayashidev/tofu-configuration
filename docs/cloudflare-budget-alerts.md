@@ -24,7 +24,7 @@ Per-product usage alerts are managed with OpenTofu in
 
 | Name                                      | Product                 | Limit                 |
 | ----------------------------------------- | ----------------------- | --------------------- |
-| R2 Storage free tier percentage alerts    | `r2_storage`            | 10-3000% of 10 GB     |
+| R2 Storage free tier percentage alerts    | `r2_storage`            | 10-3000% of 10 GiB    |
 | R2 Class A free tier percentage alerts    | `r2_class_a_operations` | 10-3000% of 1M requests |
 | R2 Class B free tier percentage alerts    | `r2_class_b_operations` | 10-3000% of 10M requests |
 | D1 rows read included tier percentage alerts | `d1_rows_read`       | 50-200% of 25B rows   |
@@ -34,6 +34,15 @@ The managed thresholds are `10`, `20`, `30`, `40`, `50`, `60`, `70`, `80`,
 `3000` percent of each R2 free tier. These alerts may fire immediately when the
 current billing period has already crossed a threshold, and then remain useful
 as early warnings in later billing periods.
+
+R2 storage thresholds use base-2 units. `1 GiB` is `2^30` bytes, or `1024^3`
+bytes, so `10 GiB` is `10 * 1024 * 1024 * 1024` bytes. This matches
+Cloudflare's R2 limits documentation:
+<https://developers.cloudflare.com/r2/platform/limits/>.
+
+This unit convention is product-specific. Some other Cloudflare products, such
+as Durable Objects, may calculate storage or usage limits with decimal `GB`
+units instead of binary `GiB` units.
 
 D1 rows read alerts use the Workers Paid monthly included tier of 25 billion
 rows as the baseline. The managed thresholds are `50`, `80`, `100`, `150`, and

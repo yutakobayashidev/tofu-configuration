@@ -26,11 +26,14 @@ locals {
     }
   }
 
-  k  = 1000
-  m  = 1000 * local.k
-  gb = 1024 * 1024 * 1024
+  k = 1000
+  m = 1000 * local.k
 
-  r2_storage_free_tier            = 10 * local.gb
+  # Cloudflare R2 storage limits use base-2 units: 1 GiB = 2^30 bytes = 1024^3 bytes.
+  # https://developers.cloudflare.com/r2/platform/limits/
+  gib = 1024 * 1024 * 1024
+
+  r2_storage_free_tier            = 10 * local.gib
   r2_class_a_operations_free_tier = 1 * local.m
   r2_class_b_operations_free_tier = 10 * local.m
   d1_rows_read_included_tier      = 25 * 1000 * local.m
@@ -48,7 +51,7 @@ locals {
       for threshold in local.r2_usage_alert_thresholds :
       "r2_storage_${threshold}" => {
         name        = "R2 Storage - ${threshold}% of Free Tier"
-        description = "Alert when R2 storage usage reaches ${threshold}% of the 10 GB free tier"
+        description = "Alert when R2 storage usage reaches ${threshold}% of the 10 GiB free tier"
         limit       = tostring(floor(local.r2_storage_free_tier * threshold / 100))
         product     = "r2_storage"
       }
