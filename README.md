@@ -12,7 +12,8 @@ Cloudflare
 ├── DNS (yutakobayashi.com)
 ├── Email Routing
 ├── R2 (Mastodon media / Obsidian backup)
-└── API Tokens
+├── API Tokens
+└── Notification Policies
 
 AWS
 └── SES (Mastodon email delivery)
@@ -48,13 +49,13 @@ nix develop
 
 ### 2. HCP Terraform
 
-State is managed by [HCP Terraform](https://app.terraform.io/). Authenticate once:
+State is managed by [HCP Terraform](https://app.terraform.io/). OpenTofu runs locally against HCP-managed state because HCP remote execution does not run OpenTofu. Authenticate once:
 
 ```bash
 tofu login app.terraform.io
 ```
 
-The workspaces managed from `infra/services/tfe` are VCS-connected to this repository through the Terraform Cloud GitHub App. Install the app for the `yutakobayashidev` GitHub account or organization before relying on automated runs.
+The workspaces managed from `infra/services/tfe` are VCS-connected to this repository through the Terraform Cloud GitHub App and use local execution mode.
 
 ### 3. OpenTofu
 
@@ -82,7 +83,7 @@ tofu apply
 
 | Variable                | Description                                                                         |
 | ----------------------- | ----------------------------------------------------------------------------------- |
-| `cloudflare_api_token`  | Cloudflare API token (Zone:DNS:Edit, Zone:Zone:Read, Zone:Email Routing Rules:Edit) |
+| `cloudflare_api_token`  | Cloudflare API token (DNS, Email Routing, R2, API tokens, Notifications)            |
 | `cloudflare_account_id` | Cloudflare account ID                                                               |
 | `cloudflare_zone_id`    | Cloudflare Zone ID                                                                  |
 | `aws_access_key`        | AWS access key (for SES)                                                            |
@@ -156,6 +157,7 @@ policy/
 | Cloudflare    | R2 buckets       | fediverse (Mastodon media), obsidian (backup), nix-cache-niks3 (Nix cache), homelab-infra-state (infra state)                                                                                                                                       |
 | Cloudflare    | R2 tokens        | mastodon-r2, obsidian-r2, nix-cache, homelab-infra-state-r2                                                                                                                                                                                         |
 | Cloudflare    | R2 custom domain | fedi-files.yutakobayashi.com                                                                                                                                                                                                                        |
+| Cloudflare    | Notifications    | Access service token expiration, passive origin monitoring, Web Analytics metrics, Tunnel Health for B450M-Pro4, R2 usage alerts, Discord status webhook delivery, API-managed budget alerts (`docs/cloudflare-budget-alerts.md`)                    |
 | AWS           | SES              | fedi.yutakobayashi.com (domain identity + DKIM)                                                                                                                                                                                                     |
 | HCP Terraform | Organization     | yutakobayashi (2FA mandatory)                                                                                                                                                                                                                       |
 | HCP Terraform | Workspaces       | tfe, homelab, github                                                                                                                                                                                                                                |

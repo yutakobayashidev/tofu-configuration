@@ -8,9 +8,9 @@ OpenTofu configurations for managing cloud infrastructure.
 ## Architecture
 
 - **DigitalOcean**: Mastodon (future migration from Vultr), managed by OpenTofu
-- **Cloudflare**: DNS, Email Routing, R2 (Mastodon media + Obsidian backup), API tokens
+- **Cloudflare**: DNS, Email Routing, R2 (Mastodon media + Obsidian backup), API tokens, notification policies
 - **AWS SES**: Mastodon email delivery (ap-northeast-1)
-- **HCP Terraform**: Remote state management and VCS-connected workspaces
+- **HCP Terraform**: Remote state management and VCS-connected workspaces using local execution
 - **GitHub**: Repository settings managed via OpenTofu
 
 ## Stack
@@ -53,4 +53,4 @@ tofu -chdir=infra/services/github plan -out=tfplan
 tofu -chdir=infra/services/github show -json tfplan | conftest test --policy policy/terraform -
 ```
 
-The workspaces managed from `infra/services/tfe` are connected to `yutakobayashidev/tofu-configuration` through the Terraform Cloud GitHub App.
+The workspaces managed from `infra/services/tfe` are connected to `yutakobayashidev/tofu-configuration` through the Terraform Cloud GitHub App and use local execution mode.

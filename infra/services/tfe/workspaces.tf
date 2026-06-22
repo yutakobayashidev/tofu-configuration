@@ -19,7 +19,7 @@ resource "tfe_workspace" "homelab" {
 
 resource "tfe_workspace_settings" "homelab" {
   workspace_id   = tfe_workspace.homelab.id
-  execution_mode = "remote"
+  execution_mode = "local"
 }
 
 resource "tfe_workspace" "github" {
@@ -41,7 +41,7 @@ resource "tfe_workspace" "github" {
 
 resource "tfe_workspace_settings" "github" {
   workspace_id   = tfe_workspace.github.id
-  execution_mode = "remote"
+  execution_mode = "local"
 }
 
 resource "tfe_workspace" "discord" {
@@ -63,5 +63,5 @@ resource "tfe_workspace" "discord" {
 
 resource "tfe_workspace_settings" "discord" {
   workspace_id   = tfe_workspace.discord.id
-  execution_mode = "remote"
+  execution_mode = "local"
 }

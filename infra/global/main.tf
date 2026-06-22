@@ -41,6 +41,18 @@ provider "aws" {
   secret_key = var.aws_secret_key
 }
 
+data "terraform_remote_state" "discord" {
+  backend = "remote"
+
+  config = {
+    hostname     = "app.terraform.io"
+    organization = "yutakobayashi"
+    workspaces = {
+      name = "discord"
+    }
+  }
+}
+
 module "services" {
   source = "../services"
 
