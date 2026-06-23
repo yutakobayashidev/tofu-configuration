@@ -56,8 +56,7 @@ locals {
   discord_status_webhook_url_parts = split("/", data.terraform_remote_state.discord.outputs.status_webhook_url)
 
   r2_usage_alert_thresholds = [
-    10, 20, 30, 40, 50, 60, 70, 80, 90, 95,
-    100, 125, 150, 200, 300, 500, 1000, 2000, 3000,
+    80, 100, 150, 200, 300, 500, 1000, 3000,
   ]
   d1_rows_read_alert_thresholds = [50, 80, 100, 150, 200]
 
@@ -115,7 +114,7 @@ resource "cloudflare_notification_policy" "this" {
   alert_type  = each.value.alert_type
   name        = each.value.name
   description = each.value.description
-  mechanisms = merge(each.key == "incident" ? {} : {
+  mechanisms = merge(contains(["incident", "maintenance_event"], each.key) ? {} : {
     email = [{
       id = local.notification_email
     }]
