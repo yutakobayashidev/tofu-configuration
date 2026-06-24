@@ -155,6 +155,7 @@
                 })
               ]))
               rclone
+              regal
               tflint
               nur-packages.packages.${pkgs.system}.tfmv
               checkov

@@ -34,6 +34,7 @@ HCP Terraform
   - [OpenTofu](https://opentofu.org/) >= 1.6
   - [TFLint](https://github.com/terraform-linters/tflint)
   - [Conftest](https://www.conftest.dev/)
+  - [Regal](https://github.com/open-policy-agent/regal)
 
 ## Setup
 
@@ -108,6 +109,9 @@ tofu -chdir=infra/services/github show -json tfplan | conftest test --policy pol
 
 # Run policy unit tests
 conftest verify --policy policy/terraform
+
+# Lint Rego policies
+regal lint policy/terraform
 ```
 
 ## Directory Structure
