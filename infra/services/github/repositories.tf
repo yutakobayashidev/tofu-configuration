@@ -166,3 +166,18 @@ resource "github_repository" "webhashtag_rust_server" {
 
   delete_branch_on_merge = true
 }
+
+resource "github_repository" "edcb_mcp" {
+  name       = "edcb-mcp"
+  visibility = "public"
+
+  has_issues   = true
+  has_projects = true
+  has_wiki     = true
+
+  allow_merge_commit = true
+  allow_squash_merge = true
+  allow_rebase_merge = true
+
+  delete_branch_on_merge = true
+}
