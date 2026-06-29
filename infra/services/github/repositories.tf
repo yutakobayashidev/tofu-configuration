@@ -167,9 +167,10 @@ resource "github_repository" "webhashtag_rust_server" {
   delete_branch_on_merge = true
 }
 
-resource "github_repository" "edcb_mcp" {
-  name       = "edcb-mcp"
-  visibility = "public"
+resource "github_repository" "edcb_tools" {
+  name        = "edcb-tools"
+  description = "Rust client library, CLI, and MCP server for EDCB/EpgTimer CtrlCmd."
+  visibility  = "public"
 
   has_issues   = true
   has_projects = true
