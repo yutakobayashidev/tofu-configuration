@@ -1,0 +1,5 @@
+{
+  "db_extra_search_path": "public, extensions",
+  "db_schema": "public, storage, graphql_public",
+  "max_rows": 1000
+}

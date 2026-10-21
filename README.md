@@ -28,7 +28,8 @@ HCP Terraform
 └── github workspace (GitHub repository settings)
 
 Local state
-└── OpenAI projects (infra/services/openai)
+├── OpenAI projects (infra/services/openai)
+└── Supabase projects and settings (infra/services/supabase)
 ```
 
 ## Prerequisites
@@ -53,7 +54,7 @@ nix develop
 
 ### 2. HCP Terraform
 
-OpenAI currently uses local state. Other infrastructure state is managed by [HCP Terraform](https://app.terraform.io/). OpenTofu runs locally against HCP-managed state because HCP remote execution does not run OpenTofu. Authenticate once:
+OpenAI and Supabase currently use local state. Other infrastructure state is managed by [HCP Terraform](https://app.terraform.io/). OpenTofu runs locally against HCP-managed state because HCP remote execution does not run OpenTofu. Authenticate once:
 
 ```bash
 tofu login app.terraform.io
@@ -71,6 +72,7 @@ Independent workspaces:
 | `infra/services/tfe/`    | tfe       | HCP Terraform organization, workspaces |
 | `infra/services/github/` | github    | GitHub repository settings             |
 | `infra/services/openai/` | local     | OpenAI projects                        |
+| `infra/services/supabase/` | local   | Supabase projects and settings         |
 
 ```bash
 cd infra/global  # or infra/services/tfe, infra/services/github
@@ -115,6 +117,19 @@ For organization administration, provide an [Admin API key](https://platform.ope
 # Inject OPENAI_ADMIN_KEY through your secret manager before managing resources.
 tofu -chdir=infra/services/openai init
 tofu -chdir=infra/services/openai plan
+```
+
+### Supabase provider
+
+`infra/services/supabase` uses the official Supabase provider bundled in the Nix
+dev shell. Four projects and two active projects’ settings are imported into
+local state. Settings for two paused projects remain blocked by the Supabase API.
+Use `SUPABASE_ACCESS_TOKEN` for authentication and preserve the Git-ignored state.
+See [import coverage and limitations](docs/supabase-import.md).
+
+```bash
+tofu -chdir=infra/services/supabase init
+tofu -chdir=infra/services/supabase plan
 ```
 
 ## Policy Checks

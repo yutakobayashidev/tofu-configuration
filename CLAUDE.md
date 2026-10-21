@@ -14,6 +14,8 @@ OpenTofu configurations for managing cloud infrastructure.
 - **GitHub**: Repository settings managed via OpenTofu
 - **OpenAI**: Official provider with local state; 162 resources imported (project, tunnels, memberships, settings, rate limits); see `docs/openai-import.md`. A new Home Assistant tunnel is declared separately; see `docs/home-assistant-mcp.md`
 
+- **Supabase**: Official provider with local state in `infra/services/supabase`; four projects and two settings resources imported. Two paused projects’ settings remain blocked. See `docs/supabase-import.md`.
+
 ## Stack
 
 | Layer           | Tool            | Purpose                                        |
@@ -59,3 +61,7 @@ tofu -chdir=infra/services/github show -json tfplan | conftest test --policy pol
 The workspaces managed from `infra/services/tfe` are connected to `yutakobayashidev/tofu-configuration` through the Terraform Cloud GitHub App and use local execution mode.
 
 OpenAI currently uses local state in `infra/services/openai/terraform.tfstate`; HCP setup is not required. Preserve this Git-ignored state until migrating to a remote backend. OpenAI credentials are read from the local environment, not `.tfvars`.
+
+Supabase credentials use `SUPABASE_ACCESS_TOKEN`. Preserve its Git-ignored local state.
+DB passwords are unmanaged; do not use the import placeholders to create projects.
+Do not resume paused projects just to complete import without user authorization.

@@ -144,6 +144,17 @@
                 p.hashicorp_tfe
                 (mkProvider {
                   mkProviderGoModule = pkgs.buildGo126Module;
+                  owner = "supabase";
+                  repo = "terraform-provider-supabase";
+                  rev = "v1.11.0";
+                  hash = "sha256-GBSGZvpVLIxxH5HtAU4UkOr4BctMqVOsbFy1sA3U0NQ=";
+                  vendorHash = "sha256-Ceo79vpJdVx3CzBi5t1opVjWFk78e4k6M9FwIWokHEA=";
+                  spdx = "MPL-2.0";
+                  homepage = "https://registry.terraform.io/providers/supabase/supabase";
+                  provider-source-address = "registry.opentofu.org/supabase/supabase";
+                })
+                (mkProvider {
+                  mkProviderGoModule = pkgs.buildGo126Module;
                   owner = "openai";
                   repo = "terraform-provider-openai";
                   rev = "v1.4.0";
