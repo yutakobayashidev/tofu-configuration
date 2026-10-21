@@ -17,3 +17,8 @@ resource "openai_mcp_tunnel" "twitter_safe_relay_mcp" {
   name        = "Twitter Safe Relay MCP"
   description = "Twitter Safe Relay MCP"
 }
+
+resource "openai_mcp_tunnel" "home_assistant" {
+  name        = "Home Assistant"
+  description = "Home Assistant MCP on B450M-Pro4"
+}
