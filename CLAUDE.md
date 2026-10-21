@@ -8,7 +8,7 @@ OpenTofu configurations for managing cloud infrastructure.
 ## Architecture
 
 - **DigitalOcean**: Mastodon (future migration from Vultr), managed by OpenTofu
-- **Cloudflare**: DNS, Email Routing, R2 (Mastodon media + Obsidian backup), API tokens, notification policies
+- **Cloudflare**: DNS, Email Routing, R2 (Mastodon media + Obsidian backup), API tokens, notification policies, response header transforms
 - **AWS SES**: Mastodon email delivery (ap-northeast-1)
 - **HCP Terraform**: Remote state management and VCS-connected workspaces using local execution
 - **GitHub**: Repository settings managed via OpenTofu
@@ -33,7 +33,7 @@ OpenTofu configurations for managing cloud infrastructure.
 - `infra/services/tfe/` — HCP Terraform self-management (org, VCS-connected workspaces)
 - `infra/services/github/` — GitHub repository settings
 - `infra/services/openai/` — OpenAI provider; use `OPENAI_ADMIN_KEY` for organization administration
-- `infra/global/domains/yutakobayashi-com/` — DNS records and Email Routing rules for yutakobayashi.com
+- `infra/global/domains/yutakobayashi-com/` — DNS records, Email Routing rules, and response header transforms for yutakobayashi.com
 - `infra/global/domains/yutakobayashi-dev/` — DNS records and Email Routing rules for yutakobayashi.dev
 - `infra/modules/` — Reusable modules (cloudflare-r2, cloudflare-account-token)
 - `policy/terraform/` — Conftest policies and unit tests
