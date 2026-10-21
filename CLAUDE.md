@@ -12,13 +12,14 @@ OpenTofu configurations for managing cloud infrastructure.
 - **AWS SES**: Mastodon email delivery (ap-northeast-1)
 - **HCP Terraform**: Remote state management and VCS-connected workspaces using local execution
 - **GitHub**: Repository settings managed via OpenTofu
+- **OpenAI**: Official provider with local state; 162 resources imported (project, tunnels, memberships, settings, rate limits); see `docs/openai-import.md`
 
 ## Stack
 
 | Layer           | Tool            | Purpose                                        |
 | --------------- | --------------- | ---------------------------------------------- |
-| Infrastructure  | OpenTofu        | DO, Cloudflare, AWS SES, GitHub, HCP Terraform |
-| State           | HCP Terraform   | Remote state storage (3 workspaces)            |
+| Infrastructure  | OpenTofu        | DO, Cloudflare, AWS SES, GitHub, OpenAI, HCP Terraform |
+| State           | HCP Terraform   | Remote state storage                           |
 | Lint            | TFLint          | OpenTofu static analysis                       |
 | Policy          | Conftest        | OpenTofu plan policy checks                    |
 | Dev Environment | Nix flake-parts | Tools, MCP servers, agent skills               |
@@ -29,6 +30,7 @@ OpenTofu configurations for managing cloud infrastructure.
 - `infra/services/` — Service resources (R2 buckets, tokens, SES)
 - `infra/services/tfe/` — HCP Terraform self-management (org, VCS-connected workspaces)
 - `infra/services/github/` — GitHub repository settings
+- `infra/services/openai/` — OpenAI provider; use `OPENAI_ADMIN_KEY` for organization administration
 - `infra/global/domains/yutakobayashi-com/` — DNS records and Email Routing rules for yutakobayashi.com
 - `infra/global/domains/yutakobayashi-dev/` — DNS records and Email Routing rules for yutakobayashi.dev
 - `infra/modules/` — Reusable modules (cloudflare-r2, cloudflare-account-token)
@@ -41,6 +43,7 @@ OpenTofu configurations for managing cloud infrastructure.
 cd infra/global && tofu init && tofu plan && tofu apply
 cd infra/services/tfe && tofu init && tofu plan && tofu apply
 cd infra/services/github && tofu init && tofu plan && tofu apply
+cd infra/services/openai && tofu init && tofu plan && tofu apply
 
 # TFLint
 cd infra/global && tflint --init && tflint
@@ -54,3 +57,5 @@ tofu -chdir=infra/services/github show -json tfplan | conftest test --policy pol
 ```
 
 The workspaces managed from `infra/services/tfe` are connected to `yutakobayashidev/tofu-configuration` through the Terraform Cloud GitHub App and use local execution mode.
+
+OpenAI currently uses local state in `infra/services/openai/terraform.tfstate`; HCP setup is not required. Preserve this Git-ignored state until migrating to a remote backend. OpenAI credentials are read from the local environment, not `.tfvars`.

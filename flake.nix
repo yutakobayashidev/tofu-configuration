@@ -144,6 +144,17 @@
                 p.hashicorp_tfe
                 (mkProvider {
                   mkProviderGoModule = pkgs.buildGo126Module;
+                  owner = "openai";
+                  repo = "terraform-provider-openai";
+                  rev = "v1.4.0";
+                  hash = "sha256-bstRwvxFFtsRBn5IEIDal1roGs4bfjc2pDDYnUN/f4c=";
+                  vendorHash = "sha256-hAc0DESZcBMXPCGCcC36Wx9/dyb1DYo85eJPjLIhwbc=";
+                  spdx = "Apache-2.0";
+                  homepage = "https://registry.terraform.io/providers/openai/openai";
+                  provider-source-address = "registry.opentofu.org/openai/openai";
+                })
+                (mkProvider {
+                  mkProviderGoModule = pkgs.buildGo126Module;
                   owner = "Lucky3028";
                   repo = "terraform-provider-discord";
                   rev = "v2.7.0";
