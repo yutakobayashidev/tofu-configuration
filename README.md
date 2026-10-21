@@ -122,8 +122,10 @@ tofu -chdir=infra/services/openai plan
 ### Supabase provider
 
 `infra/services/supabase` uses the official Supabase provider bundled in the Nix
-dev shell. Four projects and two active projects’ settings are imported into
-local state. Settings for two paused projects remain blocked by the Supabase API.
+dev shell. Three paused projects and the retained freeschool-search settings are managed in
+local state. Settings for two projects could not be imported while paused;
+freeschool-search settings were imported before pausing. Settings refresh may
+fail while projects are paused.
 Use `SUPABASE_ACCESS_TOKEN` for authentication and preserve the Git-ignored state.
 See [import coverage and limitations](docs/supabase-import.md).
 

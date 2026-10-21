@@ -14,7 +14,7 @@ OpenTofu configurations for managing cloud infrastructure.
 - **GitHub**: Repository settings managed via OpenTofu
 - **OpenAI**: Official provider with local state; 162 resources imported (project, tunnels, memberships, settings, rate limits); see `docs/openai-import.md`. A new Home Assistant tunnel is declared separately; see `docs/home-assistant-mcp.md`
 
-- **Supabase**: Official provider with local state in `infra/services/supabase`; four projects and two settings resources imported. Two paused projects’ settings remain blocked. See `docs/supabase-import.md`.
+- **Supabase**: Official provider with local state in `infra/services/supabase`; three paused projects and one retained settings resource managed (`ticket-dev` deleted, `freeschool-search` paused). Two paused projects’ settings remain blocked. See `docs/supabase-import.md`.
 
 ## Stack
 

@@ -13,18 +13,19 @@ tofu -chdir=infra/services/supabase init
 tofu -chdir=infra/services/supabase plan
 ```
 
-## Imported resources
+## Current resources
 
 Inventory on 2026-10-22 covered all four organizations visible to the supplied
-account, with one project in each. Six resources were imported without applying
-remote changes:
+account, with one project in each. Six resources were initially imported without
+remote changes. Subsequently, `ticket-dev` and its settings were deleted at the
+user’s request. Four resources remain under management:
 
 | Organization / project | Project reference | Project | Settings |
 | --- | --- | --- | --- |
-| freeschool-search | xtzdsetdxjfwdavnqkrn | Imported | Imported |
+| freeschool-search | xtzdsetdxjfwdavnqkrn | Imported, paused | Retained from before pause |
 | stable-share / Stable share | zlibyqetcfwykzlwazfy | Imported, paused | Blocked |
 | capitalens / CapitaLens | vqgsgsbkyptkcifzdjpy | Imported, paused | Blocked |
-| work / ticket-dev | qssjixzajmkpxsouqtaz | Imported | Imported |
+| work / ticket-dev | qssjixzajmkpxsouqtaz | Deleted at user request | Removed |
 
 The settings resources capture API, readable Auth, database, network, Storage
 configuration and SSL enforcement. JSON files under `settings/` contain the
@@ -48,7 +49,7 @@ The placeholders do not recover or rotate passwords.
   applying anything; do not add empty settings resources and apply them.
 - All four projects returned zero branches, Edge Functions, and third-party
   authentication integrations.
-- The two active projects each expose only legacy `anon` and `service_role`
+- At initial inventory, the two active projects each exposed only legacy `anon` and `service_role`
   keys. The v1.11.0 API key resource expects UUID-backed keys; its read path
   cannot import these legacy IDs. They remain outside resource management;
   the project resource tracks whether legacy keys are enabled. Paused projects
@@ -74,9 +75,24 @@ The placeholders do not recover or rotate passwords.
 ## Verification
 
 - OpenTofu 1.12.1: `fmt -check`, `validate`, and refreshed `plan` (exit 0,
-  six resources with `no-op`; no additions, changes or deletions).
+  six resources with `no-op` after import; four with `no-op` after the deletion).
 - Nix build of the provider and wrapped OpenTofu succeeded. A fresh directory
   initializes with the committed lock file in read-only mode. The lock records
   both upstream release checksums and the local Nix-built Linux package hash.
 - State and its backup are Git-ignored and have owner-only permissions.
-- No remote apply, password rotation, key creation or project resume was run.
+- Initial import made no remote changes. The subsequent saved deletion plan
+  destroyed only `supabase_project.ticket_dev` and `supabase_settings.ticket_dev`
+  (0 added, 0 changed, 2 destroyed). The project was confirmed absent from the
+  Management API. No password rotation, key creation or project resume was run.
+
+## freeschool-search pause
+
+At the user's request, freeschool-search was paused through the Management API
+(`POST /v1/projects/{ref}/pause`); the API subsequently confirmed `INACTIVE`. The provider's project resource does not expose
+a pause attribute. Its project and settings configuration/state are retained for
+resuming later; pausing does not remove them from OpenTofu management.
+
+The no-change plan recorded above was verified before this pause. Settings
+refresh, particularly SSL enforcement, may fail while paused. Do not remove the
+settings resource or resume the project merely to make a plan pass. Resume only
+when requested, then refresh and review the plan again.
