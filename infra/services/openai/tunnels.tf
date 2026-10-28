@@ -22,3 +22,8 @@ resource "openai_mcp_tunnel" "home_assistant" {
   name        = "Home Assistant"
   description = "Home Assistant MCP on B450M-Pro4"
 }
+
+resource "openai_mcp_tunnel" "grafana" {
+  name        = "Grafana"
+  description = "Read-only Grafana MCP on B450M-Pro4"
+}

@@ -12,7 +12,7 @@ OpenTofu configurations for managing cloud infrastructure.
 - **AWS SES**: Mastodon email delivery (ap-northeast-1)
 - **HCP Terraform**: Remote state management and VCS-connected workspaces using local execution
 - **GitHub**: Repository settings managed via OpenTofu
-- **OpenAI**: Official provider with local state; 162 resources imported (project, tunnels, memberships, settings, rate limits); see `docs/openai-import.md`. A new Home Assistant tunnel is declared separately; see `docs/home-assistant-mcp.md`
+- **OpenAI**: Official provider with local state; 162 resources imported (project, tunnels, memberships, settings, rate limits); see `docs/openai-import.md`. Home Assistant and Grafana tunnels are declared separately; see `docs/home-assistant-mcp.md` and `docs/grafana-mcp.md`
 
 - **Supabase**: Official provider with local state in `infra/services/supabase`; three paused projects and one retained settings resource managed (`ticket-dev` deleted, `freeschool-search` paused). Two paused projects’ settings remain blocked. See `docs/supabase-import.md`.
 

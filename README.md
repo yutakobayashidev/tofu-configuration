@@ -109,7 +109,7 @@ tofu apply
 
 `infra/services/openai` uses the [official OpenAI provider](https://github.com/openai/terraform-provider-openai), bundled in the Nix dev shell. 162 existing resources, including the Default project, four Secure/MCP tunnels, memberships, settings, and 153 model rate limits, are imported. See [import coverage and exclusions](docs/openai-import.md). State is stored at `infra/services/openai/terraform.tfstate`. This file is ignored by Git; keep a backup until remote state is configured.
 
-HCP Terraform setup is not required for this module. A dedicated Home Assistant tunnel is also declared; its rollout is described in [Home Assistant MCP](docs/home-assistant-mcp.md).
+HCP Terraform setup is not required for this module. Dedicated Home Assistant and Grafana tunnels are also declared; see [Home Assistant MCP](docs/home-assistant-mcp.md) and [Grafana MCP](docs/grafana-mcp.md) for rollout.
 
 For organization administration, provide an [Admin API key](https://platform.openai.com/settings/organization/admin-keys) through `OPENAI_ADMIN_KEY` in the local shell for both plan and apply. Do not put it in `.tfvars` or committed configuration. A regular project API key is not a substitute. The separate `OPENAI_API_KEY` credential is needed only if managing project webhooks.
 
