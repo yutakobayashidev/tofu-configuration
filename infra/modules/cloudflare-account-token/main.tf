@@ -3,9 +3,10 @@ data "cloudflare_api_token_permission_groups_list" "this" {
 
 locals {
   r2_api_permissions = { for x in data.cloudflare_api_token_permission_groups_list.this.result : x.name => x.id if contains(["Workers R2 Storage Bucket Item Read", "Workers R2 Storage Bucket Item Write"], x.name) }
+  # Keep the order the Cloudflare API returns; a different order shows up as an in-place update on every plan.
   permission_id_list = [
-    local.r2_api_permissions["Workers R2 Storage Bucket Item Read"],
-    local.r2_api_permissions["Workers R2 Storage Bucket Item Write"]
+    local.r2_api_permissions["Workers R2 Storage Bucket Item Write"],
+    local.r2_api_permissions["Workers R2 Storage Bucket Item Read"]
   ]
 
   resources = jsonencode({

@@ -7,6 +7,7 @@ provider "registry.opentofu.org/lucky3028/discord" {
   hashes = [
     "h1:0dIf0mqCaT7RX4GLtL4nVwojawQRhCLi/2cw+jPTcJw=",
     "h1:2lpXlzxDSsfHHsbqhzZZTFsGLxuvFZuZR69aDuI9vPU=",
+    "h1:84EvKCePbiTcJ+mjwrIw/yydFKE8aS4ONcbmHWJwgos=",
     "h1:8BKZDDBgoJspJ3bmYzEYV1E1Vp1nWE/PtU9fTKeGN2s=",
     "h1:EQaO0pfJ3Iel2e8YHy/+aPpSI/2Fq8hTFS74pMNbzMs=",
     "h1:J1wGcxYA4uwmuDNuMVCswCZOerFejxojvxaQKzLZeYk=",

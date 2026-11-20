@@ -18,10 +18,6 @@ terraform {
       source  = "cloudflare/cloudflare"
       version = "~> 5.18"
     }
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 6.0"
-    }
   }
 }
 
@@ -33,12 +29,6 @@ provider "digitalocean" {
 
 provider "cloudflare" {
   api_token = var.cloudflare_api_token
-}
-
-provider "aws" {
-  region     = var.aws_region
-  access_key = var.aws_access_key # checkov:skip=CKV_AWS_41:credentials_via_variables
-  secret_key = var.aws_secret_key
 }
 
 data "terraform_remote_state" "discord" {

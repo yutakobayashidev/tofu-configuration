@@ -54,7 +54,6 @@
       systems = [
         "x86_64-linux"
         "aarch64-linux"
-        "x86_64-darwin"
         "aarch64-darwin"
       ];
 
@@ -103,8 +102,10 @@
           _module.args.pkgs = import inputs.nixpkgs {
             inherit system;
             config = {
+              # checkov requires python-ecdsa, which nixpkgs marks insecure (CVE-2024-23342).
+              # The name embeds the default Python version; update it when nixpkgs bumps Python.
               permittedInsecurePackages = [
-                "python3.13-ecdsa-0.19.2"
+                "python3.14-ecdsa-0.19.2"
               ];
             };
           };
@@ -134,12 +135,25 @@
 
           devShells.default = pkgs.mkShellNoCC {
             packages = with pkgs; [
+              cf
               cf-terraforming
               conftest
               (opentofu.withPlugins (p: [
-                p.cloudflare_cloudflare
+                # nixpkgs ships 5.27.0, which plans an update for every dns_record whose
+                # state lacks include_shadow_metadata (fixed in 5.28.0). Switch back to
+                # p.cloudflare_cloudflare once nixpkgs ships >= 5.28.
+                (mkProvider {
+                  mkProviderGoModule = pkgs.buildGo127Module;
+                  owner = "cloudflare";
+                  repo = "terraform-provider-cloudflare";
+                  rev = "v5.28.1";
+                  hash = "sha256-u/jcdMNh/+Jm/jJ7YBZronwUvNRLoZUJZdzS1kF/2O0=";
+                  vendorHash = "sha256-IakHMXfSiIazr2sPSugOc/+2JQ7wh2rUcY0hYJYf6Eg=";
+                  spdx = "Apache-2.0";
+                  homepage = "https://registry.terraform.io/providers/cloudflare/cloudflare";
+                  provider-source-address = "registry.opentofu.org/cloudflare/cloudflare";
+                })
                 p.digitalocean_digitalocean
-                p.hashicorp_aws
                 p.integrations_github
                 p.hashicorp_tfe
                 (mkProvider {

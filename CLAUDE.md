@@ -9,7 +9,6 @@ OpenTofu configurations for managing cloud infrastructure.
 
 - **DigitalOcean**: Mastodon (future migration from Vultr), managed by OpenTofu
 - **Cloudflare**: DNS, Email Routing, R2 (Mastodon media + Obsidian backup), API tokens, notification policies, response header transforms
-- **AWS SES**: Mastodon email delivery (ap-northeast-1)
 - **HCP Terraform**: Remote state management and VCS-connected workspaces using local execution
 - **GitHub**: Repository settings managed via OpenTofu
 - **OpenAI**: Official provider with local state; 162 resources imported (project, tunnels, memberships, settings, rate limits); see `docs/openai-import.md`. Home Assistant and Grafana tunnels are declared separately; see `docs/home-assistant-mcp.md` and `docs/grafana-mcp.md`
@@ -20,7 +19,7 @@ OpenTofu configurations for managing cloud infrastructure.
 
 | Layer           | Tool            | Purpose                                        |
 | --------------- | --------------- | ---------------------------------------------- |
-| Infrastructure  | OpenTofu        | DO, Cloudflare, AWS SES, GitHub, OpenAI, HCP Terraform |
+| Infrastructure  | OpenTofu        | DO, Cloudflare, GitHub, OpenAI, HCP Terraform  |
 | State           | HCP Terraform   | Remote state storage                           |
 | Lint            | TFLint          | OpenTofu static analysis                       |
 | Policy          | Conftest        | OpenTofu plan policy checks                    |
@@ -29,7 +28,7 @@ OpenTofu configurations for managing cloud infrastructure.
 ## Directory Layout
 
 - `infra/global/` — Root module (providers, backend, variables, outputs)
-- `infra/services/` — Service resources (R2 buckets, tokens, SES)
+- `infra/services/` — Service resources (R2 buckets, tokens)
 - `infra/services/tfe/` — HCP Terraform self-management (org, VCS-connected workspaces)
 - `infra/services/github/` — GitHub repository settings
 - `infra/services/openai/` — OpenAI provider; use `OPENAI_ADMIN_KEY` for organization administration

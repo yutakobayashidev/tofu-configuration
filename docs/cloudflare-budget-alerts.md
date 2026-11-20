@@ -24,7 +24,7 @@ Per-product usage alerts are managed with OpenTofu in
 
 | Name                                      | Product                 | Limit                 |
 | ----------------------------------------- | ----------------------- | --------------------- |
-| R2 Storage free tier percentage alerts    | `r2_storage`            | 80-3000% of 10 GiB    |
+| R2 Storage free tier percentage alerts    | `r2_storage`            | 80-3000% of 10 GB     |
 | R2 Class A free tier percentage alerts    | `r2_class_a_operations` | 80-3000% of 1M requests |
 | R2 Class B free tier percentage alerts    | `r2_class_b_operations` | 80-3000% of 10M requests |
 | D1 rows read included tier percentage alerts | `d1_rows_read`       | 50-200% of 25B rows   |
@@ -33,14 +33,27 @@ The managed thresholds are `80`, `100`, `150`, `200`, `300`, `500`, `1000`,
 and `3000` percent of each R2 free tier. Low thresholds below 80% are omitted to
 avoid noisy early-cycle alerts.
 
-R2 storage thresholds use base-2 units. `1 GiB` is `2^30` bytes, or `1024^3`
-bytes, so `10 GiB` is `10 * 1024 * 1024 * 1024` bytes. This matches
-Cloudflare's R2 limits documentation:
-<https://developers.cloudflare.com/r2/platform/limits/>.
+R2 storage thresholds are bytes in decimal units: the free tier is
+`10 GB-month`, and `1 GB` is `10^9` bytes, so `10 GB` is `10 * 1000^3` bytes.
 
-This unit convention is product-specific. Some other Cloudflare products, such
-as Durable Objects, may calculate storage or usage limits with decimal `GB`
-units instead of binary `GiB` units.
+- The `limit` filter is in bytes. Fired alerts report
+  `"unit_of_measure": "Bytes of Storage"`.
+- The free tier is stated in `GB` on the R2 pricing page. The R2 limits page
+  defines `GB` as `10^9` bytes and uses binary units only for limits written in
+  `MiB`, `GiB`, or `TiB`:
+  <https://developers.cloudflare.com/r2/platform/limits/>.
+- Billing and the byte-based alerts agree only in decimal units. From
+  2026-11-01 to 2026-11-09, Billable Usage shows R2 storage accruing about
+  `13.03 GB-months` per day. At `13.03 * 10^9` bytes per day, the 500%
+  (`53687091200` bytes) and 1000% (`107374182400` bytes) thresholds of the
+  former binary configuration are crossed on 2026-11-05 and 2026-11-09, the
+  dates those alerts fired. At `13.03 * 2^30` bytes per day, they would have
+  been crossed one day earlier.
+
+R2 storage alerts accumulate the daily peak storage divided by 30 from the
+first day of the calendar month, not from the start of the billing period.
+In November 2026, the 80% to 1000% alerts fired between 2026-11-01 and
+2026-11-09, while the billing period started on 2026-11-10.
 
 D1 rows read alerts use the Workers Paid monthly included tier of 25 billion
 rows as the baseline. The managed thresholds are `50`, `80`, `100`, `150`, and
