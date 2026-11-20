@@ -1,0 +1,125 @@
+#!/usr/bin/env bash
+# Write an OpenTofu root for a new GitHub repository. The module source and the
+# provider lock come from the tofu-configuration root, so updating that root
+# also updates new roots.
+set -euo pipefail
+
+if [[ $# -lt 1 || $# -gt 3 ]]; then
+  echo "usage: $0 <name> [description] [public|private]" >&2
+  exit 2
+fi
+
+name=$1
+description=${2:-}
+visibility=${3:-public}
+
+if [[ ! "$name" =~ ^[a-z0-9][a-z0-9._-]*$ ]]; then
+  echo "repository name must start with a lowercase letter or digit and contain only lowercase letters, digits, '.', '_', or '-'" >&2
+  exit 2
+fi
+
+if [[ ! "$visibility" =~ ^(public|private)$ ]]; then
+  echo "visibility must be public or private" >&2
+  exit 2
+fi
+
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
+repositories=infra/services/github/repositories
+reference="$repositories/tofu-configuration"
+target="$repositories/$name"
+if [[ -e "$target" ]]; then
+  echo "$target already exists" >&2
+  exit 1
+fi
+
+module_source=$(sed -n 's/^ *source *= *"\(.*\)"$/\1/p' "$reference/module_gh_repo_kit.tf")
+if [[ -z "$module_source" ]]; then
+  echo "no module source in $reference/module_gh_repo_kit.tf" >&2
+  exit 1
+fi
+
+# A JSON string is a valid HCL string once template sequences are escaped.
+description_hcl=$(jq -n --arg value "$description" '$value' | sed -e 's/\${/$${/g' -e 's/%{/%%{/g')
+
+mkdir -p "$target"
+cp "$reference/.terraform.lock.hcl" "$target/.terraform.lock.hcl"
+
+cat >"$target/backend.tf" <<EOF
+terraform {
+  backend "s3" {
+    bucket                      = "homelab-infra-state"
+    key                         = "github/repositories/$name/terraform.tfstate"
+    region                      = "auto"
+    skip_credentials_validation = true
+    skip_region_validation      = true
+    skip_metadata_api_check     = true
+    skip_requesting_account_id  = true
+    skip_s3_checksum            = true
+    use_path_style              = true
+    use_lockfile                = true
+  }
+
+  encryption {
+    key_provider "pbkdf2" "state_key" {
+      passphrase = var.state_encryption_passphrase
+    }
+
+    method "aes_gcm" "state_method" {
+      keys = key_provider.pbkdf2.state_key
+    }
+
+    state {
+      method   = method.aes_gcm.state_method
+      enforced = true
+    }
+
+    plan {
+      method   = method.aes_gcm.state_method
+      enforced = true
+    }
+  }
+}
+
+variable "state_encryption_passphrase" {
+  description = "Passphrase for OpenTofu state and plan encryption"
+  type        = string
+  sensitive   = true
+}
+EOF
+
+cat >"$target/provider.tf" <<'EOF'
+provider "github" {
+  owner = "yutakobayashidev"
+}
+EOF
+
+cat >"$target/versions.tf" <<'EOF'
+terraform {
+  required_version = ">= 1.9.0"
+
+  required_providers {
+    github = {
+      source  = "integrations/github"
+      version = "~> 6.0"
+    }
+  }
+}
+EOF
+
+cat >"$target/module_gh_repo_kit.tf" <<EOF
+module "repository" {
+  source = "$module_source"
+
+  name        = "$name"
+  description = $description_hcl
+  visibility  = "$visibility"
+
+  # The standard ruleset requires an approving review, which a sole maintainer
+  # cannot give. Enable a ruleset after reviewing the policy for this repository.
+  default_branch_ruleset = null
+}
+EOF
+
+tofu -chdir="$target" fmt >/dev/null
+echo "created $target"

@@ -22,7 +22,10 @@ DigitalOcean (future)
 HCP Terraform
 ├── tfe workspace (HCP Terraform self-management)
 ├── homelab workspace (infrastructure state)
-└── github workspace (GitHub repository settings)
+└── github workspace (legacy GitHub state, being retired)
+
+R2 state (homelab-infra-state)
+└── GitHub repositories (one state per repository)
 
 Local state
 ├── OpenAI projects (infra/services/openai)
@@ -63,16 +66,20 @@ The workspaces managed from `infra/services/tfe` are VCS-connected to this repos
 
 Independent workspaces:
 
-| Directory                | Workspace | Manages                                |
-| ------------------------ | --------- | -------------------------------------- |
-| `infra/global/`          | homelab   | Cloudflare DNS/R2, DO                  |
-| `infra/services/tfe/`    | tfe       | HCP Terraform organization, workspaces |
-| `infra/services/github/` | github    | GitHub repository settings             |
-| `infra/services/openai/` | local     | OpenAI projects                        |
-| `infra/services/supabase/` | local   | Supabase projects and settings         |
+| Directory                                     | Workspace | Manages                                 |
+| --------------------------------------------- | --------- | --------------------------------------- |
+| `infra/global/`                               | homelab   | Cloudflare DNS/R2, DO                   |
+| `infra/services/tfe/`                         | tfe       | HCP Terraform organization, workspaces  |
+| `infra/services/github/repositories/<name>/`  | R2        | One GitHub repository per root          |
+| `infra/services/github/`                      | github    | Legacy GitHub settings; do not apply    |
+| `infra/services/openai/`                      | local     | OpenAI projects                         |
+| `infra/services/supabase/`                    | local     | Supabase projects and settings          |
+
+The GitHub repository roots read credentials from the environment instead of
+`terraform.tfvars`; see [GitHub management](docs/github-management.md).
 
 ```bash
-cd infra/global  # or infra/services/tfe, infra/services/github
+cd infra/global  # or infra/services/tfe
 
 # Create and edit variables file
 cp terraform.tfvars.example terraform.tfvars
@@ -93,7 +100,7 @@ tofu apply
 | `domain`                | Root domain name                                                                    |
 | `do_token`              | DigitalOcean API token                                                              |
 
-#### Required Secrets (`infra/services/github/terraform.tfvars`)
+#### Required Secrets (`infra/services/github/terraform.tfvars`, legacy root)
 
 | Variable       | Description                  |
 | -------------- | ---------------------------- |
@@ -133,8 +140,8 @@ tofu -chdir=infra/services/supabase plan
 Conftest evaluates saved OpenTofu plan JSON against the policies in `policy/terraform`.
 
 ```bash
-tofu -chdir=infra/services/github plan -out=tfplan
-tofu -chdir=infra/services/github show -json tfplan | conftest test --policy policy/terraform -
+tofu -chdir=infra/services/github/repositories/dotnix plan -out=tfplan
+tofu -chdir=infra/services/github/repositories/dotnix show -json tfplan | conftest test --policy policy/terraform -
 
 # Run policy unit tests
 conftest verify --policy policy/terraform
@@ -168,10 +175,11 @@ infra/                              # OpenTofu configuration
 │   │   ├── organization.tf
 │   │   ├── projects.tf
 │   │   └── workspaces.tf
-│   ├── github/                     # GitHub repository management
+│   ├── github/                     # Legacy GitHub root (being retired)
 │   │   ├── main.tf
 │   │   ├── variables.tf
-│   │   └── repositories.tf
+│   │   ├── repositories.tf
+│   │   └── repositories/<name>/    # One root per GitHub repository
 │   └── openai/                     # OpenAI provider workspace
 │       ├── main.tf
 │       ├── projects.tf
@@ -184,6 +192,8 @@ infra/                              # OpenTofu configuration
 │   └── cloudflare-account-token/   # R2 API token
 policy/
 └── terraform/                       # Conftest policies and unit tests
+scripts/
+└── new-github-repository           # Root for a new GitHub repository
 ```
 
 ## Managed Resources
@@ -201,7 +211,7 @@ policy/
 | Cloudflare    | Notifications    | Access service token expiration, passive origin monitoring, Web Analytics metrics, Tunnel Health for B450M-Pro4, R2 usage alerts, Discord status webhook delivery, API-managed budget alerts (`docs/cloudflare-budget-alerts.md`)                    |
 | HCP Terraform | Organization     | yutakobayashi (2FA mandatory)                                                                                                                                                                                                                       |
 | HCP Terraform | Workspaces       | tfe, homelab, github                                                                                                                                                                                                                                |
-| GitHub        | Repositories     | tofu-configuration, dotnix, repiq, ava                                                                                                                                                                                                              |
+| GitHub        | Repositories     | 11 active repositories, one root each in `infra/services/github/repositories/`; see [GitHub management](docs/github-management.md)                                                                                                                  |
 
 ## Future
 
