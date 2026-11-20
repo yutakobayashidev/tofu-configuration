@@ -172,6 +172,9 @@ resource "cloudflare_email_routing_catch_all" "this" {
   }]
 
   enabled = false
+
+  # The API returns an empty name; leaving it unset shows an in-place update on every plan.
+  name = ""
 }
 
 resource "cloudflare_email_routing_rule" "hi" {
