@@ -15,9 +15,6 @@ Cloudflare
 ├── API Tokens
 └── Notification Policies
 
-AWS
-└── SES (Mastodon email delivery)
-
 DigitalOcean (future)
 ├── Droplet (Mastodon)
 └── Spaces (backups)
@@ -68,7 +65,7 @@ Independent workspaces:
 
 | Directory                | Workspace | Manages                                |
 | ------------------------ | --------- | -------------------------------------- |
-| `infra/global/`          | homelab   | Cloudflare DNS/R2, AWS SES, DO         |
+| `infra/global/`          | homelab   | Cloudflare DNS/R2, DO                  |
 | `infra/services/tfe/`    | tfe       | HCP Terraform organization, workspaces |
 | `infra/services/github/` | github    | GitHub repository settings             |
 | `infra/services/openai/` | local     | OpenAI projects                        |
@@ -93,9 +90,6 @@ tofu apply
 | `cloudflare_api_token`  | Cloudflare API token (DNS, Email Routing, R2, API tokens, Notifications)            |
 | `cloudflare_account_id` | Cloudflare account ID                                                               |
 | `cloudflare_zone_id`    | Cloudflare Zone ID                                                                  |
-| `aws_access_key`        | AWS access key (for SES)                                                            |
-| `aws_secret_key`        | AWS secret key                                                                      |
-| `aws_region`            | AWS region (ap-northeast-1)                                                         |
 | `domain`                | Root domain name                                                                    |
 | `do_token`              | DigitalOcean API token                                                              |
 
@@ -167,8 +161,7 @@ infra/                              # OpenTofu configuration
 │           ├── main.tf
 │           └── variables.tf
 ├── services/                       # Service resources + workspaces
-│   ├── main.tf                     # R2 buckets, tokens, SES
-│   ├── ses.tf
+│   ├── main.tf                     # R2 buckets, tokens
 │   ├── variables.tf / outputs.tf
 │   ├── tfe/                        # HCP Terraform self-management
 │   │   ├── main.tf
@@ -205,7 +198,6 @@ policy/
 | Cloudflare    | R2 tokens        | mastodon-r2, obsidian-r2, nix-cache, homelab-infra-state-r2                                                                                                                                                                                         |
 | Cloudflare    | R2 custom domain | fedi-files.yutakobayashi.com                                                                                                                                                                                                                        |
 | Cloudflare    | Notifications    | Access service token expiration, passive origin monitoring, Web Analytics metrics, Tunnel Health for B450M-Pro4, R2 usage alerts, Discord status webhook delivery, API-managed budget alerts (`docs/cloudflare-budget-alerts.md`)                    |
-| AWS           | SES              | fedi.yutakobayashi.com (domain identity + DKIM)                                                                                                                                                                                                     |
 | HCP Terraform | Organization     | yutakobayashi (2FA mandatory)                                                                                                                                                                                                                       |
 | HCP Terraform | Workspaces       | tfe, homelab, github                                                                                                                                                                                                                                |
 | GitHub        | Repositories     | tofu-configuration, dotnix, repiq, ava                                                                                                                                                                                                              |
