@@ -33,3 +33,16 @@ resource "cloudflare_email_routing_rule" "hi" {
   name     = "Rule created at 2025-05-25T16:13:58.464Z"
   priority = 0
 }
+
+# Each service sends mail from its own subdomain so that inbox providers track its
+# deliverability reputation separately. Cloudflare creates the cf-bounce MX, SPF, and
+# DKIM records and a _dmarc record for each subdomain; they are not managed here.
+resource "cloudflare_email_sending_subdomain" "service" {
+  for_each = toset([
+    "fedi", # Mastodon
+    "git",  # Gitea
+  ])
+
+  zone_id = var.cloudflare_zone_id
+  name    = "${each.key}.yutakobayashi.com"
+}

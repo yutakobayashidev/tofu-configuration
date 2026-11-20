@@ -8,7 +8,7 @@ OpenTofu configurations for managing cloud infrastructure.
 ## Architecture
 
 - **DigitalOcean**: Mastodon (future migration from Vultr), managed by OpenTofu
-- **Cloudflare**: DNS, Email Routing, R2 (Mastodon media + Obsidian backup), API tokens, notification policies, response header transforms
+- **Cloudflare**: DNS, Email Routing, Email Sending (Mastodon and Gitea send from their own subdomains), R2 (Mastodon media + Obsidian backup), API tokens, notification policies, response header transforms
 - **HCP Terraform**: Remote state management and VCS-connected workspaces using local execution
 - **GitHub**: Repository settings managed via OpenTofu
 - **OpenAI**: Official provider with local state; 162 resources imported (project, tunnels, memberships, settings, rate limits); see `docs/openai-import.md`. Home Assistant and Grafana tunnels are declared separately; see `docs/home-assistant-mcp.md` and `docs/grafana-mcp.md`

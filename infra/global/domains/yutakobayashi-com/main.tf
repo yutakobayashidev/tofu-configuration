@@ -16,24 +16,6 @@ locals {
       proxied = true
       type    = "A"
     }
-    mastodon_dkim_1 = {
-      content = "4epkx5liidlbwr24hvivm5hqdxkfvtfw.dkim.amazonses.com"
-      name    = "4epkx5liidlbwr24hvivm5hqdxkfvtfw._domainkey.fedi"
-      proxied = false
-      type    = "CNAME"
-    }
-    mastodon_dkim_2 = {
-      content = "5gualsmqbqr2iyy4jcswf45fnntumcec.dkim.amazonses.com"
-      name    = "5gualsmqbqr2iyy4jcswf45fnntumcec._domainkey.fedi"
-      proxied = false
-      type    = "CNAME"
-    }
-    mastodon_dkim_3 = {
-      content = "tvkogr4mjxbbpsortlpketewdt7rrlqb.dkim.amazonses.com"
-      name    = "tvkogr4mjxbbpsortlpketewdt7rrlqb._domainkey.fedi"
-      proxied = false
-      type    = "CNAME"
-    }
     git = {
       content = "${cloudflare_zero_trust_tunnel_cloudflared.b450m_pro4.id}.cfargotunnel.com"
       name    = "git"
