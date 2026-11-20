@@ -89,6 +89,12 @@ output "gitea_email_sending_token" {
   sensitive   = true
 }
 
+output "mastodon_email_sending_token" {
+  description = "Cloudflare Email Sending API token for Mastodon SMTP"
+  value       = module.services.mastodon_email_sending_token
+  sensitive   = true
+}
+
 output "yutakobayashi_dev_zone_id" {
   description = "yutakobayashi.dev Cloudflare Zone ID"
   value       = one(data.cloudflare_zones.yutakobayashi_dev.result).id

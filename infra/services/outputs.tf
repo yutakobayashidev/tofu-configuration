@@ -64,3 +64,9 @@ output "gitea_email_sending_token" {
   value       = cloudflare_api_token.gitea_email_sending.value
   sensitive   = true
 }
+
+output "mastodon_email_sending_token" {
+  description = "Cloudflare Email Sending API token for Mastodon SMTP"
+  value       = cloudflare_api_token.mastodon_email_sending.value
+  sensitive   = true
+}
