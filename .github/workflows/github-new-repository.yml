@@ -1,0 +1,75 @@
+name: github-new-repository
+
+# Opens a pull request that adds the OpenTofu root for a new GitHub repository,
+# as 10X does with workflow_dispatch. Merging it lets github-apply create the
+# repository. See docs/github-management.md.
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: Repository name
+        required: true
+        type: string
+      description:
+        description: One-line description
+        required: false
+        type: string
+        default: ""
+      visibility:
+        description: Visibility
+        required: true
+        type: choice
+        options:
+          - public
+          - private
+        default: public
+
+permissions: {}
+
+jobs:
+  scaffold:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    env:
+      NAME: ${{ inputs.name }}
+      DESCRIPTION: ${{ inputs.description }}
+      VISIBILITY: ${{ inputs.visibility }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: cachix/install-nix-action@v32.0.0
+
+      - name: Write the root
+        # The script validates the name before it is used anywhere else.
+        run: nix develop .#github-ci -c scripts/new-github-repository "$NAME" "$DESCRIPTION" "$VISIBILITY"
+
+      - name: Open the pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          branch="new-repository/$NAME"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add "infra/services/github/repositories/$NAME" infra/services/github/ci-roots
+          git commit -m "feat(github): add the $NAME repository"
+          gh auth setup-git
+          git push origin "$branch"
+          {
+            echo "Add the OpenTofu root for \`$NAME\` ($VISIBILITY). Merging this pull request lets github-apply create the repository."
+            echo
+            echo "The repository's \`main\` accepts only pull requests that pass \`ci-gate\`, so its first commit needs a CI workflow with a \`ci-gate\` job."
+          } > body.md
+          url=$(gh pr create --base main --head "$branch" --title "feat(github): add the $NAME repository" --body-file body.md)
+          # A pull request opened with GITHUB_TOKEN triggers no workflow runs,
+          # but a workflow_dispatch event does.
+          gh workflow run github-plan.yml --ref "$branch"
+          echo "Opened $url and dispatched github-plan for $branch" >> "$GITHUB_STEP_SUMMARY"

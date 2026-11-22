@@ -54,6 +54,9 @@ their state would not remove the static credentials CI would need.
 
 `.github/workflows/github-plan.yml` plans the changed roots on pull requests,
 and `.github/workflows/github-apply.yml` applies them after a merge to `main`.
+github-plan also runs on `workflow_dispatch`, against the changes of the
+dispatched branch, so that `.github/workflows/github-new-repository.yml` can
+plan the pull request it opens.
 Each matrix job reads the repository name from the root, then:
 
 1. authenticates to Google Cloud with `google-github-actions/auth` through WIF,

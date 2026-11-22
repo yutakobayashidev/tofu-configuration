@@ -8,6 +8,9 @@ workflows:
         - 'cachix/install-nix-action@v32.0.0'
         - 'google-github-actions/auth@v3.0.0'
         - 'yagihash/ghat@v2.5.1'
+    '.github/workflows/github-new-repository.yml':
+        - 'actions/checkout@v7.0.1'
+        - 'cachix/install-nix-action@v32.0.0'
     '.github/workflows/github-plan.yml':
         - 'actions/checkout@v7.0.1'
         - 'cachix/install-nix-action@v32.0.0'
