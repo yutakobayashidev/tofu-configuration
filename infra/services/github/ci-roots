@@ -3,3 +3,13 @@
 # that CI creates joins the installations automatically.
 # See docs/gcp-github-app-signing.md.
 tofu-configuration
+ava
+contest
+dotnix
+edcb-tools
+google-apps-script
+kokkai-agent
+repiq
+skills
+talks
+webhashtag-rust-server
