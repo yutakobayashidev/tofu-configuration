@@ -17,7 +17,12 @@ module "repository" {
     vulnerability_alerts = false
   }
 
-  # Preserve the current unprotected state. Enable the standard ruleset per
-  # repository after reviewing its policy.
-  default_branch_ruleset = null
+  # Changes to main go through pull requests so that CI apply runs only on
+  # reviewed commits. The sole owner cannot approve their own pull requests,
+  # so no approval is required. Add the plan check to required_status_checks
+  # once the workflow exists.
+  default_branch_ruleset = {
+    required_approvals        = 0
+    require_code_owner_review = false
+  }
 }

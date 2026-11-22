@@ -43,6 +43,11 @@ migration.
 were. Move each repository toward the module defaults, including a ruleset, in
 separate reviewed changes.
 
+`tofu-configuration` itself requires pull requests for `main`, with no required
+approval because the sole owner cannot approve their own pull requests. The
+ruleset has no bypass actors, so direct pushes to `main` are rejected for
+everyone. It prepares for CI that applies only commits merged to `main`.
+
 Archived repositories (`grafanaconf`, `daily-report`) are not managed: the
 GitHub provider cannot read vulnerability alerts on an archived repository.
 
