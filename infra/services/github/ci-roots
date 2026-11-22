@@ -3,3 +3,4 @@
 # that CI creates joins the installations automatically.
 # See docs/gcp-github-app-signing.md.
 tofu-configuration
+ci-create-probe
