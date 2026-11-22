@@ -69,9 +69,20 @@ without changing GitHub, and the workspace was deleted.
 
 ## Adding a repository
 
+Run the **github-new-repository** workflow from the Actions tab with the name,
+description, and visibility, or run the script locally and open the pull
+request yourself:
+
 ```bash
+gh workflow run github-new-repository.yml -f name=<name> -f description="<description>" -f visibility=public
 nix develop -c scripts/new-github-repository <name> "<description>" public
 ```
+
+The workflow runs the script on `main`, opens the pull request with
+`GITHUB_TOKEN`, and dispatches github-plan for its branch, because a pull
+request opened with `GITHUB_TOKEN` triggers no workflow runs. Opening that
+pull request requires letting GitHub Actions create pull requests, which the
+`tofu-configuration` root enables in `workflow_permissions.tf`.
 
 The script copies the module source and the provider lock from the
 `tofu-configuration` root and writes a root that uses the module defaults, so

@@ -6,6 +6,9 @@ name: github-plan
 # See docs/gcp-github-app-signing.md.
 
 on:
+  # github-new-repository dispatches this workflow for the pull request it
+  # opens, because a pull request opened with GITHUB_TOKEN triggers no runs.
+  workflow_dispatch:
   pull_request:
     paths:
       - "infra/services/github/repositories/**"
@@ -18,7 +21,7 @@ on:
 permissions: {}
 
 concurrency:
-  group: github-plan-${{ github.event.pull_request.number }}
+  group: github-plan-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -40,6 +43,11 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
+          if [ -z "$BASE_SHA" ]; then
+            # A dispatched run plans the changes of its branch against main.
+            BASE_SHA=$(git merge-base origin/main "$GITHUB_SHA")
+            HEAD_SHA=$GITHUB_SHA
+          fi
           changed=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA")
           # A change to the workflow, the CI root list, the Nix shell, or the
           # policies affects every root.
