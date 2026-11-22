@@ -9,6 +9,7 @@ on:
   pull_request:
     paths:
       - "infra/services/github/repositories/**"
+      - "infra/services/github/ci-roots"
       - ".github/workflows/github-plan.yml"
       - "flake.nix"
       - "flake.lock"
@@ -19,11 +20,6 @@ permissions: {}
 concurrency:
   group: github-plan-${{ github.event.pull_request.number }}
   cancel-in-progress: true
-
-env:
-  # Roots whose repositories have the GitHub Apps installed. Add a root here
-  # after installing both Apps on its repository.
-  ENABLED_ROOTS: tofu-configuration
 
 jobs:
   detect:
@@ -45,14 +41,14 @@ jobs:
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: |
           changed=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA")
-          # A change to the workflow, the Nix shell, or the policies affects
-          # every root.
-          if grep -qE '^(\.github/workflows/github-plan\.yml|flake\.(nix|lock)|policy/terraform/)' <<<"$changed"; then
+          # A change to the workflow, the CI root list, the Nix shell, or the
+          # policies affects every root.
+          if grep -qE '^(\.github/workflows/github-plan\.yml|infra/services/github/ci-roots$|flake\.(nix|lock)|policy/terraform/)' <<<"$changed"; then
             roots=$(find infra/services/github/repositories -mindepth 1 -maxdepth 1 -type d -printf '%f\n')
           else
             roots=$(sed -nE 's#^infra/services/github/repositories/([^/]+)/.*#\1#p' <<<"$changed")
           fi
-          tr ' ' '\n' <<<"$ENABLED_ROOTS" | sort -u > enabled
+          grep -vE '^[[:space:]]*(#|$)' infra/services/github/ci-roots | sort -u > enabled
           json=$(sort -u <<<"$roots" | comm -12 - enabled | jq -R -s -c 'split("\n") | map(select(length > 0))')
           echo "roots=$json" >> "$GITHUB_OUTPUT"
           echo "Roots to plan: $json"
@@ -97,7 +93,18 @@ jobs:
           workload_identity_provider: projects/17441306233/locations/global/workloadIdentityPools/github-actions/providers/tofu-configuration
           service_account: github-app-plan@yuta-gh-signer.iam.gserviceaccount.com
 
+      - id: state
+        run: |
+          # A root without state manages a repository that does not exist yet.
+          nix develop .#github-ci -c tofu -chdir="$ROOT" init -input=false -no-color
+          if [ -z "$(nix develop .#github-ci -c tofu -chdir="$ROOT" state list)" ]; then
+            echo "new=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "new=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - id: token
+        if: steps.state.outputs.new == 'false'
         uses: yagihash/ghat@v2.5.1
         with:
           app_id: "5875937"
@@ -112,11 +119,27 @@ jobs:
           permission_issues: read
           permission_actions: read
 
+      # A token cannot be scoped to a repository that does not exist, so a new
+      # root gets a read-only token for the whole installation, as 10X does.
+      - id: new_token
+        if: steps.state.outputs.new == 'true'
+        uses: yagihash/ghat@v2.5.1
+        with:
+          app_id: "5875937"
+          kms_project_id: yuta-gh-signer
+          kms_location: asia-northeast1
+          kms_keyring_id: github-apps
+          kms_key_id: tofu-plan
+          kms_key_version: "1"
+          permission_metadata: read
+          permission_administration: read
+          permission_issues: read
+          permission_actions: read
+
       - name: Plan
         env:
-          GITHUB_TOKEN: ${{ steps.token.outputs.token }}
+          GITHUB_TOKEN: ${{ steps.token.outputs.token || steps.new_token.outputs.token }}
         run: |
-          nix develop .#github-ci -c tofu -chdir="$ROOT" init -input=false -no-color
           # The plan service account can only read state, so plan without a lock.
           # The REST API omits merge settings for the read-only plan App, and
           # provider v6.13.0 records them as false. Plan against the state from

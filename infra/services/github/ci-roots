@@ -1,0 +1,5 @@
+# GitHub repository roots that CI plans and applies, one per line.
+# Both GitHub Apps must be installed on each listed repository. A repository
+# that CI creates joins the installations automatically.
+# See docs/gcp-github-app-signing.md.
+tofu-configuration
