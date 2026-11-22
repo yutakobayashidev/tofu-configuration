@@ -50,6 +50,57 @@ public access prevention, and uses uniform bucket-level access. The OpenTofu
 The other roots stay in R2: their providers have no OIDC federation, so moving
 their state would not remove the static credentials CI would need.
 
+## CI workflows
+
+`.github/workflows/github-plan.yml` plans the changed roots on pull requests,
+and `.github/workflows/github-apply.yml` applies them after a merge to `main`.
+Each matrix job reads the repository name from the root, then:
+
+1. authenticates to Google Cloud with `google-github-actions/auth` through WIF,
+2. signs an App JWT with KMS and exchanges it for an installation token
+   limited to that one repository with `yagihash/ghat`, which revokes the token
+   when the job ends,
+3. runs OpenTofu from the `github-ci` Nix shell. The lock files record the
+   nixpkgs provider build, so CI uses the same build.
+
+| Stage | GitHub App | App ID | Token permissions |
+| --- | --- | --- | --- |
+| plan | `yuta-tofu-plan` | 5875937 | Metadata, Administration, Issues, Actions: read |
+| apply | `yuta-tofu-apply` | 5875943 | Administration and Issues: write; Metadata and Actions: read |
+
+Actions read is needed to read the GitHub Environments managed by the
+`tofu-configuration` root.
+
+The plan App stays read-only. Unlike 10X, this public personal repository
+cannot use push rulesets to stop a pull request from editing the workflows, so
+code from a pull request branch, including one opened by an AI agent, could
+use any token the plan job receives.
+
+A read-only token cannot refresh the repository merge settings through REST.
+The GitHub REST documentation says that viewing them requires `contents:read`
+and `contents:write`, and the provider documentation repeats the
+`contents:write` requirement. Checked on 2026-11-23:
+
+| Token | REST `GET /repos/{owner}/{repo}` | GraphQL `repository` |
+| --- | --- | --- |
+| plan App (Administration: read) | Merge settings, `delete_branch_on_merge`, and `allow_auto_merge` are omitted | Actual values |
+| apply App (Administration: write, no Contents) | Actual values | Actual values |
+
+Provider v6.13.0 reads only REST and records the omitted fields as `false` or
+empty, which produces a false diff on every plan
+([integrations/terraform-provider-github#3382](https://github.com/integrations/terraform-provider-github/issues/3382)).
+The plan job therefore runs with `-refresh=false`. It shows what the pull
+request changes against the state from the last apply. Changes made on GitHub
+outside OpenTofu appear only when apply refreshes with the apply App and
+reverts them. Once a provider release reads these fields over GraphQL
+([integrations/terraform-provider-github#3741](https://github.com/integrations/terraform-provider-github/pull/3741)),
+remove `-refresh=false` so plans show drift again.
+
+Only roots listed in `ENABLED_ROOTS` in both
+workflows run in CI; add a root there after installing both Apps on its
+repository. An apply job skips its root when a later commit on `main` has
+changed it, so an older run never overwrites newer configuration.
+
 ## Running OpenTofu
 
 Credentials come from `gcloud auth application-default login`. Load the

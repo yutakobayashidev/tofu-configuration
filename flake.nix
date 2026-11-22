@@ -208,6 +208,16 @@
                 targets = localTargets;
               };
           };
+
+          # CI for the GitHub repository roots. The lock files record the hash of
+          # the nixpkgs provider build, so CI must use the same build. Everything
+          # here comes from the nixpkgs binary cache.
+          devShells.github-ci = pkgs.mkShellNoCC {
+            packages = with pkgs; [
+              conftest
+              (opentofu.withPlugins (p: [ p.integrations_github ]))
+            ];
+          };
         };
     };
 }

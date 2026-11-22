@@ -36,6 +36,13 @@ tofu -chdir=infra/services/github/repositories/<name> init
 tofu -chdir=infra/services/github/repositories/<name> plan
 ```
 
+## CI
+
+Pull requests that change a root are planned by GitHub Actions, and merges to
+`main` are applied, without a static credential in GitHub. See
+[GitHub App signing](gcp-github-app-signing.md#ci-workflows). During the
+rollout, only the roots listed in `ENABLED_ROOTS` run in CI.
+
 ## Current settings
 
 The 11 active repositories were imported on 2026-11-22. Each root sets
