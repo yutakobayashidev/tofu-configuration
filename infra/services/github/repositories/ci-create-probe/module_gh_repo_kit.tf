@@ -3,7 +3,9 @@ module "repository" {
 
   name        = "ci-create-probe"
   description = "Probe for CI repository creation; safe to delete"
-  visibility  = "private"
+  # Temporarily public: GitHub Free supports rulesets only on public
+  # repositories, and this probe verifies that CI creates the ruleset.
+  visibility = "public"
 
   # main accepts changes only through pull requests that pass ci-gate, the
   # aggregate job of the repository's CI workflow. The sole owner cannot

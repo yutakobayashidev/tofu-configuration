@@ -97,6 +97,21 @@ terraform {
 }
 EOF
 
+if [[ "$visibility" == public ]]; then
+  ruleset='  # main accepts changes only through pull requests that pass ci-gate, the
+  # aggregate job of the repository'"'"'s CI workflow. The sole owner cannot
+  # approve their own pull requests, so no approval is required.
+  default_branch_ruleset = {
+    required_approvals        = 0
+    require_code_owner_review = false
+    required_status_checks    = ["ci-gate"]
+  }'
+else
+  ruleset='  # GitHub Free has no rulesets for private repositories, so ci-gate is not
+  # enforced. Add the ruleset from public roots after a plan upgrade.
+  default_branch_ruleset = null'
+fi
+
 cat >"$target/module_gh_repo_kit.tf" <<EOF
 module "repository" {
   source = "$module_source"
@@ -105,14 +120,7 @@ module "repository" {
   description = $description_hcl
   visibility  = "$visibility"
 
-  # main accepts changes only through pull requests that pass ci-gate, the
-  # aggregate job of the repository's CI workflow. The sole owner cannot
-  # approve their own pull requests, so no approval is required.
-  default_branch_ruleset = {
-    required_approvals        = 0
-    require_code_owner_review = false
-    required_status_checks    = ["ci-gate"]
-  }
+$ruleset
 }
 EOF
 
