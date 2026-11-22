@@ -33,6 +33,7 @@ OpenTofu configurations for managing cloud infrastructure.
 - `infra/services/github/repositories/<name>/` — One root per GitHub repository; credentials come from the environment (`docs/github-management.md`)
 - `scripts/new-github-repository` — Writes the root for a new GitHub repository
 - `infra/services/openai/` — OpenAI provider; use `OPENAI_ADMIN_KEY` for organization administration
+- `infra/services/gcp/` — Google Cloud project with KMS keys and Workload Identity Federation that sign GitHub App tokens in CI; read `docs/gcp-github-app-signing.md` before changing it
 - `infra/global/domains/yutakobayashi-com/` — DNS records, Email Routing rules, and response header transforms for yutakobayashi.com
 - `infra/global/domains/yutakobayashi-dev/` — DNS records and Email Routing rules for yutakobayashi.dev
 - `infra/modules/` — Reusable modules (cloudflare-r2, cloudflare-account-token)
