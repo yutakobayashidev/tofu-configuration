@@ -27,6 +27,12 @@ on:
 
 permissions: {}
 
+# An unspecified shell runs without pipefail, so a failing command piped to tee
+# would not fail its step.
+defaults:
+  run:
+    shell: bash
+
 jobs:
   scaffold:
     if: github.ref == 'refs/heads/main'

@@ -86,10 +86,13 @@ pull request requires letting GitHub Actions create pull requests, which the
 
 The script copies the module source and the provider lock from the
 `tofu-configuration` root and writes a root that uses the module defaults, so
-GitHub creates the repository with an initial commit (`auto_init`). The root's
-ruleset requires pull requests for `main` that pass the `ci-gate` check, with
-no required approval because a sole maintainer cannot approve their own pull
-requests. The script also adds the root to `infra/services/github/ci-roots`.
+GitHub creates the repository with an initial commit (`auto_init`). For a
+public repository, the root's ruleset requires pull requests for `main` that
+pass the `ci-gate` check, with no required approval because a sole maintainer
+cannot approve their own pull requests. GitHub Free has no rulesets for private
+repositories (the API answers 403 "Upgrade to GitHub Pro or make this
+repository public"), so a private root sets `default_branch_ruleset = null`
+and `ci-gate` is not enforced. The script also adds the root to `infra/services/github/ci-roots`.
 
 Open a pull request with the root. CI plans the creation, and merging it lets
 the apply workflow create the repository. The new repository then accepts
