@@ -17,12 +17,13 @@ module "repository" {
     vulnerability_alerts = false
   }
 
-  # Changes to main go through pull requests so that CI apply runs only on
-  # reviewed commits. The sole owner cannot approve their own pull requests,
-  # so no approval is required. Add the plan check to required_status_checks
-  # once the workflow exists.
+  # Changes to main go through pull requests that pass plan-gate, the aggregate
+  # job of the github-plan workflow, so CI apply runs only on planned commits.
+  # The sole owner cannot approve their own pull requests, so no approval is
+  # required.
   default_branch_ruleset = {
     required_approvals        = 0
     require_code_owner_review = false
+    required_status_checks    = ["plan-gate"]
   }
 }

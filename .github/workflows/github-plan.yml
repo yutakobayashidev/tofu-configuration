@@ -9,14 +9,9 @@ on:
   # github-new-repository dispatches this workflow for the pull request it
   # opens, because a pull request opened with GITHUB_TOKEN triggers no runs.
   workflow_dispatch:
+  # Every pull request runs, so plan-gate always reports. The detect job picks
+  # the roots to plan and leaves the plan job skipped when there are none.
   pull_request:
-    paths:
-      - "infra/services/github/repositories/**"
-      - "infra/services/github/ci-roots"
-      - ".github/workflows/github-plan.yml"
-      - "flake.nix"
-      - "flake.lock"
-      - "policy/terraform/**"
 
 permissions: {}
 
@@ -178,3 +173,15 @@ jobs:
             sed -n '/OpenTofu will perform\|No changes\./,$p' plan.log
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+
+  # The single required check on main. It passes when every planned root
+  # passed, or when the pull request changes no root.
+  plan-gate:
+    if: always()
+    needs: [detect, plan]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions: {}
+    steps:
+      - if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1
