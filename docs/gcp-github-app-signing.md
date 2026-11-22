@@ -33,6 +33,23 @@ with the apply key. The `workflow_ref` claim contains the repository name:
 after renaming the repository, update `github_repository` in `main.tf`, or
 every token is rejected.
 
+## GitHub repository state
+
+The GitHub repository roots keep their state in the
+`yuta-gh-signer-github-tfstate` bucket under `repositories/<name>`. The bucket
+has Object Versioning, keeps the 20 most recent noncurrent versions, enforces
+public access prevention, and uses uniform bucket-level access. The OpenTofu
+`gcp_kms` key provider encrypts state and saved plans with the
+`tofu-state/github-repositories` key, which rotates every 90 days.
+
+| Service account | Bucket | KMS key |
+| --- | --- | --- |
+| `github-app-plan` | Read only. The plan workflow runs with `-lock=false` | Encrypt and decrypt, for saved plan files |
+| `github-app-apply` | Read and write | Encrypt and decrypt |
+
+The other roots stay in R2: their providers have no OIDC federation, so moving
+their state would not remove the static credentials CI would need.
+
 ## Running OpenTofu
 
 Credentials come from `gcloud auth application-default login`. Load the

@@ -39,13 +39,17 @@ locals {
 
   # One GitHub App, KMS key, service account, and GitHub Environment per stage.
   stages = {
+    # plan only reads state and runs with -lock=false. Both stages encrypt and
+    # decrypt because OpenTofu also encrypts saved plan files.
     plan = {
-      environment = "github-plan"
-      workflow    = ".github/workflows/github-plan.yml"
+      environment       = "github-plan"
+      workflow          = ".github/workflows/github-plan.yml"
+      state_bucket_role = "roles/storage.objectViewer"
     }
     apply = {
-      environment = "github-apply"
-      workflow    = ".github/workflows/github-apply.yml"
+      environment       = "github-apply"
+      workflow          = ".github/workflows/github-apply.yml"
+      state_bucket_role = "roles/storage.objectUser"
     }
   }
 }

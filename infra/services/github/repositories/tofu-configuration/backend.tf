@@ -1,24 +1,19 @@
 terraform {
-  backend "s3" {
-    bucket                      = "homelab-infra-state"
-    key                         = "github/repositories/tofu-configuration/terraform.tfstate"
-    region                      = "auto"
-    skip_credentials_validation = true
-    skip_region_validation      = true
-    skip_metadata_api_check     = true
-    skip_requesting_account_id  = true
-    skip_s3_checksum            = true
-    use_path_style              = true
-    use_lockfile                = true
+  # State lives in Google Cloud Storage so that CI reaches it through Workload
+  # Identity Federation; see docs/gcp-github-app-signing.md.
+  backend "gcs" {
+    bucket = "yuta-gh-signer-github-tfstate"
+    prefix = "repositories/tofu-configuration"
   }
 
   encryption {
-    key_provider "pbkdf2" "state_key" {
-      passphrase = var.state_encryption_passphrase
+    key_provider "gcp_kms" "state_key" {
+      kms_encryption_key = "projects/yuta-gh-signer/locations/asia-northeast1/keyRings/tofu-state/cryptoKeys/github-repositories"
+      key_length         = 32
     }
 
     method "aes_gcm" "state_method" {
-      keys = key_provider.pbkdf2.state_key
+      keys = key_provider.gcp_kms.state_key
     }
 
     state {
@@ -31,10 +26,4 @@ terraform {
       enforced = true
     }
   }
-}
-
-variable "state_encryption_passphrase" {
-  description = "Passphrase for OpenTofu state and plan encryption"
-  type        = string
-  sensitive   = true
 }

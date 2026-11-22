@@ -11,7 +11,13 @@ AES-GCM encryption for state and saved plans.
 | `infra/services/tfe` | `tfe/terraform.tfstate` |
 | `infra/services/openai` | `openai/terraform.tfstate` |
 | `infra/services/supabase` | `supabase/terraform.tfstate` |
-| `infra/services/github/repositories/<name>` | `github/repositories/<name>/terraform.tfstate` |
+| `infra/services/gcp` | `gcp/terraform.tfstate` |
+
+The GitHub repository roots moved to Google Cloud Storage on 2026-11-23 so that
+CI can reach their state without a static credential. See
+[GitHub App signing](gcp-github-app-signing.md#github-repository-state). Their
+earlier objects under `github/repositories/` in this bucket remain as a rollback
+copy, encrypted with the shared passphrase, and are no longer updated.
 
 ## Credentials
 

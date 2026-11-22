@@ -23,10 +23,12 @@ R2 state (homelab-infra-state)
 ├── Homelab infrastructure
 ├── Discord server settings
 ├── HCP Terraform organization and workspace settings
-├── GitHub repositories (one state per repository)
 ├── OpenAI projects (infra/services/openai)
 ├── Supabase projects and settings (infra/services/supabase)
 └── Google Cloud project for GitHub App signing (infra/services/gcp)
+
+Google Cloud Storage state (yuta-gh-signer-github-tfstate)
+└── GitHub repositories (one state per repository)
 ```
 
 ## Prerequisites
@@ -64,7 +66,7 @@ Independent workspaces:
 | `infra/global/`                               | R2        | Cloudflare DNS/R2, DO                   |
 | `infra/services/discord/yuta-studio/`         | R2        | Discord server settings                  |
 | `infra/services/tfe/`                         | R2        | HCP Terraform organization, workspaces  |
-| `infra/services/github/repositories/<name>/`  | R2        | One GitHub repository per root          |
+| `infra/services/github/repositories/<name>/`  | GCS       | One GitHub repository per root          |
 | `infra/services/openai/`                      | R2        | OpenAI projects                         |
 | `infra/services/supabase/`                    | R2        | Supabase projects and settings          |
 | `infra/services/gcp/`                         | R2        | KMS signing for GitHub App tokens       |

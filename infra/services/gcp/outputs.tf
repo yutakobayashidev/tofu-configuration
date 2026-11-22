@@ -21,3 +21,11 @@ output "kms_keys" {
     keys     = { for stage, key in google_kms_crypto_key.github_app : stage => key.name }
   }
 }
+
+output "github_state" {
+  description = "Backend bucket and encryption key for the GitHub repository roots"
+  value = {
+    bucket             = google_storage_bucket.github_state.name
+    kms_encryption_key = google_kms_crypto_key.github_state.id
+  }
+}
