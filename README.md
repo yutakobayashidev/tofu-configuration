@@ -19,12 +19,10 @@ DigitalOcean (future)
 ├── Droplet (Mastodon)
 └── Spaces (backups)
 
-HCP Terraform
-├── tfe workspace (HCP Terraform self-management)
-├── homelab workspace (infrastructure state)
-└── discord workspace (Discord server settings)
-
 R2 state (homelab-infra-state)
+├── Homelab infrastructure
+├── Discord server settings
+├── HCP Terraform organization and workspace settings
 ├── GitHub repositories (one state per repository)
 ├── OpenAI projects (infra/services/openai)
 └── Supabase projects and settings (infra/services/supabase)
@@ -50,15 +48,11 @@ nix develop
 # OpenTofu providers are bundled in the dev shell
 ```
 
-### 2. HCP Terraform
+### 2. R2 backend credentials
 
-OpenAI and Supabase use encrypted R2 state. See [service state credentials](docs/service-state.md). GitHub repository state also uses R2. The remaining remote workspaces use [HCP Terraform](https://app.terraform.io/). OpenTofu runs locally against HCP-managed state because HCP remote execution does not run OpenTofu. Authenticate once:
-
-```bash
-tofu login app.terraform.io
-```
-
-The workspaces managed from `infra/services/tfe` are VCS-connected to this repository through the Terraform Cloud GitHub App and use local execution mode.
+[Load the R2 credentials and state passphrase](docs/service-state.md#credentials)
+before initializing a root. The `tfe` root also needs HCP Terraform provider
+credentials to manage the HCP organization and workspaces.
 
 ### 3. OpenTofu
 
@@ -66,8 +60,9 @@ Independent workspaces:
 
 | Directory                                     | Workspace | Manages                                 |
 | --------------------------------------------- | --------- | --------------------------------------- |
-| `infra/global/`                               | homelab   | Cloudflare DNS/R2, DO                   |
-| `infra/services/tfe/`                         | tfe       | HCP Terraform organization, workspaces  |
+| `infra/global/`                               | R2        | Cloudflare DNS/R2, DO                   |
+| `infra/services/discord/yuta-studio/`         | R2        | Discord server settings                  |
+| `infra/services/tfe/`                         | R2        | HCP Terraform organization, workspaces  |
 | `infra/services/github/repositories/<name>/`  | R2        | One GitHub repository per root          |
 | `infra/services/openai/`                      | R2        | OpenAI projects                         |
 | `infra/services/supabase/`                    | R2        | Supabase projects and settings          |

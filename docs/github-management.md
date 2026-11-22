@@ -21,23 +21,15 @@ the merge.
 
 ## Credentials
 
-Provide every credential through the environment. Never commit one or pass it
-with `-backend-config`.
+Load the [R2 credentials and state passphrase](service-state.md#credentials),
+then provide the GitHub provider token through the environment.
 
 ```bash
 export GITHUB_TOKEN="$(gh auth token)"
-export AWS_ACCESS_KEY_ID="$(tofu -chdir=infra/global output -raw homelab_infra_state_access_key_id)"
-export AWS_SECRET_ACCESS_KEY="$(tofu -chdir=infra/global output -raw homelab_infra_state_secret_access_key)"
-export AWS_ENDPOINT_URL_S3="https://<cloudflare_account_id>.r2.cloudflarestorage.com"
-export TF_VAR_state_encryption_passphrase="$(cat ~/.config/tofu-configuration/state-passphrase)"
 
 tofu -chdir=infra/services/github/repositories/<name> init
 tofu -chdir=infra/services/github/repositories/<name> plan
 ```
-
-The passphrase encrypts state and saved plans; it is not shared with dotnix.
-Without it the state cannot be read, so keep the local file (mode 600) and a
-copy in the password manager.
 
 ## Current settings
 
