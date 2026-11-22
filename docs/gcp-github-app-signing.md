@@ -69,7 +69,16 @@ Each matrix job reads the repository name from the root, then:
 | apply | `yuta-tofu-apply` | 5875943 | Administration and Issues: write; Metadata and Actions: read |
 
 Actions read is needed to read the GitHub Environments managed by the
-`tofu-configuration` root. Only roots listed in `ENABLED_ROOTS` in both
+`tofu-configuration` root.
+
+The plan App stays read-only. Unlike 10X, this public personal repository
+cannot use push rulesets to stop a pull request from editing the workflows, so
+code from a pull request branch, including one opened by an AI agent, could
+use any token the plan job receives. GitHub returns merge settings such as
+`delete_branch_on_merge` only to tokens that can write, so the plan job runs
+with `-refresh=false`: it shows what the pull request changes against the state
+from the last apply. Changes made on GitHub outside OpenTofu appear only when
+apply refreshes with the apply App and reverts them. Only roots listed in `ENABLED_ROOTS` in both
 workflows run in CI; add a root there after installing both Apps on its
 repository. An apply job skips its root when a later commit on `main` has
 changed it, so an older run never overwrites newer configuration.
