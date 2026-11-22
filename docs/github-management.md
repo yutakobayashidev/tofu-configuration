@@ -41,7 +41,7 @@ tofu -chdir=infra/services/github/repositories/<name> plan
 Pull requests that change a root are planned by GitHub Actions, and merges to
 `main` are applied, without a static credential in GitHub. See
 [GitHub App signing](gcp-github-app-signing.md#ci-workflows). During the
-rollout, only the roots listed in `ENABLED_ROOTS` run in CI.
+rollout, only the roots listed in `infra/services/github/ci-roots` run in CI.
 
 ## Current settings
 
@@ -75,10 +75,15 @@ nix develop -c scripts/new-github-repository <name> "<description>" public
 
 The script copies the module source and the provider lock from the
 `tofu-configuration` root and writes a root that uses the module defaults, so
-GitHub creates the repository with an initial commit (`auto_init`). The root
-also sets `default_branch_ruleset = null`: the standard ruleset requires an
-approving review, which a sole maintainer cannot give. Run `init` and `plan`,
-apply after review, and commit the root.
+GitHub creates the repository with an initial commit (`auto_init`). The root's
+ruleset requires pull requests for `main` that pass the `ci-gate` check, with
+no required approval because a sole maintainer cannot approve their own pull
+requests. The script also adds the root to `infra/services/github/ci-roots`.
+
+Open a pull request with the root. CI plans the creation, and merging it lets
+the apply workflow create the repository. The new repository then accepts
+changes on `main` only through pull requests that pass `ci-gate`, so its first
+commit needs a CI workflow with a `ci-gate` job.
 
 ## Archiving a repository
 

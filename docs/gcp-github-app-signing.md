@@ -66,7 +66,7 @@ Each matrix job reads the repository name from the root, then:
 | Stage | GitHub App | App ID | Token permissions |
 | --- | --- | --- | --- |
 | plan | `yuta-tofu-plan` | 5875937 | Metadata, Administration, Issues, Actions: read |
-| apply | `yuta-tofu-apply` | 5875943 | Administration and Issues: write; Metadata and Actions: read |
+| apply | `yuta-tofu-apply` | 5875943 | Administration and Issues: write; Metadata and Actions: read. A new root's token keeps all App permissions, including Repository creation: write |
 
 Actions read is needed to read the GitHub Environments managed by the
 `tofu-configuration` root.
@@ -96,10 +96,29 @@ reverts them. Once a provider release reads these fields over GraphQL
 ([integrations/terraform-provider-github#3741](https://github.com/integrations/terraform-provider-github/pull/3741)),
 remove `-refresh=false` so plans show drift again.
 
-Only roots listed in `ENABLED_ROOTS` in both
-workflows run in CI; add a root there after installing both Apps on its
-repository. An apply job skips its root when a later commit on `main` has
-changed it, so an older run never overwrites newer configuration.
+Only roots listed in `infra/services/github/ci-roots` run in CI. Both Apps
+must be installed on each listed repository. An apply job skips its root when
+a later commit on `main` has changed it, so an older run never overwrites newer
+configuration.
+
+### New repositories
+
+A root without state manages a repository that does not exist yet. A token
+cannot be scoped to a missing repository, so for such a root the job gets a
+token for the whole installation, as 10X does. The apply App has Repository
+creation: write, which lets an installation token create a repository in a
+personal account through `POST /user/repos`; Administration: write alone is
+rejected. ghat v2.5.1 cannot request that permission, so the new-root apply
+token keeps all of the App's permissions. Only the apply workflow on `main`
+can sign it.
+
+Verified on 2026-11-23 with a probe App installed on selected repositories:
+the created repository joined the installation at once, a token minted before
+the creation could read it, and a token scoped to it was issued. Reports from
+November 9 and 17 in
+[community discussion #210226](https://github.com/orgs/community/discussions/210226)
+describe the opposite on personal accounts; recheck if a new-root apply fails
+after creating the repository.
 
 ## Running OpenTofu
 

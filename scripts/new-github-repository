@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Write an OpenTofu root for a new GitHub repository. The module source and the
-# provider lock come from the tofu-configuration root, so updating that root
-# also updates new roots.
+# Write an OpenTofu root for a new GitHub repository and register it with CI.
+# The module source and the provider lock come from the tofu-configuration
+# root, so updating that root also updates new roots. Merging the root to main
+# lets the github-apply workflow create the repository.
 set -euo pipefail
 
 if [[ $# -lt 1 || $# -gt 3 ]]; then
@@ -104,11 +105,22 @@ module "repository" {
   description = $description_hcl
   visibility  = "$visibility"
 
-  # The standard ruleset requires an approving review, which a sole maintainer
-  # cannot give. Enable a ruleset after reviewing the policy for this repository.
-  default_branch_ruleset = null
+  # main accepts changes only through pull requests that pass ci-gate, the
+  # aggregate job of the repository's CI workflow. The sole owner cannot
+  # approve their own pull requests, so no approval is required.
+  default_branch_ruleset = {
+    required_approvals        = 0
+    require_code_owner_review = false
+    required_status_checks    = ["ci-gate"]
+  }
 }
 EOF
 
 tofu -chdir="$target" fmt >/dev/null
-echo "created $target"
+
+ci_roots=infra/services/github/ci-roots
+if ! grep -qx "$name" "$ci_roots"; then
+  echo "$name" >>"$ci_roots"
+fi
+
+echo "created $target and added it to $ci_roots"
