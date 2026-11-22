@@ -1,0 +1,142 @@
+name: github-apply
+
+# Applies the GitHub repository roots changed on main. Only this workflow on
+# main, in the github-apply Environment, can sign with the apply App key.
+# See docs/gcp-github-app-signing.md.
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "infra/services/github/repositories/**"
+      - ".github/workflows/github-apply.yml"
+      - "flake.nix"
+      - "flake.lock"
+
+permissions: {}
+
+# Applies run one at a time, in merge order.
+concurrency:
+  group: github-apply
+  cancel-in-progress: false
+
+env:
+  # Roots whose repositories have the GitHub Apps installed. Add a root here
+  # after installing both Apps on its repository.
+  ENABLED_ROOTS: tofu-configuration
+
+jobs:
+  detect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      roots: ${{ steps.roots.outputs.roots }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - id: roots
+        env:
+          BEFORE_SHA: ${{ github.event.before }}
+        run: |
+          changed=$(git diff --name-only "$BEFORE_SHA" "$GITHUB_SHA")
+          # A change to the workflow or the Nix shell affects every root.
+          if grep -qE '^(\.github/workflows/github-apply\.yml|flake\.(nix|lock))' <<<"$changed"; then
+            roots=$(find infra/services/github/repositories -mindepth 1 -maxdepth 1 -type d -printf '%f\n')
+          else
+            roots=$(sed -nE 's#^infra/services/github/repositories/([^/]+)/.*#\1#p' <<<"$changed")
+          fi
+          tr ' ' '\n' <<<"$ENABLED_ROOTS" | sort -u > enabled
+          json=$(sort -u <<<"$roots" | comm -12 - enabled | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "roots=$json" >> "$GITHUB_OUTPUT"
+          echo "Roots to apply: $json"
+
+  apply:
+    needs: detect
+    if: needs.detect.outputs.roots != '[]'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    environment: github-apply
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        root: ${{ fromJSON(needs.detect.outputs.roots) }}
+    env:
+      ROOT: infra/services/github/repositories/${{ matrix.root }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - id: current
+        run: |
+          # Skip when a later commit on main changed this root: its own run
+          # applies the newer configuration, and this run must not overwrite it.
+          git fetch --quiet origin main
+          if git diff --quiet "$GITHUB_SHA" FETCH_HEAD -- "$ROOT"; then
+            echo "apply=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::$ROOT changed after $GITHUB_SHA; the later run applies it"
+            echo "apply=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - if: steps.current.outputs.apply == 'true'
+        uses: cachix/install-nix-action@v32.0.0
+
+      - id: repository
+        if: steps.current.outputs.apply == 'true'
+        env:
+          ROOT_NAME: ${{ matrix.root }}
+        run: |
+          name=$(sed -nE 's/^  name += "([^"]+)"$/\1/p' "$ROOT/module_gh_repo_kit.tf" | head -1)
+          if [ "$name" != "$ROOT_NAME" ]; then
+            echo "::error::$ROOT manages '$name', expected '$ROOT_NAME'"
+            exit 1
+          fi
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+
+      - if: steps.current.outputs.apply == 'true'
+        uses: google-github-actions/auth@v3.0.0
+        with:
+          workload_identity_provider: projects/17441306233/locations/global/workloadIdentityPools/github-actions/providers/tofu-configuration
+          service_account: github-app-apply@yuta-gh-signer.iam.gserviceaccount.com
+
+      - id: token
+        if: steps.current.outputs.apply == 'true'
+        uses: yagihash/ghat@v2.5.1
+        with:
+          app_id: "5875943"
+          kms_project_id: yuta-gh-signer
+          kms_location: asia-northeast1
+          kms_keyring_id: github-apps
+          kms_key_id: tofu-apply
+          kms_key_version: "1"
+          repositories: ${{ steps.repository.outputs.name }}
+          permission_metadata: read
+          permission_administration: write
+          permission_issues: write
+          permission_actions: read
+
+      - name: Apply
+        if: steps.current.outputs.apply == 'true'
+        env:
+          GITHUB_TOKEN: ${{ steps.token.outputs.token }}
+        run: |
+          nix develop .#github-ci -c tofu -chdir="$ROOT" init -input=false -no-color
+          nix develop .#github-ci -c tofu -chdir="$ROOT" apply -input=false -no-color -auto-approve | tee apply.log
+          {
+            echo "### Apply for \`$ROOT\`"
+            echo '```'
+            sed -n '/OpenTofu will perform\|No changes\./,$p' apply.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

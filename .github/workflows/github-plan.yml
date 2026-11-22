@@ -1,0 +1,129 @@
+name: github-plan
+
+# Plans the GitHub repository roots changed by a pull request. Each job signs a
+# GitHub App JWT with Cloud KMS through Workload Identity Federation and gets an
+# installation token limited to the one repository its root manages.
+# See docs/gcp-github-app-signing.md.
+
+on:
+  pull_request:
+    paths:
+      - "infra/services/github/repositories/**"
+      - ".github/workflows/github-plan.yml"
+      - "flake.nix"
+      - "flake.lock"
+      - "policy/terraform/**"
+
+permissions: {}
+
+concurrency:
+  group: github-plan-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+env:
+  # Roots whose repositories have the GitHub Apps installed. Add a root here
+  # after installing both Apps on its repository.
+  ENABLED_ROOTS: tofu-configuration
+
+jobs:
+  detect:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      roots: ${{ steps.roots.outputs.roots }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - id: roots
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          changed=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA")
+          # A change to the workflow, the Nix shell, or the policies affects
+          # every root.
+          if grep -qE '^(\.github/workflows/github-plan\.yml|flake\.(nix|lock)|policy/terraform/)' <<<"$changed"; then
+            roots=$(find infra/services/github/repositories -mindepth 1 -maxdepth 1 -type d -printf '%f\n')
+          else
+            roots=$(sed -nE 's#^infra/services/github/repositories/([^/]+)/.*#\1#p' <<<"$changed")
+          fi
+          tr ' ' '\n' <<<"$ENABLED_ROOTS" | sort -u > enabled
+          json=$(sort -u <<<"$roots" | comm -12 - enabled | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "roots=$json" >> "$GITHUB_OUTPUT"
+          echo "Roots to plan: $json"
+
+  plan:
+    needs: detect
+    if: needs.detect.outputs.roots != '[]'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: github-plan
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        root: ${{ fromJSON(needs.detect.outputs.roots) }}
+    env:
+      ROOT: infra/services/github/repositories/${{ matrix.root }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: cachix/install-nix-action@v32.0.0
+
+      - id: repository
+        env:
+          ROOT_NAME: ${{ matrix.root }}
+        run: |
+          # The token covers only the repository named in this root.
+          name=$(sed -nE 's/^  name += "([^"]+)"$/\1/p' "$ROOT/module_gh_repo_kit.tf" | head -1)
+          if [ "$name" != "$ROOT_NAME" ]; then
+            echo "::error::$ROOT manages '$name', expected '$ROOT_NAME'"
+            exit 1
+          fi
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+
+      - uses: google-github-actions/auth@v3.0.0
+        with:
+          workload_identity_provider: projects/17441306233/locations/global/workloadIdentityPools/github-actions/providers/tofu-configuration
+          service_account: github-app-plan@yuta-gh-signer.iam.gserviceaccount.com
+
+      - id: token
+        uses: yagihash/ghat@v2.5.1
+        with:
+          app_id: "5875937"
+          kms_project_id: yuta-gh-signer
+          kms_location: asia-northeast1
+          kms_keyring_id: github-apps
+          kms_key_id: tofu-plan
+          kms_key_version: "1"
+          repositories: ${{ steps.repository.outputs.name }}
+          permission_metadata: read
+          permission_administration: read
+          permission_issues: read
+          permission_actions: read
+
+      - name: Plan
+        env:
+          GITHUB_TOKEN: ${{ steps.token.outputs.token }}
+        run: |
+          nix develop .#github-ci -c tofu -chdir="$ROOT" init -input=false -no-color
+          # The plan service account can only read state, so plan without a lock.
+          nix develop .#github-ci -c tofu -chdir="$ROOT" plan -input=false -no-color -lock=false -out=tfplan | tee plan.log
+          nix develop .#github-ci -c tofu -chdir="$ROOT" show -json tfplan > plan.json
+          nix develop .#github-ci -c conftest test --policy policy/terraform plan.json
+          {
+            echo "### Plan for \`$ROOT\`"
+            echo '```'
+            sed -n '/OpenTofu will perform\|No changes\./,$p' plan.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
