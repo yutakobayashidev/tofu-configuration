@@ -1,9 +1,9 @@
 # Supabase import
 
 The independent root module `infra/services/supabase` uses the official
-`supabase/supabase` provider pinned to 1.11.0. Its state is local and Git-ignored:
-`infra/services/supabase/terraform.tfstate`. Preserve and back up this state;
-HCP Terraform is not a prerequisite. Authenticate using `SUPABASE_ACCESS_TOKEN`,
+`supabase/supabase` provider pinned to 1.11.0. Its state is encrypted in R2 at
+`supabase/terraform.tfstate` in `homelab-infra-state`. Export the
+[backend credentials](service-state.md) before running OpenTofu. Authenticate using `SUPABASE_ACCESS_TOKEN`,
 never a committed token or a project API key.
 
 ```bash
