@@ -74,11 +74,29 @@ Actions read is needed to read the GitHub Environments managed by the
 The plan App stays read-only. Unlike 10X, this public personal repository
 cannot use push rulesets to stop a pull request from editing the workflows, so
 code from a pull request branch, including one opened by an AI agent, could
-use any token the plan job receives. GitHub returns merge settings such as
-`delete_branch_on_merge` only to tokens that can write, so the plan job runs
-with `-refresh=false`: it shows what the pull request changes against the state
-from the last apply. Changes made on GitHub outside OpenTofu appear only when
-apply refreshes with the apply App and reverts them. Only roots listed in `ENABLED_ROOTS` in both
+use any token the plan job receives.
+
+A read-only token cannot refresh the repository merge settings through REST.
+The GitHub REST documentation says that viewing them requires `contents:read`
+and `contents:write`, and the provider documentation repeats the
+`contents:write` requirement. Checked on 2026-11-23:
+
+| Token | REST `GET /repos/{owner}/{repo}` | GraphQL `repository` |
+| --- | --- | --- |
+| plan App (Administration: read) | Merge settings, `delete_branch_on_merge`, and `allow_auto_merge` are omitted | Actual values |
+| apply App (Administration: write, no Contents) | Actual values | Actual values |
+
+Provider v6.13.0 reads only REST and records the omitted fields as `false` or
+empty, which produces a false diff on every plan
+([integrations/terraform-provider-github#3382](https://github.com/integrations/terraform-provider-github/issues/3382)).
+The plan job therefore runs with `-refresh=false`. It shows what the pull
+request changes against the state from the last apply. Changes made on GitHub
+outside OpenTofu appear only when apply refreshes with the apply App and
+reverts them. Once a provider release reads these fields over GraphQL
+([integrations/terraform-provider-github#3741](https://github.com/integrations/terraform-provider-github/pull/3741)),
+remove `-refresh=false` so plans show drift again.
+
+Only roots listed in `ENABLED_ROOTS` in both
 workflows run in CI; add a root there after installing both Apps on its
 repository. An apply job skips its root when a later commit on `main` has
 changed it, so an older run never overwrites newer configuration.

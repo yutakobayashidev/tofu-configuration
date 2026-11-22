@@ -118,10 +118,11 @@ jobs:
         run: |
           nix develop .#github-ci -c tofu -chdir="$ROOT" init -input=false -no-color
           # The plan service account can only read state, so plan without a lock.
-          # The plan App is read-only, and GitHub returns merge settings only to
-          # tokens that can write, so a refresh would report them as false.
-          # Plan against the state from the last apply instead; apply refreshes
-          # with write access and corrects any drift.
+          # The REST API omits merge settings for the read-only plan App, and
+          # provider v6.13.0 records them as false. Plan against the state from
+          # the last apply until the provider reads them over GraphQL
+          # (integrations/terraform-provider-github#3741).
+          # See docs/gcp-github-app-signing.md.
           nix develop .#github-ci -c tofu -chdir="$ROOT" plan -input=false -no-color -lock=false -refresh=false -out=tfplan | tee plan.log
           nix develop .#github-ci -c tofu -chdir="$ROOT" show -json tfplan > plan.json
           nix develop .#github-ci -c conftest test --policy policy/terraform plan.json
