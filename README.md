@@ -25,7 +25,8 @@ R2 state (homelab-infra-state)
 ├── HCP Terraform organization and workspace settings
 ├── GitHub repositories (one state per repository)
 ├── OpenAI projects (infra/services/openai)
-└── Supabase projects and settings (infra/services/supabase)
+├── Supabase projects and settings (infra/services/supabase)
+└── Google Cloud project for GitHub App signing (infra/services/gcp)
 ```
 
 ## Prerequisites
@@ -66,6 +67,7 @@ Independent workspaces:
 | `infra/services/github/repositories/<name>/`  | R2        | One GitHub repository per root          |
 | `infra/services/openai/`                      | R2        | OpenAI projects                         |
 | `infra/services/supabase/`                    | R2        | Supabase projects and settings          |
+| `infra/services/gcp/`                         | R2        | KMS signing for GitHub App tokens       |
 
 The GitHub repository roots read credentials from the environment instead of
 `terraform.tfvars`; see [GitHub management](docs/github-management.md).
@@ -120,6 +122,12 @@ See [import coverage and limitations](docs/supabase-import.md).
 tofu -chdir=infra/services/supabase init
 tofu -chdir=infra/services/supabase plan
 ```
+
+### Google Cloud provider
+
+`infra/services/gcp` creates the `yuta-gh-signer` project, which holds the GitHub
+App private keys in Cloud KMS and lets GitHub Actions sign App JWTs through
+Workload Identity Federation. See [GitHub App signing](docs/gcp-github-app-signing.md).
 
 ## Policy Checks
 
@@ -194,6 +202,7 @@ scripts/
 | Cloudflare    | Notifications    | Access service token expiration, passive origin monitoring, Web Analytics metrics, Tunnel Health for B450M-Pro4, R2 usage alerts, Discord status webhook delivery, API-managed budget alerts (`docs/cloudflare-budget-alerts.md`)                    |
 | HCP Terraform | Organization     | yutakobayashi (2FA mandatory)                                                                                                                                                                                                                       |
 | HCP Terraform | Workspaces       | tfe, homelab, discord                                                                                                                                                                                                                               |
+| Google Cloud  | Project          | yuta-gh-signer: KMS keys and Workload Identity Federation for GitHub App tokens; see [GitHub App signing](docs/gcp-github-app-signing.md) |
 | GitHub        | Repositories     | 11 active repositories, one root each in `infra/services/github/repositories/`; see [GitHub management](docs/github-management.md)                                                                                                                  |
 
 ## Future
