@@ -11,9 +11,9 @@ OpenTofu configurations for managing cloud infrastructure.
 - **Cloudflare**: DNS, Email Routing, Email Sending (Mastodon and Gitea send from their own subdomains), R2 (Mastodon media + Obsidian backup), API tokens, notification policies, response header transforms
 - **HCP Terraform**: Remote state management and VCS-connected workspaces using local execution
 - **GitHub**: One OpenTofu root per repository using `zunoser/tfmodule-gh-repo-kit`, with encrypted state in R2; see `docs/github-management.md`
-- **OpenAI**: Official provider with local state; 162 resources imported (project, tunnels, memberships, settings, rate limits); see `docs/openai-import.md`. Home Assistant and Grafana tunnels are declared separately; see `docs/home-assistant-mcp.md` and `docs/grafana-mcp.md`
+- **OpenAI**: Official provider with encrypted R2 state; 162 resources imported (project, tunnels, memberships, settings, rate limits); see `docs/openai-import.md`. Home Assistant and Grafana tunnels are declared separately; see `docs/home-assistant-mcp.md` and `docs/grafana-mcp.md`
 
-- **Supabase**: Official provider with local state in `infra/services/supabase`; three paused projects and one retained settings resource managed (`ticket-dev` deleted, `freeschool-search` paused). Two paused projects’ settings remain blocked. See `docs/supabase-import.md`.
+- **Supabase**: Official provider with encrypted R2 state for `infra/services/supabase`; three paused projects and one retained settings resource managed (`ticket-dev` deleted, `freeschool-search` paused). Two paused projects’ settings remain blocked. See `docs/supabase-import.md`.
 
 ## Stack
 
@@ -64,8 +64,8 @@ tofu -chdir=infra/services/github/repositories/dotnix show -json tfplan | confte
 
 The workspaces managed from `infra/services/tfe` are connected to `yutakobayashidev/tofu-configuration` through the Terraform Cloud GitHub App and use local execution mode.
 
-OpenAI currently uses local state in `infra/services/openai/terraform.tfstate`; HCP setup is not required. Preserve this Git-ignored state until migrating to a remote backend. OpenAI credentials are read from the local environment, not `.tfvars`.
+OpenAI and Supabase use encrypted R2 state in `homelab-infra-state`, under `openai/terraform.tfstate` and `supabase/terraform.tfstate`. Before init, plan, apply, or state commands, load the backend credentials described in `docs/service-state.md`. Preserve the Git-ignored `terraform.tfstate.pre-r2` migration backups. OpenAI credentials use `OPENAI_ADMIN_KEY` from the environment.
 
-Supabase credentials use `SUPABASE_ACCESS_TOKEN`. Preserve its Git-ignored local state.
+Supabase credentials use `SUPABASE_ACCESS_TOKEN`.
 DB passwords are unmanaged; do not use the import placeholders to create projects.
 Do not resume paused projects just to complete import without user authorization.

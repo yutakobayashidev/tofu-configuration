@@ -1,8 +1,8 @@
 # OpenAI import coverage
 
 Inventory and import completed on 2026-10-21 using `openai/openai` v1.4.0.
-The configuration uses local state in `infra/services/openai/terraform.tfstate`.
-This Git-ignored file must be preserved until state is migrated to a remote backend.
+The configuration uses encrypted R2 state at `openai/terraform.tfstate` in
+`homelab-infra-state`. See [backend credentials and migration](service-state.md).
 
 ## Imported resources
 
@@ -23,7 +23,7 @@ The provider manages tunnel names and descriptions; associations are read-only, 
 
 Rate limits are keyed by model name. Numerical limits are Optional+Computed and are intentionally omitted so importing does not pin OpenAI's current default limits. Add explicit numerical attributes if a limit needs to be enforced through this configuration.
 
-Completed import blocks were removed to avoid publishing account-specific identifiers. Preserve the existing local state; do not apply this configuration against empty state. The final import plan contained only imports, with no resource additions, updates, or deletions.
+Completed import blocks were removed to avoid publishing account-specific identifiers. Preserve the existing state; do not apply this configuration against empty state. The final import plan contained only imports, with no resource additions, updates, or deletions.
 
 ## Not imported
 

@@ -25,9 +25,7 @@ HCP Terraform
 └── discord workspace (Discord server settings)
 
 R2 state (homelab-infra-state)
-└── GitHub repositories (one state per repository)
-
-Local state
+├── GitHub repositories (one state per repository)
 ├── OpenAI projects (infra/services/openai)
 └── Supabase projects and settings (infra/services/supabase)
 ```
@@ -35,7 +33,7 @@ Local state
 ## Prerequisites
 
 - [Nix](https://nixos.org/) (recommended) or install manually:
-  - [OpenTofu](https://opentofu.org/) >= 1.6
+  - [OpenTofu](https://opentofu.org/) >= 1.10
   - [TFLint](https://github.com/terraform-linters/tflint)
   - [Conftest](https://www.conftest.dev/)
   - [Regal](https://github.com/open-policy-agent/regal)
@@ -54,7 +52,7 @@ nix develop
 
 ### 2. HCP Terraform
 
-OpenAI and Supabase currently use local state. Other infrastructure state is managed by [HCP Terraform](https://app.terraform.io/). OpenTofu runs locally against HCP-managed state because HCP remote execution does not run OpenTofu. Authenticate once:
+OpenAI and Supabase use encrypted R2 state. See [service state credentials](docs/service-state.md). GitHub repository state also uses R2. The remaining remote workspaces use [HCP Terraform](https://app.terraform.io/). OpenTofu runs locally against HCP-managed state because HCP remote execution does not run OpenTofu. Authenticate once:
 
 ```bash
 tofu login app.terraform.io
@@ -71,8 +69,8 @@ Independent workspaces:
 | `infra/global/`                               | homelab   | Cloudflare DNS/R2, DO                   |
 | `infra/services/tfe/`                         | tfe       | HCP Terraform organization, workspaces  |
 | `infra/services/github/repositories/<name>/`  | R2        | One GitHub repository per root          |
-| `infra/services/openai/`                      | local     | OpenAI projects                         |
-| `infra/services/supabase/`                    | local     | Supabase projects and settings          |
+| `infra/services/openai/`                      | R2        | OpenAI projects                         |
+| `infra/services/supabase/`                    | R2        | Supabase projects and settings          |
 
 The GitHub repository roots read credentials from the environment instead of
 `terraform.tfvars`; see [GitHub management](docs/github-management.md).
@@ -101,7 +99,7 @@ tofu apply
 
 ### OpenAI provider
 
-`infra/services/openai` uses the [official OpenAI provider](https://github.com/openai/terraform-provider-openai), bundled in the Nix dev shell. 162 existing resources, including the Default project, four Secure/MCP tunnels, memberships, settings, and 153 model rate limits, are imported. See [import coverage and exclusions](docs/openai-import.md). State is stored at `infra/services/openai/terraform.tfstate`. This file is ignored by Git; keep a backup until remote state is configured.
+`infra/services/openai` uses the [official OpenAI provider](https://github.com/openai/terraform-provider-openai), bundled in the Nix dev shell. 162 existing resources, including the Default project, four Secure/MCP tunnels, memberships, settings, and 153 model rate limits, are imported. See [import coverage and exclusions](docs/openai-import.md). State is encrypted in R2 at `openai/terraform.tfstate`. Export the [backend credentials](docs/service-state.md) before running OpenTofu.
 
 HCP Terraform setup is not required for this module. Dedicated Home Assistant and Grafana tunnels are also declared; see [Home Assistant MCP](docs/home-assistant-mcp.md) and [Grafana MCP](docs/grafana-mcp.md) for rollout.
 
@@ -117,10 +115,10 @@ tofu -chdir=infra/services/openai plan
 
 `infra/services/supabase` uses the official Supabase provider bundled in the Nix
 dev shell. Three paused projects and the retained freeschool-search settings are managed in
-local state. Settings for two projects could not be imported while paused;
+encrypted R2 state at `supabase/terraform.tfstate`. Settings for two projects could not be imported while paused;
 freeschool-search settings were imported before pausing. Settings refresh may
 fail while projects are paused.
-Use `SUPABASE_ACCESS_TOKEN` for authentication and preserve the Git-ignored state.
+Use `SUPABASE_ACCESS_TOKEN` for authentication and export the [backend credentials](docs/service-state.md).
 See [import coverage and limitations](docs/supabase-import.md).
 
 ```bash
