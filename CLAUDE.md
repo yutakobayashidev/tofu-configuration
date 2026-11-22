@@ -10,7 +10,7 @@ OpenTofu configurations for managing cloud infrastructure.
 - **DigitalOcean**: Mastodon (future migration from Vultr), managed by OpenTofu
 - **Cloudflare**: DNS, Email Routing, Email Sending (Mastodon and Gitea send from their own subdomains), R2 (Mastodon media + Obsidian backup), API tokens, notification policies, response header transforms
 - **HCP Terraform**: Remote state management and VCS-connected workspaces using local execution
-- **GitHub**: One OpenTofu root per repository using `zunoser/tfmodule-gh-repo-kit`, with encrypted state in R2; see `docs/github-management.md`. Never apply the stale legacy root `infra/services/github/`
+- **GitHub**: One OpenTofu root per repository using `zunoser/tfmodule-gh-repo-kit`, with encrypted state in R2; see `docs/github-management.md`
 - **OpenAI**: Official provider with local state; 162 resources imported (project, tunnels, memberships, settings, rate limits); see `docs/openai-import.md`. Home Assistant and Grafana tunnels are declared separately; see `docs/home-assistant-mcp.md` and `docs/grafana-mcp.md`
 
 - **Supabase**: Official provider with local state in `infra/services/supabase`; three paused projects and one retained settings resource managed (`ticket-dev` deleted, `freeschool-search` paused). Two paused projects’ settings remain blocked. See `docs/supabase-import.md`.
@@ -31,7 +31,6 @@ OpenTofu configurations for managing cloud infrastructure.
 - `infra/services/` — Service resources (R2 buckets, tokens)
 - `infra/services/tfe/` — HCP Terraform self-management (org, VCS-connected workspaces)
 - `infra/services/github/repositories/<name>/` — One root per GitHub repository; credentials come from the environment (`docs/github-management.md`)
-- `infra/services/github/` — Legacy GitHub root (HCP workspace `github`), kept only until migration; do not apply
 - `scripts/new-github-repository` — Writes the root for a new GitHub repository
 - `infra/services/openai/` — OpenAI provider; use `OPENAI_ADMIN_KEY` for organization administration
 - `infra/global/domains/yutakobayashi-com/` — DNS records, Email Routing rules, and response header transforms for yutakobayashi.com

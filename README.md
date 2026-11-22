@@ -22,7 +22,7 @@ DigitalOcean (future)
 HCP Terraform
 ├── tfe workspace (HCP Terraform self-management)
 ├── homelab workspace (infrastructure state)
-└── github workspace (legacy GitHub state, being retired)
+└── discord workspace (Discord server settings)
 
 R2 state (homelab-infra-state)
 └── GitHub repositories (one state per repository)
@@ -71,7 +71,6 @@ Independent workspaces:
 | `infra/global/`                               | homelab   | Cloudflare DNS/R2, DO                   |
 | `infra/services/tfe/`                         | tfe       | HCP Terraform organization, workspaces  |
 | `infra/services/github/repositories/<name>/`  | R2        | One GitHub repository per root          |
-| `infra/services/github/`                      | github    | Legacy GitHub settings; do not apply    |
 | `infra/services/openai/`                      | local     | OpenAI projects                         |
 | `infra/services/supabase/`                    | local     | Supabase projects and settings          |
 
@@ -99,12 +98,6 @@ tofu apply
 | `cloudflare_zone_id`    | Cloudflare Zone ID                                                                  |
 | `domain`                | Root domain name                                                                    |
 | `do_token`              | DigitalOcean API token                                                              |
-
-#### Required Secrets (`infra/services/github/terraform.tfvars`, legacy root)
-
-| Variable       | Description                  |
-| -------------- | ---------------------------- |
-| `github_token` | GitHub Personal Access Token |
 
 ### OpenAI provider
 
@@ -175,10 +168,7 @@ infra/                              # OpenTofu configuration
 │   │   ├── organization.tf
 │   │   ├── projects.tf
 │   │   └── workspaces.tf
-│   ├── github/                     # Legacy GitHub root (being retired)
-│   │   ├── main.tf
-│   │   ├── variables.tf
-│   │   ├── repositories.tf
+│   ├── github/
 │   │   └── repositories/<name>/    # One root per GitHub repository
 │   └── openai/                     # OpenAI provider workspace
 │       ├── main.tf
@@ -210,7 +200,7 @@ scripts/
 | Cloudflare    | R2 custom domain | fedi-files.yutakobayashi.com                                                                                                                                                                                                                        |
 | Cloudflare    | Notifications    | Access service token expiration, passive origin monitoring, Web Analytics metrics, Tunnel Health for B450M-Pro4, R2 usage alerts, Discord status webhook delivery, API-managed budget alerts (`docs/cloudflare-budget-alerts.md`)                    |
 | HCP Terraform | Organization     | yutakobayashi (2FA mandatory)                                                                                                                                                                                                                       |
-| HCP Terraform | Workspaces       | tfe, homelab, github                                                                                                                                                                                                                                |
+| HCP Terraform | Workspaces       | tfe, homelab, discord                                                                                                                                                                                                                               |
 | GitHub        | Repositories     | 11 active repositories, one root each in `infra/services/github/repositories/`; see [GitHub management](docs/github-management.md)                                                                                                                  |
 
 ## Future
