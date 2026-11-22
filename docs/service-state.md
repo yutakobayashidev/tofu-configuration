@@ -1,25 +1,34 @@
-# OpenAI and Supabase state
+# R2 state
 
-OpenAI and Supabase use the existing `homelab-infra-state` R2 bucket.
-Their keys are `openai/terraform.tfstate` and `supabase/terraform.tfstate`.
-Both roots require OpenTofu 1.10 or later, use S3 lock files, and enforce
+The OpenTofu roots use encrypted state in the `homelab-infra-state` R2
+bucket. They require OpenTofu 1.10 or later, use S3 lock files, and enforce
 AES-GCM encryption for state and saved plans.
+
+| Root | State key |
+| --- | --- |
+| `infra/global` | `homelab/terraform.tfstate` |
+| `infra/services/discord/yuta-studio` | `discord/terraform.tfstate` |
+| `infra/services/tfe` | `tfe/terraform.tfstate` |
+| `infra/services/openai` | `openai/terraform.tfstate` |
+| `infra/services/supabase` | `supabase/terraform.tfstate` |
+| `infra/services/github/repositories/<name>` | `github/repositories/<name>/terraform.tfstate` |
 
 ## Credentials
 
-Export backend credentials before running init, plan, apply, or state commands.
+Load the R2 credentials and encryption passphrase before running OpenTofu.
 
 ```bash
-export AWS_ACCESS_KEY_ID="$(tofu -chdir=infra/global output -raw homelab_infra_state_access_key_id)"
-export AWS_SECRET_ACCESS_KEY="$(tofu -chdir=infra/global output -raw homelab_infra_state_secret_access_key)"
-export AWS_ENDPOINT_URL_S3="https://<cloudflare_account_id>.r2.cloudflarestorage.com"
+source ~/.config/tofu-configuration/r2.env
 export TF_VAR_state_encryption_passphrase="$(cat ~/.config/tofu-configuration/state-passphrase)"
 ```
 
-These roots use the existing tofu-configuration passphrase also used by the
-GitHub repository roots. Keep its password-manager backup. Credentials belong
-in the environment. The R2 credentials above are available through the HCP
-`homelab` workspace.
+On a new machine, restore the R2 S3 access key, secret access key, and account
+endpoint from your secret store. Export them as `AWS_ACCESS_KEY_ID`,
+`AWS_SECRET_ACCESS_KEY`, and `AWS_ENDPOINT_URL_S3`, or save the three exports
+in `r2.env` with mode 600. The endpoint has the form
+`https://<cloudflare_account_id>.r2.cloudflarestorage.com`. Keep these
+credentials outside OpenTofu so `infra/global` can open its own state.
+Restore the existing state passphrase from its password-manager backup.
 
 For resource refresh and changes, also provide `OPENAI_ADMIN_KEY` or
 `SUPABASE_ACCESS_TOKEN`, respectively.
@@ -32,7 +41,7 @@ tofu -chdir=infra/services/supabase init
 tofu -chdir=infra/services/supabase plan
 ```
 
-## Migration on 2026-11-22
+## OpenAI and Supabase migration on 2026-11-22
 
 The MacBook copies were used as the source following the owner's confirmation
 that there had been no subsequent operations. The original OpenAI state had
@@ -51,3 +60,33 @@ Both roots passed configuration validation and formatting checks. Resource
 plans remain unverified because this session had neither `OPENAI_ADMIN_KEY`
 nor `SUPABASE_ACCESS_TOKEN`. Even `plan -refresh=false` requires provider
 credentials. Supabase settings refresh may also fail while projects are paused.
+
+
+## HCP state cutover
+
+The `discord`, `homelab`, and `tfe` HCP state snapshots were copied to R2.
+`homelab` reads the encrypted Discord state to obtain the notification webhook.
+The `tfe` root still uses the HCP API to manage the organization and workspaces.
+
+| HCP workspace | Source serial | Managed instances |
+| --- | ---: | ---: |
+| `discord` | 641 | 233 |
+| `homelab` | 106 | 96 |
+| `tfe` | 10 | 7 |
+
+Freeze writes to the old workspaces before switching shared operations to R2.
+Confirm that the HCP snapshots have not advanced since the copy, then lock the
+old workspaces to prevent writes from checkouts that still use the old backend.
+Retain the HCP workspaces and snapshot history for rollback.
+
+With the R2 credentials loaded, switch each existing checkout to the new
+backend using `init -reconfigure`.
+
+```bash
+tofu -chdir=infra/services/discord/yuta-studio init -reconfigure
+tofu -chdir=infra/global init -reconfigure
+tofu -chdir=infra/services/tfe init -reconfigure
+```
+
+Use the Discord provider credentials for the Discord root and HCP provider
+credentials for the tfe root. Review each plan before applying any change.

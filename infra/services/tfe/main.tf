@@ -1,13 +1,5 @@
 terraform {
-  required_version = ">= 1.6"
-
-  cloud {
-    hostname     = "app.terraform.io"
-    organization = "yutakobayashi"
-    workspaces {
-      name = "tfe"
-    }
-  }
+  required_version = ">= 1.10"
 
   required_providers {
     tfe = {

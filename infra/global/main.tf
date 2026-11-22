@@ -1,13 +1,5 @@
 terraform {
-  required_version = ">= 1.6"
-
-  cloud {
-    hostname     = "app.terraform.io"
-    organization = "yutakobayashi"
-    workspaces {
-      name = "homelab"
-    }
-  }
+  required_version = ">= 1.10"
 
   required_providers {
     digitalocean = {
@@ -32,14 +24,18 @@ provider "cloudflare" {
 }
 
 data "terraform_remote_state" "discord" {
-  backend = "remote"
+  backend = "s3"
 
   config = {
-    hostname     = "app.terraform.io"
-    organization = "yutakobayashi"
-    workspaces = {
-      name = "discord"
-    }
+    bucket                      = "homelab-infra-state"
+    key                         = "discord/terraform.tfstate"
+    region                      = "auto"
+    skip_credentials_validation = true
+    skip_region_validation      = true
+    skip_metadata_api_check     = true
+    skip_requesting_account_id  = true
+    skip_s3_checksum            = true
+    use_path_style              = true
   }
 }
 
