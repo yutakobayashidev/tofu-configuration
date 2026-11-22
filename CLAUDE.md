@@ -10,7 +10,7 @@ OpenTofu configurations for managing cloud infrastructure.
 - **DigitalOcean**: Mastodon (future migration from Vultr), managed by OpenTofu
 - **Cloudflare**: DNS, Email Routing, Email Sending (Mastodon and Gitea send from their own subdomains), R2 (Mastodon media + Obsidian backup), API tokens, notification policies, response header transforms
 - **HCP Terraform**: Remote state management and VCS-connected workspaces using local execution
-- **GitHub**: Repository settings managed via OpenTofu
+- **GitHub**: One OpenTofu root per repository using `zunoser/tfmodule-gh-repo-kit`, with encrypted state in R2; see `docs/github-management.md`
 - **OpenAI**: Official provider with local state; 162 resources imported (project, tunnels, memberships, settings, rate limits); see `docs/openai-import.md`. Home Assistant and Grafana tunnels are declared separately; see `docs/home-assistant-mcp.md` and `docs/grafana-mcp.md`
 
 - **Supabase**: Official provider with local state in `infra/services/supabase`; three paused projects and one retained settings resource managed (`ticket-dev` deleted, `freeschool-search` paused). Two paused projects’ settings remain blocked. See `docs/supabase-import.md`.
@@ -20,7 +20,7 @@ OpenTofu configurations for managing cloud infrastructure.
 | Layer           | Tool            | Purpose                                        |
 | --------------- | --------------- | ---------------------------------------------- |
 | Infrastructure  | OpenTofu        | DO, Cloudflare, GitHub, OpenAI, HCP Terraform  |
-| State           | HCP Terraform   | Remote state storage                           |
+| State           | HCP Terraform, R2 | Remote state storage                         |
 | Lint            | TFLint          | OpenTofu static analysis                       |
 | Policy          | Conftest        | OpenTofu plan policy checks                    |
 | Dev Environment | Nix flake-parts | Tools, MCP servers, agent skills               |
@@ -30,7 +30,8 @@ OpenTofu configurations for managing cloud infrastructure.
 - `infra/global/` — Root module (providers, backend, variables, outputs)
 - `infra/services/` — Service resources (R2 buckets, tokens)
 - `infra/services/tfe/` — HCP Terraform self-management (org, VCS-connected workspaces)
-- `infra/services/github/` — GitHub repository settings
+- `infra/services/github/repositories/<name>/` — One root per GitHub repository; credentials come from the environment (`docs/github-management.md`)
+- `scripts/new-github-repository` — Writes the root for a new GitHub repository
 - `infra/services/openai/` — OpenAI provider; use `OPENAI_ADMIN_KEY` for organization administration
 - `infra/global/domains/yutakobayashi-com/` — DNS records, Email Routing rules, and response header transforms for yutakobayashi.com
 - `infra/global/domains/yutakobayashi-dev/` — DNS records and Email Routing rules for yutakobayashi.dev
@@ -43,8 +44,12 @@ OpenTofu configurations for managing cloud infrastructure.
 # OpenTofu (each workspace is independent)
 cd infra/global && tofu init && tofu plan && tofu apply
 cd infra/services/tfe && tofu init && tofu plan && tofu apply
-cd infra/services/github && tofu init && tofu plan && tofu apply
 cd infra/services/openai && tofu init && tofu plan && tofu apply
+
+# GitHub repository roots (export the credentials in docs/github-management.md first)
+tofu -chdir=infra/services/github/repositories/<name> init
+tofu -chdir=infra/services/github/repositories/<name> plan
+nix develop -c scripts/new-github-repository <name> "<description>" public
 
 # TFLint
 cd infra/global && tflint --init && tflint
@@ -53,8 +58,8 @@ cd infra/global && tflint --init && tflint
 conftest verify --policy policy/terraform
 
 # Policy check for a saved plan (from repository root)
-tofu -chdir=infra/services/github plan -out=tfplan
-tofu -chdir=infra/services/github show -json tfplan | conftest test --policy policy/terraform -
+tofu -chdir=infra/services/github/repositories/dotnix plan -out=tfplan
+tofu -chdir=infra/services/github/repositories/dotnix show -json tfplan | conftest test --policy policy/terraform -
 ```
 
 The workspaces managed from `infra/services/tfe` are connected to `yutakobayashidev/tofu-configuration` through the Terraform Cloud GitHub App and use local execution mode.

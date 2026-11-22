@@ -138,6 +138,7 @@
               cf
               cf-terraforming
               conftest
+              jq
               (opentofu.withPlugins (p: [
                 # nixpkgs ships 5.27.0, which plans an update for every dns_record whose
                 # state lacks include_shadow_metadata (fixed in 5.28.0). Switch back to
