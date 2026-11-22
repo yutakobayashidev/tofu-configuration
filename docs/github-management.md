@@ -3,12 +3,13 @@
 Each repository has its own OpenTofu root in
 `infra/services/github/repositories/<name>/`. The root calls
 [`zunoser/tfmodule-gh-repo-kit`](https://github.com/zunoser/tfmodule-gh-repo-kit)
-and keeps its state in its own object in the `homelab-infra-state` R2 bucket,
-which dotnix also uses. A plan or apply therefore touches only one repository.
+and keeps its state in its own object in the `yuta-gh-signer-github-tfstate`
+Google Cloud Storage bucket. A plan or apply therefore touches only one
+repository.
 
 | File | Contents |
 | --- | --- |
-| `backend.tf` | R2 backend with the key `github/repositories/<name>/terraform.tfstate`, state and plan encryption |
+| `backend.tf` | GCS backend with the prefix `repositories/<name>`, state and plan encryption with Cloud KMS |
 | `provider.tf` | GitHub provider for `yutakobayashidev` |
 | `versions.tf` | OpenTofu and provider constraints |
 | `module_gh_repo_kit.tf` | Repository settings |
@@ -21,8 +22,12 @@ the merge.
 
 ## Credentials
 
-Load the [R2 credentials and state passphrase](service-state.md#credentials),
-then provide the GitHub provider token through the environment.
+The GitHub roots use neither the R2 credentials nor the state passphrase.
+State access and encryption use Google Cloud credentials from
+`gcloud auth application-default login`, so CI reaches them through Workload
+Identity Federation without a static secret. See
+[GitHub App signing](gcp-github-app-signing.md#github-repository-state).
+Provide the GitHub provider token through the environment.
 
 ```bash
 export GITHUB_TOKEN="$(gh auth token)"
