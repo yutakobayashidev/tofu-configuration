@@ -102,14 +102,23 @@ jobs:
           service_account: github-app-plan@yuta-gh-signer.iam.gserviceaccount.com
 
       - id: state
+        env:
+          ROOT_NAME: ${{ matrix.root }}
         run: |
           # A root without state manages a repository that does not exist yet.
-          nix develop .#github-ci -c tofu -chdir="$ROOT" init -input=false -no-color
-          if [ -z "$(nix develop .#github-ci -c tofu -chdir="$ROOT" state list)" ]; then
-            echo "new=true" >> "$GITHUB_OUTPUT"
-          else
+          if listing=$(gcloud storage ls "gs://yuta-gh-signer-github-tfstate/repositories/$ROOT_NAME/" 2>&1); then
             echo "new=false" >> "$GITHUB_OUTPUT"
+          elif grep -q 'matched no objects' <<<"$listing"; then
+            echo "new=true" >> "$GITHUB_OUTPUT"
+            # Initializing an empty GCS prefix writes a lock and an empty state,
+            # which the read-only plan service account cannot do. A new root
+            # has no state to read, so plan it against an empty local state.
+            printf 'terraform {\n  backend "local" {}\n}\n' > "$ROOT/ci_backend_override.tf"
+          else
+            echo "$listing"
+            exit 1
           fi
+          nix develop .#github-ci -c tofu -chdir="$ROOT" init -input=false -no-color
 
       - id: token
         if: steps.state.outputs.new == 'false'
