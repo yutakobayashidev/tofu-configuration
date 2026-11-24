@@ -51,7 +51,12 @@ jobs:
         with:
           persist-credentials: false
 
-      - uses: cachix/install-nix-action@v32.0.0
+      - name: Install Nix
+        uses: nixbuild/nix-quick-install-action@v35
+        with:
+          github_access_token: ${{ github.token }}
+          nix_conf: |
+            access-tokens = github.com=${{ github.token }}
 
       - name: Write the root
         # The script validates the name before it is used anywhere else.
