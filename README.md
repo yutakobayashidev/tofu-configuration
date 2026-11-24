@@ -50,10 +50,14 @@ nix develop
 # OpenTofu providers are bundled in the dev shell
 ```
 
-### 2. R2 backend credentials
+### 2. Credentials
 
-[Load the R2 credentials and state passphrase](docs/service-state.md#credentials)
-before initializing a root.
+Secrets live in 1Password. `op.env` lists their references, so run OpenTofu
+through `op run` (see [credentials](docs/service-state.md#credentials)):
+
+```bash
+op run --env-file=op.env -- tofu -chdir=infra/global plan
+```
 
 ### 3. OpenTofu
 
@@ -68,22 +72,19 @@ Independent workspaces:
 | `infra/services/supabase/`                    | R2        | Supabase projects and settings          |
 | `infra/services/gcp/`                         | R2        | KMS signing for GitHub App tokens       |
 
-The GitHub repository roots read credentials from the environment instead of
-`terraform.tfvars`; see [GitHub management](docs/github-management.md).
+The GitHub repository roots use Google Cloud credentials and run in CI; see
+[GitHub management](docs/github-management.md).
 
 ```bash
-cd infra/global
-
-# Create and edit variables file
-cp terraform.tfvars.example terraform.tfvars
-
-# Init, plan, apply
-tofu init
-tofu plan
-tofu apply
+op run --env-file=op.env -- tofu -chdir=infra/global init
+op run --env-file=op.env -- tofu -chdir=infra/global plan
+op run --env-file=op.env -- tofu -chdir=infra/global apply
 ```
 
-#### Required Secrets (`infra/global/terraform.tfvars`)
+#### `infra/global` variables
+
+`op.env` supplies them as `TF_VAR_*` from the `tofu-configuration-global`
+1Password item. `terraform.tfvars.example` lists them for reference.
 
 | Variable                | Description                                                                         |
 | ----------------------- | ----------------------------------------------------------------------------------- |

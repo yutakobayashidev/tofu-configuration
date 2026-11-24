@@ -15,25 +15,27 @@ AES-GCM encryption for state and saved plans.
 The GitHub repository roots moved to Google Cloud Storage on 2026-11-23 so that
 CI can reach their state without a static credential. See
 [GitHub App signing](gcp-github-app-signing.md#github-repository-state). Their
-earlier objects under `github/repositories/` in this bucket remain as a rollback
-copy, encrypted with the shared passphrase, and are no longer updated.
+earlier objects under `github/repositories/` were deleted from this bucket on
+2026-11-24.
 
 ## Credentials
 
-Load the R2 credentials and encryption passphrase before running OpenTofu.
+Secrets live in 1Password (Personal vault), and `op.env` at the repository
+root lists their references, never their values. Run OpenTofu through `op run`:
 
 ```bash
-source ~/.config/tofu-configuration/r2.env
-export TF_VAR_state_encryption_passphrase="$(cat ~/.config/tofu-configuration/state-passphrase)"
+op run --env-file=op.env -- tofu -chdir=infra/services/openai plan
 ```
 
-On a new machine, restore the R2 S3 access key, secret access key, and account
-endpoint from your secret store. Export them as `AWS_ACCESS_KEY_ID`,
-`AWS_SECRET_ACCESS_KEY`, and `AWS_ENDPOINT_URL_S3`, or save the three exports
-in `r2.env` with mode 600. The endpoint has the form
-`https://<cloudflare_account_id>.r2.cloudflarestorage.com`. Keep these
-credentials outside OpenTofu so `infra/global` can open its own state.
-Restore the existing state passphrase from its password-manager backup.
+| 1Password item | Provides |
+| --- | --- |
+| `tofu-configuration-r2` | R2 S3 access key, secret key, and endpoint |
+| GitHub OpenTofu state | State and plan encryption passphrase for every R2 root |
+| `tofu-configuration-global` | `infra/global` variables (Cloudflare) |
+| Discord bot token (yuta-studio) | `DISCORD_TOKEN` for the Discord root |
+
+Keep the R2 credentials outside OpenTofu so `infra/global` can open its own
+state. On a new machine, sign in to the 1Password CLI; nothing else is needed.
 
 For resource refresh and changes, also provide `OPENAI_ADMIN_KEY` or
 `SUPABASE_ACCESS_TOKEN`, respectively.
@@ -79,5 +81,5 @@ The Discord root reads its bot token from `DISCORD_TOKEN`. The token is stored
 in 1Password as "Discord bot token (yuta-studio)" in the Personal vault:
 
 ```bash
-export DISCORD_TOKEN="$(op item get "Discord bot token (yuta-studio)" --vault Personal --fields credential --reveal)"
+op run --env-file=op.env -- tofu -chdir=infra/services/discord/yuta-studio plan
 ```

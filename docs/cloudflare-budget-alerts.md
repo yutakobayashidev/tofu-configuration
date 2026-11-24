@@ -77,8 +77,8 @@ they do not pause traffic, cap usage, or prevent charges.
 ## Verify
 
 ```bash
-account_id=$(sed -n 's/^cloudflare_account_id[[:space:]]*=[[:space:]]*"\(.*\)"/\1/p' infra/global/terraform.tfvars)
-api_token=$(sed -n 's/^cloudflare_api_token[[:space:]]*=[[:space:]]*"\(.*\)"/\1/p' infra/global/terraform.tfvars)
+account_id=$(op read op://Personal/tofu-configuration-global/cloudflare_account_id)
+api_token=$(op read op://Personal/tofu-configuration-global/cloudflare_api_token)
 
 curl -fsS \
   -H "Authorization: Bearer $api_token" \
