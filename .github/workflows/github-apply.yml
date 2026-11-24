@@ -136,6 +136,16 @@ jobs:
           workload_identity_provider: projects/17441306233/locations/global/workloadIdentityPools/github-actions/providers/tofu-configuration
           service_account: github-app-apply@yuta-gh-signer.iam.gserviceaccount.com
 
+      # The dotnix and tofu-configuration roots declare the Discord webhook for
+      # repository events. Secret Manager holds a copy of the Discord root's
+      # output; see docs/gcp-github-app-signing.md.
+      - name: Read the Discord webhook for repository events
+        if: steps.current.outputs.apply == 'true'
+        run: |
+          url=$(gcloud secrets versions access latest --secret=github-repository-discord-webhook --project=yuta-gh-signer)
+          echo "::add-mask::$url"
+          echo "TF_VAR_discord_github_webhook_url=$url" >> "$GITHUB_ENV"
+
       - id: state
         if: steps.current.outputs.apply == 'true'
         run: |
@@ -162,6 +172,7 @@ jobs:
           permission_administration: write
           permission_issues: write
           permission_actions: read
+          permission_repository_hooks: write
 
       # A new root creates its repository. A token cannot be scoped to a
       # repository that does not exist, so it covers the whole installation, as
@@ -296,6 +307,15 @@ jobs:
           workload_identity_provider: projects/17441306233/locations/global/workloadIdentityPools/github-actions/providers/tofu-configuration
           service_account: github-app-apply@yuta-gh-signer.iam.gserviceaccount.com
 
+      # The dotnix and tofu-configuration roots declare the Discord webhook for
+      # repository events. Secret Manager holds a copy of the Discord root's
+      # output; see docs/gcp-github-app-signing.md.
+      - name: Read the Discord webhook for repository events
+        run: |
+          url=$(gcloud secrets versions access latest --secret=github-repository-discord-webhook --project=yuta-gh-signer)
+          echo "::add-mask::$url"
+          echo "TF_VAR_discord_github_webhook_url=$url" >> "$GITHUB_ENV"
+
       - id: state
         run: |
           nix develop .#github-ci -c tofu -chdir="$ROOT" init -input=false -no-color
@@ -321,6 +341,7 @@ jobs:
           permission_administration: write
           permission_issues: write
           permission_actions: read
+          permission_repository_hooks: read
 
       # GitHub returns a new ruleset etag on every read, so an etag-only change
       # is not drift. -lock=false keeps this read-only check from blocking an

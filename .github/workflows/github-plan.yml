@@ -107,6 +107,15 @@ jobs:
           workload_identity_provider: projects/17441306233/locations/global/workloadIdentityPools/github-actions/providers/tofu-configuration
           service_account: github-app-plan@yuta-gh-signer.iam.gserviceaccount.com
 
+      # The dotnix and tofu-configuration roots declare the Discord webhook for
+      # repository events. Secret Manager holds a copy of the Discord root's
+      # output; see docs/gcp-github-app-signing.md.
+      - name: Read the Discord webhook for repository events
+        run: |
+          url=$(gcloud secrets versions access latest --secret=github-repository-discord-webhook --project=yuta-gh-signer)
+          echo "::add-mask::$url"
+          echo "TF_VAR_discord_github_webhook_url=$url" >> "$GITHUB_ENV"
+
       - id: state
         env:
           ROOT_NAME: ${{ matrix.root }}
@@ -141,6 +150,7 @@ jobs:
           permission_administration: read
           permission_issues: read
           permission_actions: read
+          permission_repository_hooks: read
 
       # A token cannot be scoped to a repository that does not exist, so a new
       # root gets a read-only token for the whole installation, as 10X does.
@@ -158,6 +168,7 @@ jobs:
           permission_administration: read
           permission_issues: read
           permission_actions: read
+          permission_repository_hooks: read
 
       - name: Plan
         env:
