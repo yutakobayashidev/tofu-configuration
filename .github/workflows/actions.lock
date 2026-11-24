@@ -6,16 +6,16 @@ workflows:
     '.github/workflows/ci.yml': []
     '.github/workflows/github-apply.yml':
         - 'actions/checkout@v7.0.1'
-        - 'cachix/install-nix-action@v32.0.0'
         - 'google-github-actions/auth@v3.0.0'
+        - 'nixbuild/nix-quick-install-action@v35'
         - 'yagihash/ghat@v2.5.1'
     '.github/workflows/github-new-repository.yml':
         - 'actions/checkout@v7.0.1'
-        - 'cachix/install-nix-action@v32.0.0'
+        - 'nixbuild/nix-quick-install-action@v35'
     '.github/workflows/github-plan.yml':
         - 'actions/checkout@v7.0.1'
-        - 'cachix/install-nix-action@v32.0.0'
         - 'google-github-actions/auth@v3.0.0'
+        - 'nixbuild/nix-quick-install-action@v35'
         - 'yagihash/ghat@v2.5.1'
 dependencies:
     'actions/checkout@v7.0.1':
@@ -23,16 +23,16 @@ dependencies:
         commit: 'sha1-3d3c42e5aac5ba805825da76410c181273ba90b1'
         owner_id: 44036562
         repo_id: 197814629
-    'cachix/install-nix-action@v32.0.0':
-        ref: 'v32.0.0'
-        commit: 'sha1-bb0495a1086c46893eee56f32fd192dfe4a15bb9'
-        owner_id: 36824654
-        repo_id: 212301524
     'google-github-actions/auth@v3.0.0':
         ref: 'v3.0.0'
         commit: 'sha1-7c6bc770dae815cd3e89ee6cdf493a5fab2cc093'
         owner_id: 71461757
         repo_id: 407242578
+    'nixbuild/nix-quick-install-action@v35':
+        ref: 'v35'
+        commit: 'sha1-9f63be77f412a248c9d9a65a4c82cf066cdf8f0c'
+        owner_id: 60610456
+        repo_id: 296639338
     'yagihash/ghat@v2.5.1':
         ref: 'v2.5.1'
         commit: 'sha1-835b74ff6cd3e48f13132a4c1fd914d5d10ddbd9'
