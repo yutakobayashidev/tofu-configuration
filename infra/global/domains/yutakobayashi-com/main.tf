@@ -40,6 +40,13 @@ locals {
       proxied = true
       type    = "CNAME"
     }
+    sts = {
+      comment = "Octo STS on B450M-Pro4 (dotnix)"
+      content = "${cloudflare_zero_trust_tunnel_cloudflared.b450m_pro4.id}.cfargotunnel.com"
+      name    = "sts"
+      proxied = true
+      type    = "CNAME"
+    }
     tag = {
       content = "${cloudflare_zero_trust_tunnel_cloudflared.b450m_pro4.id}.cfargotunnel.com"
       name    = "tag"
