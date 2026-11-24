@@ -1,5 +1,5 @@
 module "repository" {
-  source = "git::https://github.com/zunoser/tfmodule-gh-repo-kit.git?ref=2871fec43812d4da413808013232c7234bd2f718"
+  source = "git::https://github.com/zunoser/tfmodule-gh-repo-kit.git?ref=64642f92df10dd1dbebeb55e8ab51072f4be3efc"
 
   name        = "edcb-tools"
   description = "Rust client library, CLI, and MCP server for EDCB/EpgTimer CtrlCmd."
