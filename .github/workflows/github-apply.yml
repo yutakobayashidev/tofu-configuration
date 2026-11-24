@@ -68,6 +68,8 @@ jobs:
     permissions:
       contents: read
       id-token: write
+      # Comment on the merged pull request when the apply fails.
+      pull-requests: write
     strategy:
       fail-fast: false
       max-parallel: 5
@@ -169,3 +171,29 @@ jobs:
             sed -n '/OpenTofu will perform\|No changes\./,$p' apply.log
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+
+      # As 10X does, report a failed apply to chat and to the merged pull
+      # request. The Discord webhook URL comes from Secret Manager, which only
+      # the apply service account can read. See docs/gcp-github-app-signing.md.
+      - name: Report the failure
+        if: failure() && steps.current.outputs.apply == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ROOT_NAME: ${{ matrix.root }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set +e
+          pr=$(gh api "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/pulls" --jq '.[0].number // empty')
+          message="github-apply failed for \`$ROOT_NAME\` at ${GITHUB_SHA:0:7}${pr:+ (#$pr)}: $RUN_URL"
+          webhook=$(gcloud secrets versions access latest --secret=github-apply-discord-webhook --project=yuta-gh-signer)
+          if [ -n "$webhook" ]; then
+            echo "::add-mask::$webhook"
+            jq -n --arg c "$message" '{content: $c, allowed_mentions: {parse: []}}' |
+              curl -sS --fail -o /dev/null -H 'Content-Type: application/json' -d @- "$webhook" ||
+              echo "::warning::Could not post to Discord"
+          else
+            echo "::warning::Could not read the Discord webhook from Secret Manager"
+          fi
+          if [ -n "$pr" ]; then
+            gh pr comment "$pr" --repo "$GITHUB_REPOSITORY" --body "$message" || echo "::warning::Could not comment on #$pr"
+          fi
