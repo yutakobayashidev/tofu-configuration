@@ -105,6 +105,15 @@ resource "cloudflare_notification_policy_webhooks" "discord_status" {
   name       = "Discord Status"
   url        = nonsensitive(join("/", slice(local.discord_status_webhook_url_parts, 0, 6)))
   secret     = local.discord_status_webhook_url_parts[6]
+
+  # The Cloudflare API returns Discord webhook URLs redacted as
+  # "https://discord.com/...", so every refresh would report a URL change.
+  # Cloudflare cannot change a webhook's URL in place, and the provider
+  # replaces the webhook when it does (cloudflare/terraform-provider-cloudflare#7358).
+  # To point at a new Discord webhook, drop this ignore for that apply.
+  lifecycle {
+    ignore_changes = [url]
+  }
 }
 
 resource "cloudflare_notification_policy" "this" {
