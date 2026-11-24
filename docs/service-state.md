@@ -61,5 +61,5 @@ For resource refresh and changes, also provide `OPENAI_ADMIN_KEY` or
 - 2026-11-24: the remaining roots moved from R2 to GCS because R2 has no object
   versioning. Each state was read back and compared on resources and outputs,
   and every root planned with no changes. The `homelab-infra-state` R2 bucket
-  now holds only dotnix's states. The R2 copies of this repository's states,
-  encrypted with the old shared passphrase, were kept for rollback.
+  now holds only dotnix's states. The R2 copies were deleted the same day, and
+  the R2 key and passphrase items were archived in 1Password.
