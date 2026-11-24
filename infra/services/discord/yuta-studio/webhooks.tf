@@ -180,3 +180,11 @@ resource "discord_webhook" "tofu_configuration_ci" {
   channel_id = discord_text_channel.txt_infra_warning.id
   name       = "tofu-configuration CI"
 }
+
+# Repository webhooks of dotnix and tofu-configuration post GitHub events to
+# house/#github. The gcp root copies the URL into Secret Manager for the GitHub
+# repository roots, which add `/github` for GitHub's payload format.
+resource "discord_webhook" "house_github" {
+  channel_id = discord_text_channel.txt_github.id
+  name       = "GitHub"
+}
