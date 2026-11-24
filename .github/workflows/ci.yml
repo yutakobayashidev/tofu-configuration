@@ -1,4 +1,4 @@
-name: GitHub Actions lint
+name: CI
 
 on:
   pull_request:
