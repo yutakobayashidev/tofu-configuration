@@ -9,7 +9,6 @@ OpenTofu configurations for managing cloud infrastructure.
 
 - **DigitalOcean**: Mastodon (future migration from Vultr), managed by OpenTofu
 - **Cloudflare**: DNS, Email Routing, Email Sending (Mastodon and Gitea send from their own subdomains), R2 (Mastodon media + Obsidian backup), API tokens, notification policies, response header transforms
-- **HCP Terraform**: Organization and VCS-connected workspaces managed by the tfe provider
 - **GitHub**: One OpenTofu root per repository using `zunoser/tfmodule-gh-repo-kit`, with state in Google Cloud Storage encrypted by Cloud KMS; see `docs/github-management.md`
 - **OpenAI**: Official provider with encrypted R2 state; 162 resources imported (project, tunnels, memberships, settings, rate limits); see `docs/openai-import.md`. Home Assistant and Grafana tunnels are declared separately; see `docs/home-assistant-mcp.md` and `docs/grafana-mcp.md`
 
@@ -19,7 +18,7 @@ OpenTofu configurations for managing cloud infrastructure.
 
 | Layer           | Tool            | Purpose                                        |
 | --------------- | --------------- | ---------------------------------------------- |
-| Infrastructure  | OpenTofu        | DO, Cloudflare, GitHub, OpenAI, HCP Terraform  |
+| Infrastructure  | OpenTofu        | DO, Cloudflare, GitHub, OpenAI, Google Cloud   |
 | State           | Cloudflare R2, GCS | Remote state storage (GCS for GitHub roots) |
 | Lint            | TFLint          | OpenTofu static analysis                       |
 | Policy          | Conftest        | OpenTofu plan policy checks                    |
@@ -29,7 +28,6 @@ OpenTofu configurations for managing cloud infrastructure.
 
 - `infra/global/` — Root module (providers, backend, variables, outputs)
 - `infra/services/` — Service resources (R2 buckets, tokens)
-- `infra/services/tfe/` — HCP Terraform self-management (org, VCS-connected workspaces)
 - `infra/services/github/repositories/<name>/` — One root per GitHub repository; credentials come from the environment (`docs/github-management.md`)
 - `scripts/new-github-repository` — Writes the root for a new GitHub repository
 - `infra/services/openai/` — OpenAI provider; use `OPENAI_ADMIN_KEY` for organization administration
@@ -44,7 +42,6 @@ OpenTofu configurations for managing cloud infrastructure.
 ```bash
 # OpenTofu (each workspace is independent)
 cd infra/global && tofu init && tofu plan && tofu apply
-cd infra/services/tfe && tofu init && tofu plan && tofu apply
 cd infra/services/openai && tofu init && tofu plan && tofu apply
 
 # GitHub repository roots (export the credentials in docs/github-management.md first)
@@ -63,9 +60,7 @@ tofu -chdir=infra/services/github/repositories/dotnix plan -out=tfplan
 tofu -chdir=infra/services/github/repositories/dotnix show -json tfplan | conftest test --policy policy/terraform -
 ```
 
-The workspaces managed from `infra/services/tfe` are connected to `yutakobayashidev/tofu-configuration` through the Terraform Cloud GitHub App and use local execution mode.
-
-Before init, plan, apply, or state commands for any root except the GitHub roots, load the R2 credentials and passphrase from `docs/service-state.md`. The GitHub roots use Google Cloud credentials instead (`docs/github-management.md`). See its HCP cutover section when switching an existing HCP-backed checkout. Preserve the Git-ignored `terraform.tfstate.pre-r2` migration backups. OpenAI credentials use `OPENAI_ADMIN_KEY` from the environment.
+Before init, plan, apply, or state commands for any root except the GitHub roots, load the R2 credentials and passphrase from `docs/service-state.md`. The GitHub roots use Google Cloud credentials instead (`docs/github-management.md`). Preserve the Git-ignored `terraform.tfstate.pre-r2` migration backups. OpenAI credentials use `OPENAI_ADMIN_KEY` from the environment.
 
 Supabase credentials use `SUPABASE_ACCESS_TOKEN`.
 DB passwords are unmanaged; do not use the import placeholders to create projects.

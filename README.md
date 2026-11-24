@@ -22,7 +22,6 @@ DigitalOcean (future)
 R2 state (homelab-infra-state)
 ├── Homelab infrastructure
 ├── Discord server settings
-├── HCP Terraform organization and workspace settings
 ├── OpenAI projects (infra/services/openai)
 ├── Supabase projects and settings (infra/services/supabase)
 └── Google Cloud project for GitHub App signing (infra/services/gcp)
@@ -54,8 +53,7 @@ nix develop
 ### 2. R2 backend credentials
 
 [Load the R2 credentials and state passphrase](docs/service-state.md#credentials)
-before initializing a root. The `tfe` root also needs HCP Terraform provider
-credentials to manage the HCP organization and workspaces.
+before initializing a root.
 
 ### 3. OpenTofu
 
@@ -65,7 +63,6 @@ Independent workspaces:
 | --------------------------------------------- | --------- | --------------------------------------- |
 | `infra/global/`                               | R2        | Cloudflare DNS/R2, DO                   |
 | `infra/services/discord/yuta-studio/`         | R2        | Discord server settings                  |
-| `infra/services/tfe/`                         | R2        | HCP Terraform organization, workspaces  |
 | `infra/services/github/repositories/<name>/`  | GCS       | One GitHub repository per root          |
 | `infra/services/openai/`                      | R2        | OpenAI projects                         |
 | `infra/services/supabase/`                    | R2        | Supabase projects and settings          |
@@ -75,7 +72,7 @@ The GitHub repository roots read credentials from the environment instead of
 `terraform.tfvars`; see [GitHub management](docs/github-management.md).
 
 ```bash
-cd infra/global  # or infra/services/tfe
+cd infra/global
 
 # Create and edit variables file
 cp terraform.tfvars.example terraform.tfvars
@@ -100,7 +97,7 @@ tofu apply
 
 `infra/services/openai` uses the [official OpenAI provider](https://github.com/openai/terraform-provider-openai), bundled in the Nix dev shell. 162 existing resources, including the Default project, four Secure/MCP tunnels, memberships, settings, and 153 model rate limits, are imported. See [import coverage and exclusions](docs/openai-import.md). State is encrypted in R2 at `openai/terraform.tfstate`. Export the [backend credentials](docs/service-state.md) before running OpenTofu.
 
-HCP Terraform setup is not required for this module. Dedicated Home Assistant and Grafana tunnels are also declared; see [Home Assistant MCP](docs/home-assistant-mcp.md) and [Grafana MCP](docs/grafana-mcp.md) for rollout.
+Dedicated Home Assistant and Grafana tunnels are also declared; see [Home Assistant MCP](docs/home-assistant-mcp.md) and [Grafana MCP](docs/grafana-mcp.md) for rollout.
 
 For organization administration, provide an [Admin API key](https://platform.openai.com/settings/organization/admin-keys) through `OPENAI_ADMIN_KEY` in the local shell for both plan and apply. Do not put it in `.tfvars` or committed configuration. A regular project API key is not a substitute. The separate `OPENAI_API_KEY` credential is needed only if managing project webhooks.
 
@@ -166,11 +163,6 @@ infra/                              # OpenTofu configuration
 ├── services/                       # Service resources + workspaces
 │   ├── main.tf                     # R2 buckets, tokens
 │   ├── variables.tf / outputs.tf
-│   ├── tfe/                        # HCP Terraform self-management
-│   │   ├── main.tf
-│   │   ├── organization.tf
-│   │   ├── projects.tf
-│   │   └── workspaces.tf
 │   ├── github/
 │   │   └── repositories/<name>/    # One root per GitHub repository
 │   └── openai/                     # OpenAI provider workspace
@@ -202,8 +194,6 @@ scripts/
 | Cloudflare    | R2 tokens        | mastodon-r2, obsidian-r2, nix-cache, homelab-infra-state-r2                                                                                                                                                                                         |
 | Cloudflare    | R2 custom domain | fedi-files.yutakobayashi.com                                                                                                                                                                                                                        |
 | Cloudflare    | Notifications    | Access service token expiration, passive origin monitoring, Web Analytics metrics, Tunnel Health for B450M-Pro4, R2 usage alerts, Discord status webhook delivery, API-managed budget alerts (`docs/cloudflare-budget-alerts.md`)                    |
-| HCP Terraform | Organization     | yutakobayashi (2FA mandatory)                                                                                                                                                                                                                       |
-| HCP Terraform | Workspaces       | tfe, homelab, discord                                                                                                                                                                                                                               |
 | Google Cloud  | Project          | yuta-gh-signer: KMS keys and Workload Identity Federation for GitHub App tokens; see [GitHub App signing](docs/gcp-github-app-signing.md) |
 | GitHub        | Repositories     | 11 active repositories, one root each in `infra/services/github/repositories/`; see [GitHub management](docs/github-management.md)                                                                                                                  |
 
