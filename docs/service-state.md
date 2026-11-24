@@ -41,9 +41,9 @@ op run --env-file=op.env -- tofu -chdir=infra/global plan
 | `tofu-configuration-global` | `infra/global` variables (Cloudflare) |
 | Discord bot token (yuta-studio) | `DISCORD_TOKEN` for the Discord root |
 | `tofu-configuration-gcp` | `TF_VAR_billing_account` for the gcp root |
+| `tofu-configuration-openai` | `OPENAI_ADMIN_KEY` for the OpenAI root |
 
-For resource refresh and changes, also provide `OPENAI_ADMIN_KEY` or
-`SUPABASE_ACCESS_TOKEN`, respectively.
+For Supabase resource refresh and changes, also provide `SUPABASE_ACCESS_TOKEN`.
 
 ## History
 

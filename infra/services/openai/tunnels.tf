@@ -27,3 +27,8 @@ resource "openai_mcp_tunnel" "grafana" {
   name        = "Grafana"
   description = "Read-only Grafana MCP on B450M-Pro4"
 }
+
+resource "openai_mcp_tunnel" "atuin_mcp" {
+  name        = "Atuin MCP"
+  description = "Atuin history and output search MCP on UM790-Pro"
+}
