@@ -60,7 +60,7 @@ tofu -chdir=infra/services/github/repositories/dotnix plan -out=tfplan
 tofu -chdir=infra/services/github/repositories/dotnix show -json tfplan | conftest test --policy policy/terraform -
 ```
 
-Before init, plan, apply, or state commands for any root except the GitHub roots, load the R2 credentials and passphrase from `docs/service-state.md`. The GitHub roots use Google Cloud credentials instead (`docs/github-management.md`). Preserve the Git-ignored `terraform.tfstate.pre-r2` migration backups. OpenAI credentials use `OPENAI_ADMIN_KEY` from the environment.
+Run init, plan, apply, and state commands for any root except the GitHub roots through `op run --env-file=op.env -- tofu ...`; `op.env` holds 1Password references for the R2 credentials, the passphrase, the `infra/global` variables, and `DISCORD_TOKEN` (`docs/service-state.md`). Never write their values to files. The GitHub roots use Google Cloud credentials instead (`docs/github-management.md`). Preserve the Git-ignored `terraform.tfstate.pre-r2` migration backups. OpenAI credentials use `OPENAI_ADMIN_KEY` from the environment.
 
 Supabase credentials use `SUPABASE_ACCESS_TOKEN`.
 DB passwords are unmanaged; do not use the import placeholders to create projects.
