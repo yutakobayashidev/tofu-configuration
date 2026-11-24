@@ -22,7 +22,6 @@ the merge.
 
 ## Credentials
 
-The GitHub roots use neither the R2 credentials nor the state passphrase.
 State access and encryption use Google Cloud credentials from
 `gcloud auth application-default login`, so CI reaches them through Workload
 Identity Federation without a static secret. See

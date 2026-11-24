@@ -10,16 +10,16 @@ OpenTofu configurations for managing cloud infrastructure.
 - **DigitalOcean**: Mastodon (future migration from Vultr), managed by OpenTofu
 - **Cloudflare**: DNS, Email Routing, Email Sending (Mastodon and Gitea send from their own subdomains), R2 (Mastodon media + Obsidian backup), API tokens, notification policies, response header transforms
 - **GitHub**: One OpenTofu root per repository using `zunoser/tfmodule-gh-repo-kit`, with state in Google Cloud Storage encrypted by Cloud KMS; see `docs/github-management.md`
-- **OpenAI**: Official provider with encrypted R2 state; 162 resources imported (project, tunnels, memberships, settings, rate limits); see `docs/openai-import.md`. Home Assistant and Grafana tunnels are declared separately; see `docs/home-assistant-mcp.md` and `docs/grafana-mcp.md`
+- **OpenAI**: Official provider; 162 resources imported (project, tunnels, memberships, settings, rate limits); see `docs/openai-import.md`. Home Assistant and Grafana tunnels are declared separately; see `docs/home-assistant-mcp.md` and `docs/grafana-mcp.md`
 
-- **Supabase**: Official provider with encrypted R2 state for `infra/services/supabase`; three paused projects and one retained settings resource managed (`ticket-dev` deleted, `freeschool-search` paused). Two paused projects’ settings remain blocked. See `docs/supabase-import.md`.
+- **Supabase**: Official provider for `infra/services/supabase`; three paused projects and one retained settings resource managed (`ticket-dev` deleted, `freeschool-search` paused). Two paused projects’ settings remain blocked. See `docs/supabase-import.md`.
 
 ## Stack
 
 | Layer           | Tool            | Purpose                                        |
 | --------------- | --------------- | ---------------------------------------------- |
 | Infrastructure  | OpenTofu        | DO, Cloudflare, GitHub, OpenAI, Google Cloud   |
-| State           | Cloudflare R2, GCS | Remote state storage (GCS for GitHub roots) |
+| State           | GCS             | Versioned, KMS-encrypted remote state          |
 | Lint            | TFLint          | OpenTofu static analysis                       |
 | Policy          | Conftest        | OpenTofu plan policy checks                    |
 | Dev Environment | Nix flake-parts | Tools, MCP servers, agent skills               |
@@ -60,7 +60,7 @@ tofu -chdir=infra/services/github/repositories/dotnix plan -out=tfplan
 tofu -chdir=infra/services/github/repositories/dotnix show -json tfplan | conftest test --policy policy/terraform -
 ```
 
-Run init, plan, apply, and state commands for any root except the GitHub roots through `op run --env-file=op.env -- tofu ...`; `op.env` holds 1Password references for the R2 credentials, the passphrase, the `infra/global` variables, and `DISCORD_TOKEN` (`docs/service-state.md`). Never write their values to files. The GitHub roots use Google Cloud credentials instead (`docs/github-management.md`). Preserve the Git-ignored `terraform.tfstate.pre-r2` migration backups. OpenAI credentials use `OPENAI_ADMIN_KEY` from the environment.
+State for every root is in Google Cloud Storage, encrypted with Cloud KMS (`docs/service-state.md`); it needs only `gcloud auth application-default login`. Run init, plan, apply, and state commands for the non-GitHub roots through `op run --env-file=op.env -- tofu ...`; `op.env` holds 1Password references for the provider credentials (Cloudflare variables, `DISCORD_TOKEN`, the billing account). Never write their values to files. Preserve the Git-ignored `terraform.tfstate.pre-r2` migration backups. OpenAI credentials use `OPENAI_ADMIN_KEY` from the environment.
 
 Supabase credentials use `SUPABASE_ACCESS_TOKEN`.
 DB passwords are unmanaged; do not use the import placeholders to create projects.

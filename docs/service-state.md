@@ -1,85 +1,65 @@
-# R2 state
+# OpenTofu state
 
-The OpenTofu roots use encrypted state in the `homelab-infra-state` R2
-bucket. They require OpenTofu 1.10 or later, use S3 lock files, and enforce
-AES-GCM encryption for state and saved plans.
+Every root keeps its state in Google Cloud Storage in the `yuta-gh-signer`
+project, encrypted with Cloud KMS through the OpenTofu `gcp_kms` key provider.
+Both buckets use Object Versioning (20 noncurrent versions), so an overwritten
+or deleted state can be restored. Both enforce public access prevention and
+uniform bucket-level access. `infra/services/gcp` manages the buckets and keys.
 
-| Root | State key |
-| --- | --- |
-| `infra/global` | `homelab/terraform.tfstate` |
-| `infra/services/discord/yuta-studio` | `discord/terraform.tfstate` |
-| `infra/services/openai` | `openai/terraform.tfstate` |
-| `infra/services/supabase` | `supabase/terraform.tfstate` |
-| `infra/services/gcp` | `gcp/terraform.tfstate` |
+| Roots | Bucket | KMS key | Access |
+| --- | --- | --- | --- |
+| `infra/global` (`homelab`), Discord (`discord`), OpenAI (`openai`), Supabase (`supabase`), `infra/services/gcp` (`gcp`) | `yuta-gh-signer-tfstate`, prefix in parentheses | `tofu-state/services` | Project owner only |
+| `infra/services/github/repositories/<name>` | `yuta-gh-signer-github-tfstate`, prefix `repositories/<name>` | `tofu-state/github-repositories` | Owner, and the CI service accounts through WIF; see [GitHub App signing](gcp-github-app-signing.md#github-repository-state) |
 
-The GitHub repository roots moved to Google Cloud Storage on 2026-11-23 so that
-CI can reach their state without a static credential. See
-[GitHub App signing](gcp-github-app-signing.md#github-repository-state). Their
-earlier objects under `github/repositories/` were deleted from this bucket on
-2026-11-24.
+The gcp root stores its state in a bucket it manages, as Google's bootstrap
+module does. `force_destroy = false` on the buckets, `prevent_destroy` on the
+keys, and `deletion_policy = "PREVENT"` on the project keep an apply from
+removing what holds that state.
+
+To restore an earlier version, list it with
+`gcloud storage ls --all-versions gs://<bucket>/<prefix>/` and copy the chosen
+generation over `default.tfstate`.
 
 ## Credentials
 
-Secrets live in 1Password (Personal vault), and `op.env` at the repository
-root lists their references, never their values. Run OpenTofu through `op run`:
+State access needs only Google Cloud credentials:
 
 ```bash
-op run --env-file=op.env -- tofu -chdir=infra/services/openai plan
+gcloud auth application-default login
+```
+
+Provider credentials live in 1Password (Personal vault). `op.env` at the
+repository root lists their references, never their values. Run OpenTofu
+through `op run`:
+
+```bash
+op run --env-file=op.env -- tofu -chdir=infra/global plan
 ```
 
 | 1Password item | Provides |
 | --- | --- |
-| `tofu-configuration-r2` | R2 S3 access key, secret key, and endpoint |
-| GitHub OpenTofu state | State and plan encryption passphrase for every R2 root |
 | `tofu-configuration-global` | `infra/global` variables (Cloudflare) |
 | Discord bot token (yuta-studio) | `DISCORD_TOKEN` for the Discord root |
-
-Keep the R2 credentials outside OpenTofu so `infra/global` can open its own
-state. On a new machine, sign in to the 1Password CLI; nothing else is needed.
+| `tofu-configuration-gcp` | `TF_VAR_billing_account` for the gcp root |
 
 For resource refresh and changes, also provide `OPENAI_ADMIN_KEY` or
 `SUPABASE_ACCESS_TOKEN`, respectively.
 
-```bash
-tofu -chdir=infra/services/openai init
-tofu -chdir=infra/services/openai plan
+## History
 
-tofu -chdir=infra/services/supabase init
-tofu -chdir=infra/services/supabase plan
-```
-
-## OpenAI and Supabase migration on 2026-11-22
-
-The MacBook copies were used as the source following the owner's confirmation
-that there had been no subsequent operations. The original OpenAI state had
-164 managed instances at serial 4, and Supabase had 4 at serial 7.
-
-Original files are retained as `terraform.tfstate.pre-r2` beside each root,
-with mode 600 and excluded from Git. Earlier `terraform.tfstate.backup` files
-are also retained. New operations use R2. Restoring an old local copy requires
-checking the current remote state first.
-
-State transfer was checked by comparing all resources and outputs after
-reading back from R2 and by inspecting the downloaded object's encryption
-envelope. New remote state metadata can have a different lineage and serial.
-
-Both roots passed configuration validation and formatting checks. Resource
-plans remain unverified because this session had neither `OPENAI_ADMIN_KEY`
-nor `SUPABASE_ACCESS_TOKEN`. Even `plan -refresh=false` requires provider
-credentials. Supabase settings refresh may also fail while projects are paused.
-
-
-## HCP Terraform retirement
-
-The `discord`, `homelab`, and `tfe` HCP workspaces were copied to R2 on
-2026-11-22 (serials 641, 106, and 10; 233, 96, and 7 managed instances) and
-locked. On 2026-11-24 the `tfe` root destroyed the `discord` and `homelab`
-workspaces and the Discord token variable, then was removed from this
-repository. The HCP organization is deleted by hand.
-
-The Discord root reads its bot token from `DISCORD_TOKEN`. The token is stored
-in 1Password as "Discord bot token (yuta-studio)" in the Personal vault:
-
-```bash
-op run --env-file=op.env -- tofu -chdir=infra/services/discord/yuta-studio plan
-```
+- 2026-11-22: OpenAI and Supabase moved from local files to R2. The MacBook
+  copies were the source (OpenAI serial 4 with 164 instances, Supabase serial
+  7 with 4). The originals remain as Git-ignored `terraform.tfstate.pre-r2`
+  files beside each root.
+- 2026-11-22: the `discord`, `homelab`, and `tfe` HCP Terraform workspaces
+  moved to R2 (serials 641, 106, and 10).
+- 2026-11-23: the GitHub repository roots moved to GCS so that CI reaches
+  their state without a static credential.
+- 2026-11-24: HCP Terraform was retired. The `tfe` root destroyed the
+  `discord` and `homelab` workspaces and was removed; the organization was
+  deleted by hand.
+- 2026-11-24: the remaining roots moved from R2 to GCS because R2 has no object
+  versioning. Each state was read back and compared on resources and outputs,
+  and every root planned with no changes. The `homelab-infra-state` R2 bucket
+  now holds only dotnix's states. The R2 copies of this repository's states,
+  encrypted with the old shared passphrase, were kept for rollback.

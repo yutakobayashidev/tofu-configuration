@@ -29,3 +29,11 @@ output "github_state" {
     kms_encryption_key = google_kms_crypto_key.github_state.id
   }
 }
+
+output "service_state" {
+  description = "Backend bucket and encryption key for the other roots"
+  value = {
+    bucket             = google_storage_bucket.service_state.name
+    kms_encryption_key = google_kms_crypto_key.service_state.id
+  }
+}
