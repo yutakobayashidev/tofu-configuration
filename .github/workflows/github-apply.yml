@@ -312,29 +312,35 @@ jobs:
           permission_issues: write
           permission_actions: read
 
-      # -detailed-exitcode exits with 2 when the refresh finds drift. -lock=false
-      # keeps this read-only check from blocking an apply of the same root.
+      # GitHub returns a new ruleset etag on every read, so an etag-only change
+      # is not drift. -lock=false keeps this read-only check from blocking an
+      # apply of the same root.
       - id: plan
         if: steps.state.outputs.new == 'false'
         env:
           GITHUB_TOKEN: ${{ steps.token.outputs.token }}
         run: |
-          set +e
-          nix develop .#github-ci -c tofu -chdir="$ROOT" plan -refresh-only -detailed-exitcode \
-            -input=false -no-color -lock=false | tee plan.log
-          code=${PIPESTATUS[0]}
-          set -e
+          nix develop .#github-ci -c tofu -chdir="$ROOT" plan -refresh-only \
+            -input=false -no-color -lock=false -out=drift.tfplan | tee plan.log
+          drifted=$(nix develop .#github-ci -c tofu -chdir="$ROOT" show -json drift.tfplan |
+            jq -r '.resource_drift[]?
+              | select((.change.before // {} | del(.etag)) != (.change.after // {} | del(.etag)))
+              | .address')
+          rm -f "$ROOT/drift.tfplan"
           {
             echo "### Drift check for \`$ROOT\`"
-            echo '```'
-            sed -n '/Note: Objects have changed\|No changes\./,$p' plan.log
-            echo '```'
+            if [ -n "$drifted" ]; then
+              echo '```'
+              sed -n '/Objects have changed outside of OpenTofu/,$p' plan.log
+              echo '```'
+            else
+              echo "No drift."
+            fi
           } >> "$GITHUB_STEP_SUMMARY"
-          case "$code" in
-            0) ;;
-            2) echo "::warning::$ROOT has drifted from its state"; echo "drift=true" >> "$GITHUB_OUTPUT" ;;
-            *) exit "$code" ;;
-          esac
+          if [ -n "$drifted" ]; then
+            echo "::warning::$ROOT has drifted: $(paste -sd ' ' <<<"$drifted")"
+            echo "drift=true" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Report drift or failure
         if: steps.plan.outputs.drift == 'true' || failure()
