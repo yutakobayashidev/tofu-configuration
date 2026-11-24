@@ -2,7 +2,8 @@ name: github-apply
 
 # Applies the GitHub repository roots changed on main. Only this workflow on
 # main, in the github-apply Environment, can sign with the apply App key.
-# See docs/gcp-github-app-signing.md.
+# A daily run checks every root for drift instead. See
+# docs/gcp-github-app-signing.md.
 
 on:
   push:
@@ -14,6 +15,12 @@ on:
       - ".github/workflows/github-apply.yml"
       - "flake.nix"
       - "flake.lock"
+  # Pull request plans run with -refresh=false, so changes made on GitHub stay
+  # hidden until an apply reverts them. Report them daily until the provider
+  # can refresh with the plan App (#41).
+  schedule:
+    - cron: "17 0 * * *"
+  workflow_dispatch:
 
 permissions: {}
 
@@ -23,13 +30,15 @@ defaults:
   run:
     shell: bash
 
-# Applies run one at a time, in merge order.
+# Applies run one at a time, in merge order. Drift checks use their own group:
+# in the apply group, a queued drift check would cancel a pending apply.
 concurrency:
-  group: github-apply
+  group: ${{ github.event_name == 'push' && 'github-apply' || 'github-drift' }}
   cancel-in-progress: false
 
 jobs:
   detect:
+    if: github.event_name == 'push'
     runs-on: ubuntu-24.04
     timeout-minutes: 5
     permissions:
@@ -228,4 +237,124 @@ jobs:
           fi
           if [ -n "$pr" ]; then
             gh pr comment "$pr" --repo "$GITHUB_REPOSITORY" --body "$message" || echo "::warning::Could not comment on #$pr"
+          fi
+
+  drift-roots:
+    if: github.event_name != 'push'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      roots: ${{ steps.roots.outputs.roots }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - id: roots
+        run: |
+          json=$(grep -vE '^[[:space:]]*(#|$)' infra/services/github/ci-roots | sort -u | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          echo "roots=$json" >> "$GITHUB_OUTPUT"
+
+  # Refresh each root with the apply App and report differences from the state.
+  # The job only plans; it never applies or writes state.
+  drift:
+    needs: drift-roots
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    environment: github-apply
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        root: ${{ fromJSON(needs.drift-roots.outputs.roots) }}
+    env:
+      ROOT: infra/services/github/repositories/${{ matrix.root }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: cachix/install-nix-action@v32.0.0
+
+      - uses: google-github-actions/auth@v3.0.0
+        with:
+          workload_identity_provider: projects/17441306233/locations/global/workloadIdentityPools/github-actions/providers/tofu-configuration
+          service_account: github-app-apply@yuta-gh-signer.iam.gserviceaccount.com
+
+      - id: state
+        run: |
+          nix develop .#github-ci -c tofu -chdir="$ROOT" init -input=false -no-color
+          if [ -z "$(nix develop .#github-ci -c tofu -chdir="$ROOT" state list)" ]; then
+            echo "::notice::$ROOT has no state yet; skipping"
+            echo "new=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "new=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - id: token
+        if: steps.state.outputs.new == 'false'
+        uses: yagihash/ghat@v2.5.1
+        with:
+          app_id: "5875943"
+          kms_project_id: yuta-gh-signer
+          kms_location: asia-northeast1
+          kms_keyring_id: github-apps
+          kms_key_id: tofu-apply
+          kms_key_version: "1"
+          repositories: ${{ matrix.root }}
+          permission_metadata: read
+          permission_administration: write
+          permission_issues: write
+          permission_actions: read
+
+      # -detailed-exitcode exits with 2 when the refresh finds drift. -lock=false
+      # keeps this read-only check from blocking an apply of the same root.
+      - id: plan
+        if: steps.state.outputs.new == 'false'
+        env:
+          GITHUB_TOKEN: ${{ steps.token.outputs.token }}
+        run: |
+          set +e
+          nix develop .#github-ci -c tofu -chdir="$ROOT" plan -refresh-only -detailed-exitcode \
+            -input=false -no-color -lock=false | tee plan.log
+          code=${PIPESTATUS[0]}
+          set -e
+          {
+            echo "### Drift check for \`$ROOT\`"
+            echo '```'
+            sed -n '/Note: Objects have changed\|No changes\./,$p' plan.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+          case "$code" in
+            0) ;;
+            2) echo "::warning::$ROOT has drifted from its state"; echo "drift=true" >> "$GITHUB_OUTPUT" ;;
+            *) exit "$code" ;;
+          esac
+
+      - name: Report drift or failure
+        if: steps.plan.outputs.drift == 'true' || failure()
+        env:
+          ROOT_NAME: ${{ matrix.root }}
+          DRIFT: ${{ steps.plan.outputs.drift }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set +e
+          if [ "$DRIFT" = true ]; then
+            message="GitHub settings of \`$ROOT_NAME\` differ from its OpenTofu state. The next apply reverts them unless the root is updated: $RUN_URL"
+          else
+            message="github drift check failed for \`$ROOT_NAME\`: $RUN_URL"
+          fi
+          webhook=$(gcloud secrets versions access latest --secret=github-apply-discord-webhook --project=yuta-gh-signer)
+          if [ -n "$webhook" ]; then
+            echo "::add-mask::$webhook"
+            jq -n --arg c "$message" '{content: $c, allowed_mentions: {parse: []}}' |
+              curl -sS --fail -o /dev/null -H 'Content-Type: application/json' -d @- "$webhook" ||
+              echo "::warning::Could not post to Discord"
+          else
+            echo "::warning::Could not read the Discord webhook from Secret Manager"
           fi
