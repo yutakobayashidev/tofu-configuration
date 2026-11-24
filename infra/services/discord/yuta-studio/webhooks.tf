@@ -142,3 +142,33 @@ resource "discord_webhook" "captain_hook_3" {
   channel_id = discord_text_channel.txt_dtv.id
   name       = "Captain Hook"
 }
+
+resource "discord_webhook" "spidey_bot_infra_critical_1" {
+  channel_id = discord_text_channel.txt_infra_critical.id
+  name       = "Spidey Bot"
+}
+
+resource "discord_webhook" "spidey_bot_infra_critical_2" {
+  channel_id = discord_text_channel.txt_infra_critical.id
+  name       = "Spidey Bot"
+}
+
+resource "discord_webhook" "spidey_bot_infra_warning" {
+  channel_id = discord_text_channel.txt_infra_warning.id
+  name       = "Spidey Bot"
+}
+
+resource "discord_webhook" "captain_hook_infra_info" {
+  channel_id = discord_text_channel.txt_infra_info.id
+  name       = "Captain Hook"
+}
+
+resource "discord_webhook" "captain_hook_home_1" {
+  channel_id = discord_text_channel.txt_home.id
+  name       = "Captain Hook"
+}
+
+resource "discord_webhook" "captain_hook_home_2" {
+  channel_id = discord_text_channel.txt_home.id
+  name       = "Captain Hook"
+}

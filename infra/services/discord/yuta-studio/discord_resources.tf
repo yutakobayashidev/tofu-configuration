@@ -15,27 +15,27 @@ resource "discord_category_channel" "cat_Welcome" {
 resource "discord_category_channel" "cat_ChatRoom" {
   name      = "chat-room"
   server_id = "895564066922328094"
-  position  = 1
+  position  = 2
 }
 resource "discord_category_channel" "cat_feed" {
   name      = "feed"
   server_id = "895564066922328094"
-  position  = 2
+  position  = 3
 }
 resource "discord_category_channel" "cat_Projects" {
   name      = "projects"
   server_id = "895564066922328094"
-  position  = 3
+  position  = 4
 }
 resource "discord_category_channel" "cat_ch971904" {
   name      = "topics"
   server_id = "895564066922328094"
-  position  = 4
+  position  = 5
 }
 resource "discord_category_channel" "cat_ARCHIVE" {
   name      = "archive"
   server_id = "895564066922328094"
-  position  = 5
+  position  = 6
 }
 resource "discord_text_channel" "txt_ch424587" {
   name      = "introduction"
@@ -60,7 +60,7 @@ resource "discord_text_channel" "txt_ch801860" {
   topic                    = "#\u306f\u3058\u3081\u306b\u3067\u30ed\u30fc\u30eb\u3092\u53d7\u3051\u53d6\u3063\u3066\u304f\u3060\u3055\u3044\uff01"
   nsfw                     = false
   category                 = discord_category_channel.cat_Welcome.id
-  sync_perms_with_category = false
+  sync_perms_with_category = true
 }
 resource "discord_text_channel" "txt_ch776213" {
   name      = "server-perks"
@@ -110,7 +110,7 @@ resource "discord_news_channel" "ann_ch112660" {
   topic                    = ""
   nsfw                     = false
   category                 = discord_category_channel.cat_Welcome.id
-  sync_perms_with_category = false
+  sync_perms_with_category = true
 }
 resource "discord_text_channel" "txt_sns" {
   name      = "sns"
@@ -123,7 +123,7 @@ resource "discord_text_channel" "txt_sns" {
 resource "discord_text_channel" "txt_ch497822" {
   name      = "chat"
   server_id = "895564066922328094"
-  position  = 7
+  position  = 17
   topic     = "\u30e2\u30ce\u30ed\u30fc\u30b0\u3092\u5782\u308c\u6d41\u3059\u30c1\u30e3\u30f3\u30cd\u30eb\u3067\u3059 Slack: https://dub.sh/slack-times"
   nsfw      = false
   category  = discord_category_channel.cat_ChatRoom.id
@@ -131,32 +131,33 @@ resource "discord_text_channel" "txt_ch497822" {
 resource "discord_text_channel" "txt_tw" {
   name      = "tw"
   server_id = "895564066922328094"
-  position  = 8
+  position  = 18
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ChatRoom.id
 }
 resource "discord_text_channel" "txt_dtv" {
-  name      = "dtv"
-  server_id = "895564066922328094"
-  position  = 9
-  topic     = ""
-  nsfw      = false
-  category  = discord_category_channel.cat_ChatRoom.id
+  name                     = "dtv"
+  server_id                = "895564066922328094"
+  position                 = 13
+  topic                    = ""
+  nsfw                     = false
+  category                 = discord_category_channel.cat_house.id
+  sync_perms_with_category = false
 }
 resource "discord_text_channel" "txt_splatoon" {
   name                     = "splatoon"
   server_id                = "895564066922328094"
-  position                 = 10
+  position                 = 14
   topic                    = ""
   nsfw                     = false
-  category                 = discord_category_channel.cat_ChatRoom.id
+  category                 = discord_category_channel.cat_house.id
   sync_perms_with_category = false
 }
 resource "discord_text_channel" "txt_ch881792" {
   name                     = "work-stats"
   server_id                = "895564066922328094"
-  position                 = 13
+  position                 = 19
   topic                    = ""
   nsfw                     = false
   category                 = discord_category_channel.cat_ChatRoom.id
@@ -166,7 +167,7 @@ resource "discord_text_channel" "txt_ch881792" {
 resource "discord_text_channel" "txt_ch465618" {
   name      = "tech-news-papers"
   server_id = "895564066922328094"
-  position  = 15
+  position  = 21
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ChatRoom.id
@@ -174,7 +175,7 @@ resource "discord_text_channel" "txt_ch465618" {
 resource "discord_text_channel" "txt_ch923220" {
   name      = "links-promo"
   server_id = "895564066922328094"
-  position  = 16
+  position  = 22
   topic     = "\u5ba3\u4f1d\u3084\u30b5\u30fc\u30d3\u30b9\u7d39\u4ecb\u306a\u3069\uff01"
   nsfw      = false
   category  = discord_category_channel.cat_ChatRoom.id
@@ -182,23 +183,24 @@ resource "discord_text_channel" "txt_ch923220" {
 resource "discord_text_channel" "txt_gif" {
   name      = "gif"
   server_id = "895564066922328094"
-  position  = 17
+  position  = 23
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ChatRoom.id
 }
 resource "discord_text_channel" "txt_status" {
-  name      = "status"
-  server_id = "895564066922328094"
-  position  = 18
-  topic     = ""
-  nsfw      = false
-  category  = discord_category_channel.cat_ChatRoom.id
+  name                     = "status"
+  server_id                = "895564066922328094"
+  position                 = 12
+  topic                    = ""
+  nsfw                     = false
+  category                 = discord_category_channel.cat_house.id
+  sync_perms_with_category = false
 }
 resource "discord_text_channel" "txt_commands" {
   name      = "commands"
   server_id = "895564066922328094"
-  position  = 19
+  position  = 24
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ChatRoom.id
@@ -206,24 +208,25 @@ resource "discord_text_channel" "txt_commands" {
 resource "discord_text_channel" "txt_ch309525" {
   name                     = "notes"
   server_id                = "895564066922328094"
-  position                 = 20
+  position                 = 25
   topic                    = ""
   nsfw                     = false
   category                 = discord_category_channel.cat_ChatRoom.id
   sync_perms_with_category = false
 }
 resource "discord_text_channel" "txt_ch039184" {
-  name      = "domain-monitoring"
-  server_id = "895564066922328094"
-  position  = 22
-  topic     = ""
-  nsfw      = false
-  category  = discord_category_channel.cat_ChatRoom.id
+  name                     = "domain-monitoring"
+  server_id                = "895564066922328094"
+  position                 = 15
+  topic                    = ""
+  nsfw                     = false
+  category                 = discord_category_channel.cat_house.id
+  sync_perms_with_category = false
 }
 resource "discord_text_channel" "txt_toolchain" {
   name      = "toolchain"
   server_id = "895564066922328094"
-  position  = 23
+  position  = 27
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ChatRoom.id
@@ -231,7 +234,7 @@ resource "discord_text_channel" "txt_toolchain" {
 resource "discord_text_channel" "txt_feeds" {
   name      = "feeds"
   server_id = "895564066922328094"
-  position  = 24
+  position  = 28
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ChatRoom.id
@@ -239,7 +242,7 @@ resource "discord_text_channel" "txt_feeds" {
 resource "discord_text_channel" "txt_serveranalytics" {
   name      = "server-analytics"
   server_id = "895564066922328094"
-  position  = 25
+  position  = 31
   topic     = "YUTA STUDIO Server Analytics"
   nsfw      = false
   category  = discord_category_channel.cat_feed.id
@@ -247,7 +250,7 @@ resource "discord_text_channel" "txt_serveranalytics" {
 resource "discord_news_channel" "ann_safety" {
   name                     = "safety"
   server_id                = "895564066922328094"
-  position                 = 26
+  position                 = 32
   topic                    = "\u65e5\u672c\u306e\u9632\u707d\u60c5\u5831"
   nsfw                     = false
   category                 = discord_category_channel.cat_feed.id
@@ -256,7 +259,7 @@ resource "discord_news_channel" "ann_safety" {
 resource "discord_news_channel" "ann_podcast" {
   name      = "podcast"
   server_id = "895564066922328094"
-  position  = 27
+  position  = 33
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_feed.id
@@ -264,7 +267,7 @@ resource "discord_news_channel" "ann_podcast" {
 resource "discord_news_channel" "ann_hackernews" {
   name                     = "hacker-news"
   server_id                = "895564066922328094"
-  position                 = 28
+  position                 = 34
   topic                    = "news.ycombinator.com"
   nsfw                     = false
   category                 = discord_category_channel.cat_feed.id
@@ -273,7 +276,7 @@ resource "discord_news_channel" "ann_hackernews" {
 resource "discord_news_channel" "ann_todaydoodle" {
   name                     = "today-doodle"
   server_id                = "895564066922328094"
-  position                 = 29
+  position                 = 35
   topic                    = "Doodle\u306f\u3001\u795d\u65e5\u3084\u8a18\u5ff5\u65e5\u3001\u6709\u540d\u306a\u753b\u5bb6\u3084\u5148\u99c6\u8005\u3001\u79d1\u5b66\u8005\u306e\u751f\u8a95\u306a\u3069\u3092\u795d\u3046\u305f\u3081\u3001\u65ac\u65b0\u3067\u697d\u3057\u304f\u3001\u307e\u305f\u6642\u306b\u306f\u81ea\u7531\u306a\u624b\u6cd5\u3067 Google \u306e\u30ed\u30b4 \u30de\u30fc\u30af\u3092\u30a2\u30ec\u30f3\u30b8\u3057\u305f\u3082\u306e\u3067\u3059\u3002"
   nsfw                     = false
   category                 = discord_category_channel.cat_feed.id
@@ -282,7 +285,7 @@ resource "discord_news_channel" "ann_todaydoodle" {
 resource "discord_news_channel" "ann_covid19" {
   name      = "covid19"
   server_id = "895564066922328094"
-  position  = 30
+  position  = 36
   topic     = "\u4e3b\u8981\u306a\u90fd\u9053\u5e9c\u770c\u3084\u4e16\u754c\u306e\u30b0\u30e9\u30d5\u3084\u30b3\u30ed\u30d7\u30ec\u30b9\u56f3\u3092\u9001\u4fe1\u3057\u307e\u3059\u3002"
   nsfw      = false
   category  = discord_category_channel.cat_feed.id
@@ -290,7 +293,7 @@ resource "discord_news_channel" "ann_covid19" {
 resource "discord_text_channel" "txt_whether" {
   name      = "whether"
   server_id = "895564066922328094"
-  position  = 31
+  position  = 37
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_feed.id
@@ -298,7 +301,7 @@ resource "discord_text_channel" "txt_whether" {
 resource "discord_text_channel" "txt_covernews" {
   name      = "cover-news"
   server_id = "895564066922328094"
-  position  = 32
+  position  = 38
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_feed.id
@@ -306,7 +309,7 @@ resource "discord_text_channel" "txt_covernews" {
 resource "discord_text_channel" "txt_likefeed" {
   name      = "like-feed"
   server_id = "895564066922328094"
-  position  = 33
+  position  = 39
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_feed.id
@@ -314,7 +317,7 @@ resource "discord_text_channel" "txt_likefeed" {
 resource "discord_text_channel" "txt_spotifylog" {
   name      = "spotify-log"
   server_id = "895564066922328094"
-  position  = 34
+  position  = 40
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_feed.id
@@ -323,7 +326,7 @@ resource "discord_text_channel" "txt_spotifylog" {
 resource "discord_text_channel" "txt_times" {
   name      = "about-times"
   server_id = "895564066922328094"
-  position  = 39
+  position  = 45
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ch971904.id
@@ -331,7 +334,7 @@ resource "discord_text_channel" "txt_times" {
 resource "discord_news_channel" "ann_news" {
   name                     = "news"
   server_id                = "895564066922328094"
-  position                 = 41
+  position                 = 47
   topic                    = ""
   nsfw                     = false
   category                 = discord_category_channel.cat_ch971904.id
@@ -340,7 +343,7 @@ resource "discord_news_channel" "ann_news" {
 resource "discord_news_channel" "ann_ch788992" {
   name                     = "all-announcements"
   server_id                = "895564066922328094"
-  position                 = 43
+  position                 = 49
   topic                    = "\u5168\u4f53\u30a2\u30ca\u30a6\u30f3\u30b9"
   nsfw                     = false
   category                 = discord_category_channel.cat_ch971904.id
@@ -350,7 +353,7 @@ resource "discord_news_channel" "ann_ch788992" {
 resource "discord_text_channel" "txt_zatsudan" {
   name      = "zatsudan"
   server_id = "895564066922328094"
-  position  = 46
+  position  = 52
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ch971904.id
@@ -358,7 +361,7 @@ resource "discord_text_channel" "txt_zatsudan" {
 resource "discord_text_channel" "txt_bot" {
   name      = "bot"
   server_id = "895564066922328094"
-  position  = 48
+  position  = 54
   topic     = "\u3044\u308d\u3044\u308d\u3058\u3063\u3051\u3093\u3057\u3066\u307e\u3059"
   nsfw      = false
   category  = discord_category_channel.cat_ch971904.id
@@ -366,7 +369,7 @@ resource "discord_text_channel" "txt_bot" {
 resource "discord_text_channel" "txt_address" {
   name      = "address"
   server_id = "895564066922328094"
-  position  = 49
+  position  = 55
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ch971904.id
@@ -374,7 +377,7 @@ resource "discord_text_channel" "txt_address" {
 resource "discord_text_channel" "txt_ch272522" {
   name                     = "about-public-server"
   server_id                = "895564066922328094"
-  position                 = 50
+  position                 = 56
   topic                    = ""
   nsfw                     = false
   category                 = discord_category_channel.cat_ch971904.id
@@ -383,7 +386,7 @@ resource "discord_text_channel" "txt_ch272522" {
 resource "discord_text_channel" "txt_ch094218" {
   name      = "programming"
   server_id = "895564066922328094"
-  position  = 51
+  position  = 57
   topic     = "\u5236\u4f5c\u7269\u3068\u304b\u30d8\u30eb\u30d7\u3068\u304b"
   nsfw      = false
   category  = discord_category_channel.cat_ch971904.id
@@ -391,7 +394,7 @@ resource "discord_text_channel" "txt_ch094218" {
 resource "discord_text_channel" "txt_ch210378" {
   name      = "science"
   server_id = "895564066922328094"
-  position  = 52
+  position  = 58
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ch971904.id
@@ -400,7 +403,7 @@ resource "discord_text_channel" "txt_ch210378" {
 resource "discord_text_channel" "txt_ch350366" {
   name      = "study"
   server_id = "895564066922328094"
-  position  = 54
+  position  = 60
   topic     = "\u4e0d\u767b\u6821\u6b743\u5e74\u306b\u3088\u308b\u52c9\u5f37\u4f1a"
   nsfw      = false
   category  = discord_category_channel.cat_ch971904.id
@@ -408,7 +411,7 @@ resource "discord_text_channel" "txt_ch350366" {
 resource "discord_text_channel" "txt_notion" {
   name      = "notion"
   server_id = "895564066922328094"
-  position  = 55
+  position  = 61
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ch971904.id
@@ -416,7 +419,7 @@ resource "discord_text_channel" "txt_notion" {
 resource "discord_text_channel" "txt_ch444885" {
   name      = "astronomy"
   server_id = "895564066922328094"
-  position  = 56
+  position  = 62
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ch971904.id
@@ -424,7 +427,7 @@ resource "discord_text_channel" "txt_ch444885" {
 resource "discord_text_channel" "txt_ch603581" {
   name      = "music"
   server_id = "895564066922328094"
-  position  = 57
+  position  = 63
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ch971904.id
@@ -432,7 +435,7 @@ resource "discord_text_channel" "txt_ch603581" {
 resource "discord_text_channel" "txt_ch630996" {
   name      = "games"
   server_id = "895564066922328094"
-  position  = 58
+  position  = 64
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ch971904.id
@@ -440,7 +443,7 @@ resource "discord_text_channel" "txt_ch630996" {
 resource "discord_text_channel" "txt_db" {
   name      = "proseka-db"
   server_id = "895564066922328094"
-  position  = 59
+  position  = 65
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ch971904.id
@@ -448,7 +451,7 @@ resource "discord_text_channel" "txt_db" {
 resource "discord_text_channel" "txt_gitupdates" {
   name      = "git-updates"
   server_id = "895564066922328094"
-  position  = 60
+  position  = 66
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ARCHIVE.id
@@ -456,7 +459,7 @@ resource "discord_text_channel" "txt_gitupdates" {
 resource "discord_text_channel" "txt_mcchangelog" {
   name                     = "mc-changelog"
   server_id                = "895564066922328094"
-  position                 = 61
+  position                 = 67
   topic                    = "@mcchangelog"
   nsfw                     = false
   category                 = discord_category_channel.cat_ARCHIVE.id
@@ -465,7 +468,7 @@ resource "discord_text_channel" "txt_mcchangelog" {
 resource "discord_text_channel" "txt_pricetracker" {
   name      = "price-tracker"
   server_id = "895564066922328094"
-  position  = 62
+  position  = 68
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ARCHIVE.id
@@ -473,7 +476,7 @@ resource "discord_text_channel" "txt_pricetracker" {
 resource "discord_text_channel" "txt_webclips" {
   name      = "web-clips"
   server_id = "895564066922328094"
-  position  = 63
+  position  = 69
   topic     = "\u30df\u30e5\u30fc\u30c8\u63a8\u5968\u3067\u3059"
   nsfw      = false
   category  = discord_category_channel.cat_ARCHIVE.id
@@ -481,7 +484,7 @@ resource "discord_text_channel" "txt_webclips" {
 resource "discord_text_channel" "txt_music" {
   name      = "music"
   server_id = "895564066922328094"
-  position  = 65
+  position  = 71
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ARCHIVE.id
@@ -489,7 +492,7 @@ resource "discord_text_channel" "txt_music" {
 resource "discord_text_channel" "txt_ch248970" {
   name                     = "leave"
   server_id                = "895564066922328094"
-  position                 = 67
+  position                 = 73
   topic                    = ""
   nsfw                     = false
   category                 = discord_category_channel.cat_ARCHIVE.id
@@ -498,7 +501,7 @@ resource "discord_text_channel" "txt_ch248970" {
 resource "discord_text_channel" "txt_ch686130" {
   name                     = "join"
   server_id                = "895564066922328094"
-  position                 = 68
+  position                 = 74
   topic                    = "Welcome!"
   nsfw                     = false
   category                 = discord_category_channel.cat_ARCHIVE.id
@@ -507,7 +510,7 @@ resource "discord_text_channel" "txt_ch686130" {
 resource "discord_text_channel" "txt_ch705907" {
   name      = "general"
   server_id = "895564066922328094"
-  position  = 69
+  position  = 75
   topic     = "\u7dcf\u5408"
   nsfw      = false
   category  = discord_category_channel.cat_ARCHIVE.id
@@ -515,7 +518,7 @@ resource "discord_text_channel" "txt_ch705907" {
 resource "discord_text_channel" "txt_webupdates" {
   name                     = "web-updates"
   server_id                = "895564066922328094"
-  position                 = 71
+  position                 = 77
   topic                    = "yutakobayashi.dev/feed"
   nsfw                     = false
   category                 = discord_category_channel.cat_ARCHIVE.id
@@ -524,7 +527,7 @@ resource "discord_text_channel" "txt_webupdates" {
 resource "discord_text_channel" "txt_partymode" {
   name      = "party-mode"
   server_id = "895564066922328094"
-  position  = 74
+  position  = 80
   topic     = ""
   nsfw      = false
   category  = discord_category_channel.cat_ARCHIVE.id
@@ -532,7 +535,7 @@ resource "discord_text_channel" "txt_partymode" {
 resource "discord_text_channel" "txt_ch502387" {
   name                     = "self-introduction"
   server_id                = "895564066922328094"
-  position                 = 76
+  position                 = 82
   topic                    = "\u4efb\u610f"
   nsfw                     = false
   category                 = discord_category_channel.cat_ARCHIVE.id
@@ -556,8 +559,8 @@ resource "discord_channel_permission" "txt_ch801860_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch801860.id
   overwrite_id = discord_role_everyone.main.id
   type         = "role"
-  allow        = 2048
-  deny         = 0
+  allow        = 0
+  deny         = 2048
 }
 resource "discord_channel_permission" "txt_ch776213_perm_22328094" {
   channel_id   = discord_text_channel.txt_ch776213.id
@@ -612,8 +615,8 @@ resource "discord_channel_permission" "ann_ch112660_perm_22328094" {
   channel_id   = discord_news_channel.ann_ch112660.id
   overwrite_id = discord_role_everyone.main.id
   type         = "role"
-  allow        = 2048
-  deny         = 0
+  allow        = 0
+  deny         = 2048
 }
 resource "discord_channel_permission" "txt_sns_perm_22328094" {
   channel_id   = discord_text_channel.txt_sns.id
