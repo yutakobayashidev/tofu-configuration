@@ -172,3 +172,11 @@ resource "discord_webhook" "captain_hook_home_2" {
   channel_id = discord_text_channel.txt_home.id
   name       = "Captain Hook"
 }
+
+# github-apply in tofu-configuration posts here when an apply fails. The gcp
+# root copies the URL into Secret Manager, which only the apply service account
+# can read.
+resource "discord_webhook" "tofu_configuration_ci" {
+  channel_id = discord_text_channel.txt_infra_warning.id
+  name       = "tofu-configuration CI"
+}

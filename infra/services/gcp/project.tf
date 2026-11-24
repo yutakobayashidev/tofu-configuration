@@ -29,6 +29,7 @@ resource "google_project_service" "enabled" {
     "cloudkms.googleapis.com",
     "iam.googleapis.com",
     "iamcredentials.googleapis.com",
+    "secretmanager.googleapis.com",
     "storage.googleapis.com",
     "sts.googleapis.com",
   ])

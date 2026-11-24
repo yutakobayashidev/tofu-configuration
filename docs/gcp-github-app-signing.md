@@ -104,6 +104,17 @@ must be installed on each listed repository. An apply job skips its root when
 a later commit on `main` has changed it, so an older run never overwrites newer
 configuration.
 
+### Failure notifications
+
+When an apply job fails, it posts the root, commit, and run URL to the
+`infra-warning` Discord channel and comments on the merged pull request, as
+10X reports to Slack and the pull request. The Discord root owns the dedicated
+webhook (`tofu-configuration CI`). The gcp root copies its URL from the Discord
+state into the Secret Manager secret `github-apply-discord-webhook`, which only
+`github-app-apply` can read; the job reads it through WIF. The pull request
+comment uses `GITHUB_TOKEN` with `pull-requests: write`. Neither step needs a
+static credential in GitHub.
+
 ### New repositories
 
 A root without state manages a repository that does not exist yet. A token

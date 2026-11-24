@@ -21,6 +21,12 @@ terraform {
       enforced = true
     }
 
+    remote_state_data_sources {
+      remote_state_data_source "discord" {
+        method = method.aes_gcm.state_method
+      }
+    }
+
     plan {
       method   = method.aes_gcm.state_method
       enforced = true
