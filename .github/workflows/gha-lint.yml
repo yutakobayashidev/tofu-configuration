@@ -17,4 +17,4 @@ jobs:
   gha-lint:
     permissions:
       contents: read
-    uses: zunoser/reusable-workflows/.github/workflows/gha-lint.yml@c228e2cb32200679d6657b0fa47a63ada091a44f # v1.0.0
+    uses: zunoser/reusable-workflows/.github/workflows/gha-lint.yml@cd4727a1d6777fb660aafe64570f18e760d4a966 # v1.1.0
