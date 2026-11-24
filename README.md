@@ -19,15 +19,15 @@ DigitalOcean (future)
 ├── Droplet (Mastodon)
 └── Spaces (backups)
 
-R2 state (homelab-infra-state)
-├── Homelab infrastructure
-├── Discord server settings
-├── OpenAI projects (infra/services/openai)
-├── Supabase projects and settings (infra/services/supabase)
-└── Google Cloud project for GitHub App signing (infra/services/gcp)
-
-Google Cloud Storage state (yuta-gh-signer-github-tfstate)
-└── GitHub repositories (one state per repository)
+Google Cloud Storage state (versioned, Cloud KMS encrypted)
+├── yuta-gh-signer-tfstate
+│   ├── Homelab infrastructure (infra/global)
+│   ├── Discord server settings
+│   ├── OpenAI projects (infra/services/openai)
+│   ├── Supabase projects and settings (infra/services/supabase)
+│   └── Google Cloud project (infra/services/gcp)
+└── yuta-gh-signer-github-tfstate
+    └── GitHub repositories (one state per repository)
 ```
 
 ## Prerequisites
@@ -65,12 +65,12 @@ Independent workspaces:
 
 | Directory                                     | Workspace | Manages                                 |
 | --------------------------------------------- | --------- | --------------------------------------- |
-| `infra/global/`                               | R2        | Cloudflare DNS/R2, DO                   |
-| `infra/services/discord/yuta-studio/`         | R2        | Discord server settings                  |
+| `infra/global/`                               | GCS       | Cloudflare DNS/R2, DO                   |
+| `infra/services/discord/yuta-studio/`         | GCS       | Discord server settings                  |
 | `infra/services/github/repositories/<name>/`  | GCS       | One GitHub repository per root          |
-| `infra/services/openai/`                      | R2        | OpenAI projects                         |
-| `infra/services/supabase/`                    | R2        | Supabase projects and settings          |
-| `infra/services/gcp/`                         | R2        | KMS signing for GitHub App tokens       |
+| `infra/services/openai/`                      | GCS       | OpenAI projects                         |
+| `infra/services/supabase/`                    | GCS       | Supabase projects and settings          |
+| `infra/services/gcp/`                         | GCS       | KMS signing for GitHub App tokens       |
 
 The GitHub repository roots use Google Cloud credentials and run in CI; see
 [GitHub management](docs/github-management.md).
@@ -96,7 +96,7 @@ op run --env-file=op.env -- tofu -chdir=infra/global apply
 
 ### OpenAI provider
 
-`infra/services/openai` uses the [official OpenAI provider](https://github.com/openai/terraform-provider-openai), bundled in the Nix dev shell. 162 existing resources, including the Default project, four Secure/MCP tunnels, memberships, settings, and 153 model rate limits, are imported. See [import coverage and exclusions](docs/openai-import.md). State is encrypted in R2 at `openai/terraform.tfstate`. Export the [backend credentials](docs/service-state.md) before running OpenTofu.
+`infra/services/openai` uses the [official OpenAI provider](https://github.com/openai/terraform-provider-openai), bundled in the Nix dev shell. 162 existing resources, including the Default project, four Secure/MCP tunnels, memberships, settings, and 153 model rate limits, are imported. See [import coverage and exclusions](docs/openai-import.md). State is encrypted in Google Cloud Storage; see [OpenTofu state](docs/service-state.md). Export the [backend credentials](docs/service-state.md) before running OpenTofu.
 
 Dedicated Home Assistant and Grafana tunnels are also declared; see [Home Assistant MCP](docs/home-assistant-mcp.md) and [Grafana MCP](docs/grafana-mcp.md) for rollout.
 
@@ -112,7 +112,7 @@ tofu -chdir=infra/services/openai plan
 
 `infra/services/supabase` uses the official Supabase provider bundled in the Nix
 dev shell. Three paused projects and the retained freeschool-search settings are managed in
-encrypted R2 state at `supabase/terraform.tfstate`. Settings for two projects could not be imported while paused;
+encrypted state in Google Cloud Storage; see [OpenTofu state](docs/service-state.md). Settings for two projects could not be imported while paused;
 freeschool-search settings were imported before pausing. Settings refresh may
 fail while projects are paused.
 Use `SUPABASE_ACCESS_TOKEN` for authentication and export the [backend credentials](docs/service-state.md).
@@ -191,7 +191,7 @@ scripts/
 | Cloudflare    | Response headers | Gitea `X-Robots-Tag: noindex`; see [configuration and verification](docs/gitea-noindex.md) |
 | Cloudflare    | Email Routing    | hi@yutakobayashi.com and hi@yutakobayashi.dev to Worker core, disabled catch-all rules                                                                                                                                                              |
 | Cloudflare    | Email Sending    | Sending subdomains fedi.yutakobayashi.com (Mastodon) and git.yutakobayashi.com (Gitea), and an SMTP token for each |
-| Cloudflare    | R2 buckets       | fediverse (Mastodon media), obsidian (backup), nix-cache-niks3 (Nix cache), homelab-infra-state (infra state)                                                                                                                                       |
+| Cloudflare    | R2 buckets       | fediverse (Mastodon media), obsidian (backup), nix-cache-niks3 (Nix cache), homelab-infra-state (dotnix state)                                                                                                                                       |
 | Cloudflare    | R2 tokens        | mastodon-r2, obsidian-r2, nix-cache, homelab-infra-state-r2                                                                                                                                                                                         |
 | Cloudflare    | R2 custom domain | fedi-files.yutakobayashi.com                                                                                                                                                                                                                        |
 | Cloudflare    | Notifications    | Access service token expiration, passive origin monitoring, Web Analytics metrics, Tunnel Health for B450M-Pro4, R2 usage alerts, Discord status webhook delivery, API-managed budget alerts (`docs/cloudflare-budget-alerts.md`)                    |

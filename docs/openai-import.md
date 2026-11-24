@@ -1,8 +1,8 @@
 # OpenAI import coverage
 
 Inventory and import completed on 2026-10-21 using `openai/openai` v1.4.0.
-The configuration uses encrypted R2 state at `openai/terraform.tfstate` in
-`homelab-infra-state`. See [backend credentials and migration](service-state.md).
+The configuration uses encrypted state in Google Cloud Storage. See
+[OpenTofu state](service-state.md).
 
 ## Imported resources
 

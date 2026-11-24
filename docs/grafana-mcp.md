@@ -7,8 +7,8 @@ no public MCP listener is needed.
 
 ## Rollout
 
-1. Use the existing R2 state in `infra/services/openai`, export the
-   [backend credentials](service-state.md), and supply
+1. Use the existing state in `infra/services/openai` (see
+   [OpenTofu state](service-state.md)), and supply
    `OPENAI_ADMIN_KEY` through the environment. Review `tofu plan` before apply;
    do not apply unrelated changes or run against empty state. Then obtain
    `tofu -chdir=infra/services/openai output -raw grafana_tunnel_id`.

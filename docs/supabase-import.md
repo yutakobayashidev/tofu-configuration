@@ -1,8 +1,8 @@
 # Supabase import
 
 The independent root module `infra/services/supabase` uses the official
-`supabase/supabase` provider pinned to 1.11.0. Its state is encrypted in R2 at
-`supabase/terraform.tfstate` in `homelab-infra-state`. Export the
+`supabase/supabase` provider pinned to 1.11.0. Its state is encrypted in Google Cloud Storage; see
+[OpenTofu state](service-state.md). Export the
 [backend credentials](service-state.md) before running OpenTofu. Authenticate using `SUPABASE_ACCESS_TOKEN`,
 never a committed token or a project API key.
 

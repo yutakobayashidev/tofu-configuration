@@ -7,14 +7,14 @@ holds the App private keys and signs App JWTs. GitHub Actions reaches KMS only
 through Workload Identity Federation (WIF), and the job exchanges the signed JWT
 for an installation token limited to the repository it manages.
 
-`infra/services/gcp` manages the Google Cloud side. Its state is encrypted in R2
-at `gcp/terraform.tfstate`.
+`infra/services/gcp` manages the Google Cloud side, including the state buckets
+and keys for every root; see [OpenTofu state](service-state.md).
 
 ## Resources
 
 | Resource | Name | Purpose |
 | --- | --- | --- |
-| Project | `yuta-gh-signer` | No organization parent. Billing account from `TF_VAR_billing_account` |
+| Project | `yuta-gh-signer` | No organization parent. Billing account from `TF_VAR_billing_account` (`op.env`) |
 | KMS key ring | `github-apps` (`asia-northeast1`) | Holds the App keys |
 | KMS keys | `tofu-plan`, `tofu-apply` | Import-only RSA 2048 signing keys, one per GitHub App |
 | WIF pool and provider | `github-actions` / `tofu-configuration` | Accepts GitHub Actions OIDC tokens |
@@ -47,8 +47,8 @@ public access prevention, and uses uniform bucket-level access. The OpenTofu
 | `github-app-plan` | Read only. The plan workflow runs with `-lock=false` | Encrypt and decrypt, for saved plan files |
 | `github-app-apply` | Read and write | Encrypt and decrypt |
 
-The other roots stay in R2: their providers have no OIDC federation, so moving
-their state would not remove the static credentials CI would need.
+The other roots run only locally, so their state is in a separate bucket that
+the CI service accounts cannot reach.
 
 ## CI workflows
 
@@ -133,13 +133,12 @@ repositories only.
 
 ## Running OpenTofu
 
-Credentials come from `gcloud auth application-default login`. Load the
-[R2 backend credentials](service-state.md) and the billing account ID.
+Credentials come from `gcloud auth application-default login`. `op.env`
+supplies the billing account ID.
 
 ```bash
-export TF_VAR_billing_account="$(gcloud billing accounts list --filter=open=true --format='value(name)' | sed 's|^billingAccounts/||')"
-tofu -chdir=infra/services/gcp init
-tofu -chdir=infra/services/gcp plan
+op run --env-file=op.env -- tofu -chdir=infra/services/gcp init
+op run --env-file=op.env -- tofu -chdir=infra/services/gcp plan
 ```
 
 The default provider sets `user_project_override`, as the provider documentation

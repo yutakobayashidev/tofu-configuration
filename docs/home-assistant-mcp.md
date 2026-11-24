@@ -6,7 +6,7 @@ the local `tunnel-client` systemd service and Home Assistant MCP component belon
 in `dotnix`, under `systems/nixos/services/home-assistant/`.
 
 Adding the configuration does not deploy the service or create the tunnel.
-The existing 162 imported resources are now stored in encrypted R2 state.
+The existing 162 imported resources are stored in encrypted state in Google Cloud Storage.
 
 ## Rollout
 
@@ -20,7 +20,7 @@ The existing 162 imported resources are now stored in encrypted R2 state.
    ```
 
    Expect one tunnel creation and no changes to imported resources. Preserve the
-   R2 state; do not run against an empty state.
+   remote state; do not run against an empty state.
 
 2. Associate the tunnel with the intended ChatGPT workspace in
    [Platform tunnel settings](https://platform.openai.com/settings/organization/tunnels).
