@@ -7,3 +7,8 @@ output "grafana_tunnel_id" {
   description = "Tunnel ID for the Grafana tunnel-client and ChatGPT connection."
   value       = openai_mcp_tunnel.grafana.id
 }
+
+output "atuin_mcp_tunnel_id" {
+  description = "Tunnel ID for the Atuin MCP tunnel-client on UM790-Pro and its ChatGPT connection."
+  value       = openai_mcp_tunnel.atuin_mcp.id
+}
