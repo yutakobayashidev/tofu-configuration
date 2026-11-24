@@ -95,9 +95,15 @@ empty, which produces a false diff on every plan
 The plan job therefore runs with `-refresh=false`. It shows what the pull
 request changes against the state from the last apply. Changes made on GitHub
 outside OpenTofu appear only when apply refreshes with the apply App and
-reverts them. Once a provider release reads these fields over GraphQL
+reverts them. Until then, the `drift` job of `github-apply` refreshes every CI
+root with the apply App each day (`tofu plan -refresh-only -detailed-exitcode`)
+and reports drift or a failed check to the same Discord channel as failed
+applies. It never applies or writes state. It runs on main in the
+`github-apply` Environment, so the existing Workload Identity condition covers
+it. Once a provider release reads these fields over GraphQL
 ([integrations/terraform-provider-github#3741](https://github.com/integrations/terraform-provider-github/pull/3741)),
-remove `-refresh=false` so plans show drift again.
+remove `-refresh=false` so plans show drift again, and decide whether to keep
+the daily check (#41).
 
 Only roots listed in `infra/services/github/ci-roots` run in CI. Both Apps
 must be installed on each listed repository. An apply job skips its root when
