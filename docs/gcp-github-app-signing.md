@@ -68,8 +68,8 @@ Each matrix job reads the repository name from the root, then:
 
 | Stage | GitHub App | App ID | Token permissions |
 | --- | --- | --- | --- |
-| plan | `yuta-tofu-plan` | 5875937 | Metadata, Administration, Issues, Actions: read |
-| apply | `yuta-tofu-apply` | 5875943 | Administration and Issues: write; Metadata and Actions: read. A new root's token keeps all App permissions, including Repository creation: write |
+| plan | `yuta-tofu-plan` | 5875937 | Metadata, Administration, Issues, Actions, Webhooks: read |
+| apply | `yuta-tofu-apply` | 5875943 | Administration, Issues and Webhooks: write; Metadata and Actions: read (the drift check requests Webhooks: read). A new root's token keeps all App permissions, including Repository creation: write |
 
 Actions read is needed to read the GitHub Environments managed by the
 `tofu-configuration` root.
@@ -120,6 +120,15 @@ state into the Secret Manager secret `github-apply-discord-webhook`, which only
 `github-app-apply` can read; the job reads it through WIF. The pull request
 comment uses `GITHUB_TOKEN` with `pull-requests: write`. Neither step needs a
 static credential in GitHub.
+
+The dotnix and tofu-configuration roots declare a repository webhook that posts
+GitHub events to the house `#github` Discord channel. Its URL follows the same
+path: the Discord root owns the webhook (`GitHub`), and the gcp root copies the
+URL into `github-repository-discord-webhook`. Both `github-app-plan` and
+`github-app-apply` can read that secret, because plan compares the webhook's
+configuration. Every plan, apply, and drift job exports it as
+`TF_VAR_discord_github_webhook_url`; roots that do not declare the variable
+ignore it.
 
 ### New repositories
 
