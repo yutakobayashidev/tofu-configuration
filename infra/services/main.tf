@@ -92,4 +92,23 @@ module "homelab_infra_state_token" {
   cloudflare_account_id = var.cloudflare_account_id
 }
 
+# Cloudflare R2 - Restic backups (one repository per host and service, at
+# restic-backup/<host>/<service>; dotnix configures the clients)
+module "restic_backup" {
+  source                = "../modules/cloudflare-r2"
+  cloudflare_account_id = var.cloudflare_account_id
+  r2_location           = "APAC"
+  bucket_name           = "restic-backup"
+}
+
+# Cloudflare R2 Access Token - Restic backups
+module "restic_backup_token" {
+  source                = "../modules/cloudflare-account-token"
+  project_name          = "homelab"
+  environment           = "prod"
+  token_name            = "restic-backup-r2" # checkov:skip=CKV_SECRET_6:token_name_is_not_a_secret
+  bucket_name           = module.restic_backup.bucket_name
+  cloudflare_account_id = var.cloudflare_account_id
+}
+
 

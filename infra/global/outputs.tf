@@ -83,6 +83,22 @@ output "homelab_infra_state_bucket_name" {
   value       = module.services.homelab_infra_state_bucket_name
 }
 
+output "restic_backup_access_key_id" {
+  description = "Restic バックアップ用 R2 アクセスキー ID"
+  value       = module.services.restic_backup_access_key_id
+}
+
+output "restic_backup_secret_access_key" {
+  description = "Restic バックアップ用 R2 シークレットアクセスキー"
+  value       = module.services.restic_backup_secret_access_key
+  sensitive   = true
+}
+
+output "restic_backup_bucket_name" {
+  description = "Restic バックアップ R2 バケット名"
+  value       = module.services.restic_backup_bucket_name
+}
+
 output "gitea_email_sending_token" {
   description = "Cloudflare Email Sending API token for Gitea SMTP"
   value       = module.services.gitea_email_sending_token
