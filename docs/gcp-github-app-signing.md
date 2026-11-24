@@ -134,13 +134,18 @@ November 9 and 17 in
 describe the opposite on personal accounts; recheck if a new-root apply fails
 after creating the repository.
 
-Only the apply App's installation gains the created repository. Add it to the
-plan App's installation by hand (Settings → Installations → `yuta-tofu-plan` →
-Repository access); until then, github-plan fails for the root with a 422. 10X
-avoids this step by installing its Apps on the whole organization, which is
-safe there because push rulesets keep pull requests from editing the
-workflows. Here a pull request can edit them, so both Apps stay on the managed
-repositories only.
+GitHub adds the new repository to the creating App's installation. After
+OpenTofu applies the new root, `github-apply` adds the repository to the
+`yuta-tofu-plan` installation using the apply App's
+`installation_repositories: write` permission on a token scoped to the new
+repository. The account owner must approve this permission on the apply
+installation before CI can use it. Both Apps use selected repositories.
+
+If the API call fails after OpenTofu writes state, rerun the failed job from
+the push that introduced the root. You can also add the repository
+manually under Settings → Installations → `yuta-tofu-plan` → Repository access.
+Until it is added, `github-plan` cannot get a token for that root. If the plan
+App is ever reinstalled, update `PLAN_INSTALLATION_ID` in `github-apply.yml`.
 
 ## Running OpenTofu
 
