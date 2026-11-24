@@ -8,7 +8,6 @@ AES-GCM encryption for state and saved plans.
 | --- | --- |
 | `infra/global` | `homelab/terraform.tfstate` |
 | `infra/services/discord/yuta-studio` | `discord/terraform.tfstate` |
-| `infra/services/tfe` | `tfe/terraform.tfstate` |
 | `infra/services/openai` | `openai/terraform.tfstate` |
 | `infra/services/supabase` | `supabase/terraform.tfstate` |
 | `infra/services/gcp` | `gcp/terraform.tfstate` |
@@ -68,31 +67,17 @@ nor `SUPABASE_ACCESS_TOKEN`. Even `plan -refresh=false` requires provider
 credentials. Supabase settings refresh may also fail while projects are paused.
 
 
-## HCP state cutover
+## HCP Terraform retirement
 
-The `discord`, `homelab`, and `tfe` HCP state snapshots were copied to R2.
-`homelab` reads the encrypted Discord state to obtain the notification webhook.
-The `tfe` root still uses the HCP API to manage the organization and workspaces.
+The `discord`, `homelab`, and `tfe` HCP workspaces were copied to R2 on
+2026-11-22 (serials 641, 106, and 10; 233, 96, and 7 managed instances) and
+locked. On 2026-11-24 the `tfe` root destroyed the `discord` and `homelab`
+workspaces and the Discord token variable, then was removed from this
+repository. The HCP organization is deleted by hand.
 
-| HCP workspace | Source serial | Managed instances |
-| --- | ---: | ---: |
-| `discord` | 641 | 233 |
-| `homelab` | 106 | 96 |
-| `tfe` | 10 | 7 |
-
-Freeze writes to the old workspaces before switching shared operations to R2.
-Confirm that the HCP snapshots have not advanced since the copy, then lock the
-old workspaces to prevent writes from checkouts that still use the old backend.
-Retain the HCP workspaces and snapshot history for rollback.
-
-With the R2 credentials loaded, switch each existing checkout to the new
-backend using `init -reconfigure`.
+The Discord root reads its bot token from `DISCORD_TOKEN`. The token is stored
+in 1Password as "Discord bot token (yuta-studio)" in the Personal vault:
 
 ```bash
-tofu -chdir=infra/services/discord/yuta-studio init -reconfigure
-tofu -chdir=infra/global init -reconfigure
-tofu -chdir=infra/services/tfe init -reconfigure
+export DISCORD_TOKEN="$(op item get "Discord bot token (yuta-studio)" --vault Personal --fields credential --reveal)"
 ```
-
-Use the Discord provider credentials for the Discord root and HCP provider
-credentials for the tfe root. Review each plan before applying any change.

@@ -156,7 +156,6 @@
                 })
                 p.digitalocean_digitalocean
                 p.integrations_github
-                p.hashicorp_tfe
                 p.hashicorp_google
                 (mkProvider {
                   mkProviderGoModule = pkgs.buildGo126Module;
