@@ -1,0 +1,20 @@
+name: GitHub Actions lint
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/**
+      - .github/actions/**
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/**
+      - .github/actions/**
+
+permissions: {}
+
+jobs:
+  gha-lint:
+    permissions:
+      contents: read
+    uses: zunoser/reusable-workflows/.github/workflows/gha-lint.yml@c228e2cb32200679d6657b0fa47a63ada091a44f # v1.0.0
