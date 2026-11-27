@@ -50,9 +50,8 @@ jobs:
             HEAD_SHA=$GITHUB_SHA
           fi
           changed=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA")
-          # A change to the workflow, the CI root list, the Nix shell, or the
-          # policies affects every root.
-          if grep -qE '^(\.github/workflows/github-plan\.yml|infra/services/github/ci-roots$|flake\.(nix|lock)|policy/terraform/)' <<<"$changed"; then
+          # Shared modules and CI inputs can change a root without editing it.
+          if grep -qE '^(\.github/workflows/github-plan\.yml|infra/services/github/(ci-roots$|modules/)|flake\.(nix|lock)|policy/terraform/)' <<<"$changed"; then
             roots=$(find infra/services/github/repositories -mindepth 1 -maxdepth 1 -type d -printf '%f\n')
           else
             roots=$(sed -nE 's#^infra/services/github/repositories/([^/]+)/.*#\1#p' <<<"$changed")
