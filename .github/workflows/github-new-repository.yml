@@ -70,7 +70,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$branch"
-          git add "infra/services/github/repositories/$NAME" infra/services/github/ci-roots
+          git add "infra/services/github/repositories/$NAME"
           git commit -m "feat(github): add the $NAME repository"
           gh auth setup-git
           git push origin "$branch"

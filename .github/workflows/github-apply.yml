@@ -12,8 +12,8 @@ on:
     paths:
       - "infra/services/github/repositories/**"
       - "infra/services/github/modules/**"
-      - "infra/services/github/ci-roots"
       - ".github/workflows/github-apply.yml"
+      - "scripts/github-roots"
       - "flake.nix"
       - "flake.lock"
   # Pull request plans run with -refresh=false, so changes made on GitHub stay
@@ -31,11 +31,11 @@ defaults:
   run:
     shell: bash
 
-# Applies run one at a time, in merge order. Drift checks use their own group:
-# in the apply group, a queued drift check would cancel a pending apply.
+# Queue applies so a new push cannot replace an apply for a different root.
+# Drift checks use a separate group.
 concurrency:
   group: ${{ github.event_name == 'push' && 'github-apply' || 'github-drift' }}
-  cancel-in-progress: false
+  queue: max
 
 jobs:
   detect:
@@ -52,19 +52,19 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - id: changed
+        uses: babarot/action-changed-objects@v0.1.35
+        with:
+          added: 'true'
+          deleted: 'true'
+          modified: 'true'
+          merge_base: ${{ github.event.before }}
+
       - id: roots
         env:
-          BEFORE_SHA: ${{ github.event.before }}
+          CHANGED_OBJECTS: ${{ steps.changed.outputs.changes }}
         run: |
-          changed=$(git diff --name-only "$BEFORE_SHA" "$GITHUB_SHA")
-          # Shared modules and CI inputs can change a root without editing it.
-          if grep -qE '^(\.github/workflows/github-apply\.yml|infra/services/github/(ci-roots$|modules/)|flake\.(nix|lock))' <<<"$changed"; then
-            roots=$(find infra/services/github/repositories -mindepth 1 -maxdepth 1 -type d -printf '%f\n')
-          else
-            roots=$(sed -nE 's#^infra/services/github/repositories/([^/]+)/.*#\1#p' <<<"$changed")
-          fi
-          grep -vE '^[[:space:]]*(#|$)' infra/services/github/ci-roots | sort -u > enabled
-          json=$(sort -u <<<"$roots" | comm -12 - enabled | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          json=$(scripts/github-roots apply <<<"$CHANGED_OBJECTS")
           echo "roots=$json" >> "$GITHUB_OUTPUT"
           echo "Roots to apply: $json"
 
@@ -86,6 +86,7 @@ jobs:
         root: ${{ fromJSON(needs.detect.outputs.roots) }}
     env:
       ROOT: infra/services/github/repositories/${{ matrix.root }}
+      ROOT_NAME: ${{ matrix.root }}
     steps:
       - uses: actions/checkout@v7.0.1
         with:
@@ -97,11 +98,13 @@ jobs:
           # Skip when a later commit on main changed this root: its own run
           # applies the newer configuration, and this run must not overwrite it.
           git fetch --quiet origin main
-          if git diff --quiet "$GITHUB_SHA" FETCH_HEAD -- "$ROOT" infra/services/github/modules; then
+          if scripts/github-roots current "$ROOT_NAME" "$GITHUB_SHA" FETCH_HEAD; then
             echo "apply=true" >> "$GITHUB_OUTPUT"
-          else
+          elif [ "$?" -eq 1 ]; then
             echo "::notice::$ROOT changed after $GITHUB_SHA; the later run applies it"
             echo "apply=false" >> "$GITHUB_OUTPUT"
+          else
+            exit 1
           fi
 
       - if: steps.current.outputs.apply == 'true'
@@ -270,13 +273,14 @@ jobs:
 
       - id: roots
         run: |
-          json=$(grep -vE '^[[:space:]]*(#|$)' infra/services/github/ci-roots | sort -u | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          json=$(scripts/github-roots all)
           echo "roots=$json" >> "$GITHUB_OUTPUT"
 
   # Refresh each root with the apply App and report differences from the state.
   # The job only plans; it never applies or writes state.
   drift:
     needs: drift-roots
+    if: needs.drift-roots.outputs.roots != '[]'
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     environment: github-apply

@@ -38,8 +38,8 @@ tofu -chdir=infra/services/github/repositories/<name> plan
 
 Pull requests that change a root are planned by GitHub Actions, and merges to
 `main` are applied, without a static credential in GitHub. See
-[GitHub App signing](gcp-github-app-signing.md#ci-workflows). During the
-rollout, only the roots listed in `infra/services/github/ci-roots` run in CI.
+[GitHub App signing](gcp-github-app-signing.md#ci-workflows).
+CI discovers roots under `infra/services/github/repositories/`.
 
 ## Current settings
 
@@ -100,7 +100,7 @@ pass the `ci-gate` check, with no required approval because a sole maintainer
 cannot approve their own pull requests. GitHub Free has no rulesets for private
 repositories (the API answers 403 "Upgrade to GitHub Pro or make this
 repository public"), so a private root sets `default_branch_ruleset = null`
-and `ci-gate` is not enforced. The script also adds the root to `infra/services/github/ci-roots`.
+and `ci-gate` is not enforced.
 
 Open a pull request with the root. CI plans the creation, and merging it lets
 the apply workflow create the repository. The new repository then accepts
