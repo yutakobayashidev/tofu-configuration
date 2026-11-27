@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+version=v0.6.9
+checksum=b609e37094948c0b77cd8c6c0baaf8af2bd168c685c6e3334d671cc9692c34a5
+directory=$(mktemp -d "${RUNNER_TEMP:?}/hcl2json.XXXXXXXX")
+binary="$directory/hcl2json"
+
+curl --fail --silent --show-error --location --retry 3 \
+  "https://github.com/tmccombs/hcl2json/releases/download/$version/hcl2json_linux_amd64" \
+  --output "$binary"
+printf '%s  %s\n' "$checksum" "$binary" | sha256sum --check --status
+chmod +x "$binary"
+printf '%s\n' "$directory" >> "${GITHUB_PATH:?}"
