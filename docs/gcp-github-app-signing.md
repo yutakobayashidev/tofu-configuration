@@ -57,7 +57,7 @@ and `.github/workflows/github-apply.yml` applies them after a merge to `main`.
 github-plan also runs on `workflow_dispatch`, against the changes of the
 dispatched branch, so that `.github/workflows/github-new-repository.yml` can
 plan the pull request it opens.
-Each matrix job reads the repository name from the root, then:
+Each matrix job uses `hcl2json` to read the repository name from the root, then:
 
 1. authenticates to Google Cloud with `google-github-actions/auth` through WIF,
 2. signs an App JWT with KMS and exchanges it for an installation token
@@ -105,7 +105,7 @@ it. Once a provider release reads these fields over GraphQL
 remove `-refresh=false` so plans show drift again, and decide whether to keep
 the daily check (#41).
 
-CI uses `action-changed-objects` to identify changed paths. It runs the roots
+CI uses `action-changed-objects` to group changed paths by OpenTofu root. It runs the roots
 whose files or local module changed. A Nix toolchain change affects all roots,
 and a policy change plans all roots. Daily drift checks discover every root
 under `infra/services/github/repositories/`. Both Apps need access to each

@@ -46,6 +46,10 @@ jobs:
           deleted: 'true'
           modified: 'true'
           merge_base: ${{ github.event.pull_request.base.sha || 'origin/main' }}
+          root_marker: module_gh_repo_kit.tf
+
+      - name: Install hcl2json
+        run: scripts/setup-hcl2json
 
       - id: roots
         env:
@@ -83,16 +87,15 @@ jobs:
           nix_conf: |
             access-tokens = github.com=${{ github.token }}
 
+      - name: Install hcl2json
+        run: scripts/setup-hcl2json
+
       - id: repository
         env:
           ROOT_NAME: ${{ matrix.root }}
         run: |
           # The token covers only the repository named in this root.
-          name=$(sed -nE 's/^  name += "([^"]+)"$/\1/p' "$ROOT/module_gh_repo_kit.tf" | head -1)
-          if [ "$name" != "$ROOT_NAME" ]; then
-            echo "::error::$ROOT manages '$name', expected '$ROOT_NAME'"
-            exit 1
-          fi
+          name=$(scripts/github-roots name "$ROOT_NAME")
           echo "name=$name" >> "$GITHUB_OUTPUT"
 
       - uses: google-github-actions/auth@v3.0.0

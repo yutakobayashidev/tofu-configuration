@@ -14,6 +14,7 @@ on:
       - "infra/services/github/modules/**"
       - ".github/workflows/github-apply.yml"
       - "scripts/github-roots"
+      - "scripts/setup-hcl2json"
       - "flake.nix"
       - "flake.lock"
   # Pull request plans run with -refresh=false, so changes made on GitHub stay
@@ -59,6 +60,10 @@ jobs:
           deleted: 'true'
           modified: 'true'
           merge_base: ${{ github.event.before }}
+          root_marker: module_gh_repo_kit.tf
+
+      - name: Install hcl2json
+        run: scripts/setup-hcl2json
 
       - id: roots
         env:
@@ -93,18 +98,18 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Install hcl2json
+        run: scripts/setup-hcl2json
+
       - id: current
         run: |
           # Skip when a later commit on main changed this root: its own run
           # applies the newer configuration, and this run must not overwrite it.
           git fetch --quiet origin main
-          if scripts/github-roots current "$ROOT_NAME" "$GITHUB_SHA" FETCH_HEAD; then
-            echo "apply=true" >> "$GITHUB_OUTPUT"
-          elif [ "$?" -eq 1 ]; then
+          current=$(scripts/github-roots current "$ROOT_NAME" "$GITHUB_SHA" FETCH_HEAD)
+          echo "apply=$current" >> "$GITHUB_OUTPUT"
+          if [ "$current" = false ]; then
             echo "::notice::$ROOT changed after $GITHUB_SHA; the later run applies it"
-            echo "apply=false" >> "$GITHUB_OUTPUT"
-          else
-            exit 1
           fi
 
       - if: steps.current.outputs.apply == 'true'
@@ -119,13 +124,8 @@ jobs:
         if: steps.current.outputs.apply == 'true'
         env:
           BEFORE_SHA: ${{ github.event.before }}
-          ROOT_NAME: ${{ matrix.root }}
         run: |
-          name=$(sed -nE 's/^  name += "([^"]+)"$/\1/p' "$ROOT/module_gh_repo_kit.tf" | head -1)
-          if [ "$name" != "$ROOT_NAME" ]; then
-            echo "::error::$ROOT manages '$name', expected '$ROOT_NAME'"
-            exit 1
-          fi
+          name=$(scripts/github-roots name "$ROOT_NAME")
           echo "name=$name" >> "$GITHUB_OUTPUT"
           # Keep retrying the installation if apply already wrote state on an
           # earlier attempt of the push that introduced this repository root.
