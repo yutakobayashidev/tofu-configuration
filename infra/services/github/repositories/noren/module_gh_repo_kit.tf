@@ -1,22 +1,18 @@
 module "repository" {
-  source = "../../modules/existing-repository"
+  source = "git::https://github.com/zunoser/tfmodule-gh-repo-kit.git?ref=f438c079c02f87cce96f10a5edf7907e596f3f44"
 
   name        = "noren"
   description = "Noren is an independent web client for Mastodon, Bluesky, X, Misskey and Nostr."
   visibility  = "public"
 
-  settings = {
-    default_branch         = "main"
-    is_template            = false
-    has_issues             = true
-    has_discussions        = false
+  general = {
+    auto_init              = false
     has_projects           = true
     has_wiki               = true
     allow_merge_commit     = true
     allow_rebase_merge     = true
-    allow_squash_merge     = true
-    allow_update_branch    = false
     delete_branch_on_merge = false
-    vulnerability_alerts   = false
   }
+
+  default_branch_ruleset = null
 }
