@@ -3,7 +3,7 @@ data "github_repository" "existing" {
 }
 
 module "repository" {
-  source = "git::https://github.com/zunoser/tfmodule-gh-repo-kit.git?ref=64642f92df10dd1dbebeb55e8ab51072f4be3efc"
+  source = "git::https://github.com/zunoser/tfmodule-gh-repo-kit.git?ref=f438c079c02f87cce96f10a5edf7907e596f3f44"
 
   name        = "surveyor"
   description = try(coalesce(data.github_repository.existing.description), "")
