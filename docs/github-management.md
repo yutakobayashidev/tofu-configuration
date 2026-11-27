@@ -63,13 +63,18 @@ everyone. It prepares for CI that applies only commits merged to `main`.
 Archived repositories (`grafanaconf`, `daily-report`) are not managed: the
 GitHub provider cannot read vulnerability alerts on an archived repository.
 
-The 15 repositories adopted in the November 27 batch use the local
-`existing-repository` module. It records the live repository settings,
-including whether GitHub suggests updating pull request branches. The module
-imports the repository, default branch, and vulnerability-alert setting.
-Repository destruction is blocked while the resource remains in configuration.
-Existing rulesets and Actions settings are outside the module. Private
-repository descriptions are read from GitHub.
+Thirteen of the repositories imported on November 27 use the repository kit.
+Their merge methods, branch cleanup, and existing rulesets retain their
+previous settings. All 15 roots enable Dependabot alerts. The kit requires
+SHA pinning where the workflows already use full SHAs or a verified action
+lockfile. Three kit users with unpinned workflows leave Actions settings
+outside OpenTofu until those workflows are ready.
+
+`comore` retains the local module because the kit cannot preserve
+`allow_update_branch = true`. `nur-packages` retains it because the GitHub
+provider reads the repository's template origin and the kit does not expose
+a way to preserve that value in its plan. Private repository descriptions and
+homepage URLs used by the kit are read from GitHub.
 
 The previous root `infra/services/github/` and its HCP Terraform workspace
 `github` were retired after the import. `removed` blocks forgot their resources

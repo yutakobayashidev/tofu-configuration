@@ -17,6 +17,6 @@ module "repository" {
     allow_squash_merge     = true
     allow_update_branch    = false
     delete_branch_on_merge = false
-    vulnerability_alerts   = false
+    vulnerability_alerts   = true
   }
 }
