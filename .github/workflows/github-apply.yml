@@ -206,6 +206,16 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
+      # An apply reads github_repository before dependent resources change
+      # the repository, so computed attributes such as vulnerability_alerts
+      # stay stale in state and the next drift check reports them. Record the
+      # final values without changing GitHub.
+      - name: Refresh state
+        if: steps.current.outputs.apply == 'true'
+        env:
+          GITHUB_TOKEN: ${{ steps.token.outputs.token || steps.new_token.outputs.token }}
+        run: nix develop .#github-ci -c tofu -chdir="$ROOT" apply -refresh-only -input=false -no-color -auto-approve
+
       # ghat cannot request installation_repositories explicitly. Scope this
       # token to the newly created repository and use it only for this step.
       - id: plan_installation_token
