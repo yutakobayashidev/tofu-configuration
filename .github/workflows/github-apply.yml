@@ -11,6 +11,7 @@ on:
       - main
     paths:
       - "infra/services/github/repositories/**"
+      - "infra/services/github/modules/**"
       - "infra/services/github/ci-roots"
       - ".github/workflows/github-apply.yml"
       - "flake.nix"
@@ -56,9 +57,8 @@ jobs:
           BEFORE_SHA: ${{ github.event.before }}
         run: |
           changed=$(git diff --name-only "$BEFORE_SHA" "$GITHUB_SHA")
-          # A change to the workflow, the CI root list, or the Nix shell affects
-          # every root.
-          if grep -qE '^(\.github/workflows/github-apply\.yml|infra/services/github/ci-roots$|flake\.(nix|lock))' <<<"$changed"; then
+          # Shared modules and CI inputs can change a root without editing it.
+          if grep -qE '^(\.github/workflows/github-apply\.yml|infra/services/github/(ci-roots$|modules/)|flake\.(nix|lock))' <<<"$changed"; then
             roots=$(find infra/services/github/repositories -mindepth 1 -maxdepth 1 -type d -printf '%f\n')
           else
             roots=$(sed -nE 's#^infra/services/github/repositories/([^/]+)/.*#\1#p' <<<"$changed")
@@ -97,7 +97,7 @@ jobs:
           # Skip when a later commit on main changed this root: its own run
           # applies the newer configuration, and this run must not overwrite it.
           git fetch --quiet origin main
-          if git diff --quiet "$GITHUB_SHA" FETCH_HEAD -- "$ROOT"; then
+          if git diff --quiet "$GITHUB_SHA" FETCH_HEAD -- "$ROOT" infra/services/github/modules; then
             echo "apply=true" >> "$GITHUB_OUTPUT"
           else
             echo "::notice::$ROOT changed after $GITHUB_SHA; the later run applies it"
