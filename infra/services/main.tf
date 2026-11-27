@@ -26,6 +26,15 @@ module "obsidian_r2" {
   bucket_name           = "obsidian"
 }
 
+# Cloudflare R2 - livesync-workers full-text search index (yutakobayashidev/livesync-workers).
+# The Worker reaches it through an R2 binding, so it needs no access token.
+module "garden_r2" {
+  source                = "../modules/cloudflare-r2"
+  cloudflare_account_id = var.cloudflare_account_id
+  r2_location           = "APAC"
+  bucket_name           = "garden"
+}
+
 # Cloudflare R2 Access Token - Obsidian
 module "obsidian_r2_token" {
   source                = "../modules/cloudflare-account-token"
