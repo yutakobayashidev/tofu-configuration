@@ -39,25 +39,19 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - id: changed
+        uses: babarot/action-changed-objects@v0.1.35
+        with:
+          added: 'true'
+          deleted: 'true'
+          modified: 'true'
+          merge_base: ${{ github.event.pull_request.base.sha || 'origin/main' }}
+
       - id: roots
         env:
-          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          CHANGED_OBJECTS: ${{ steps.changed.outputs.changes }}
         run: |
-          if [ -z "$BASE_SHA" ]; then
-            # A dispatched run plans the changes of its branch against main.
-            BASE_SHA=$(git merge-base origin/main "$GITHUB_SHA")
-            HEAD_SHA=$GITHUB_SHA
-          fi
-          changed=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA")
-          # Shared modules and CI inputs can change a root without editing it.
-          if grep -qE '^(\.github/workflows/github-plan\.yml|infra/services/github/(ci-roots$|modules/)|flake\.(nix|lock)|policy/terraform/)' <<<"$changed"; then
-            roots=$(find infra/services/github/repositories -mindepth 1 -maxdepth 1 -type d -printf '%f\n')
-          else
-            roots=$(sed -nE 's#^infra/services/github/repositories/([^/]+)/.*#\1#p' <<<"$changed")
-          fi
-          grep -vE '^[[:space:]]*(#|$)' infra/services/github/ci-roots | sort -u > enabled
-          json=$(sort -u <<<"$roots" | comm -12 - enabled | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          json=$(scripts/github-roots plan <<<"$CHANGED_OBJECTS")
           echo "roots=$json" >> "$GITHUB_OUTPUT"
           echo "Roots to plan: $json"
 

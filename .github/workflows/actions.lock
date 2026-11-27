@@ -6,6 +6,7 @@ workflows:
     '.github/workflows/ci.yml': []
     '.github/workflows/github-apply.yml':
         - 'actions/checkout@v7.0.1'
+        - 'babarot/action-changed-objects@v0.1.35'
         - 'google-github-actions/auth@v3.0.0'
         - 'nixbuild/nix-quick-install-action@v35'
         - 'yagihash/ghat@v2.5.1'
@@ -14,6 +15,7 @@ workflows:
         - 'nixbuild/nix-quick-install-action@v35'
     '.github/workflows/github-plan.yml':
         - 'actions/checkout@v7.0.1'
+        - 'babarot/action-changed-objects@v0.1.35'
         - 'google-github-actions/auth@v3.0.0'
         - 'nixbuild/nix-quick-install-action@v35'
         - 'yagihash/ghat@v2.5.1'
@@ -23,6 +25,11 @@ dependencies:
         commit: 'sha1-3d3c42e5aac5ba805825da76410c181273ba90b1'
         owner_id: 44036562
         repo_id: 197814629
+    'babarot/action-changed-objects@v0.1.35':
+        ref: 'v0.1.35'
+        commit: 'sha1-bc3c5ad5a5f1ac2f0190900486f0e1ed068bddae'
+        owner_id: 4442708
+        repo_id: 237492949
     'google-github-actions/auth@v3.0.0':
         ref: 'v3.0.0'
         commit: 'sha1-7c6bc770dae815cd3e89ee6cdf493a5fab2cc093'

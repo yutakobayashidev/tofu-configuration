@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Write an OpenTofu root for a new GitHub repository and register it with CI.
+# Write an OpenTofu root for a new GitHub repository.
 # The module source and the provider lock come from the tofu-configuration
 # root, so updating that root also updates new roots. Merging the root to main
 # lets the github-apply workflow create the repository.
@@ -126,9 +126,4 @@ EOF
 
 tofu -chdir="$target" fmt >/dev/null
 
-ci_roots=infra/services/github/ci-roots
-if ! grep -qx "$name" "$ci_roots"; then
-  echo "$name" >>"$ci_roots"
-fi
-
-echo "created $target and added it to $ci_roots"
+echo "created $target"

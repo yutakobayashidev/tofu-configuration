@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+import json
+import re
+import subprocess
+import sys
+from pathlib import Path
+
+
+REPOSITORIES = Path("infra/services/github/repositories")
+MODULES = Path("infra/services/github/modules")
+ROOT_CONFIG = "module_gh_repo_kit.tf"
+TOOLCHAIN = ("flake.nix", "flake.lock")
+
+
+def local_module(root):
+    config = (REPOSITORIES / root / ROOT_CONFIG).read_text()
+    source = re.search(r'^\s*source\s*=\s*"\.\./\.\./modules/([^/"]+)"', config, re.MULTILINE)
+    return source[1] if source else None
+
+
+def changed_roots(roots, paths, plan):
+    if any(path.as_posix() in TOOLCHAIN or
+           (plan and path.is_relative_to("policy/terraform")) for path in paths):
+        return roots
+
+    direct = {
+        path.parts[len(REPOSITORIES.parts)]
+        for path in paths
+        if path.is_relative_to(REPOSITORIES) and len(path.parts) > len(REPOSITORIES.parts) + 1
+    }
+    modules = {
+        path.parts[len(MODULES.parts)]
+        for path in paths
+        if path.is_relative_to(MODULES) and len(path.parts) > len(MODULES.parts) + 1
+    }
+    affected = {root for root in roots if modules and local_module(root) in modules}
+    return (roots & direct) | affected
+
+
+mode = sys.argv[1]
+if mode == "current":
+    root, base, head = sys.argv[2:]
+    paths = [str(REPOSITORIES / root), *TOOLCHAIN]
+    module = local_module(root)
+    if module:
+        paths.append(str(MODULES / module))
+    sys.exit(subprocess.run(["git", "diff", "--quiet", base, head, "--", *paths]).returncode)
+
+roots = {file.parent.name for file in REPOSITORIES.glob(f"*/{ROOT_CONFIG}")}
+if mode in {"plan", "apply"}:
+    paths = {Path(file["path"]) for file in (json.load(sys.stdin)["files"] or [])}
+    roots = changed_roots(roots, paths, plan=mode == "plan")
+elif mode != "all":
+    sys.exit(f"Unknown mode: {mode}")
+print(json.dumps(sorted(roots), separators=(",", ":")))

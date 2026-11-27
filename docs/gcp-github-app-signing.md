@@ -105,10 +105,12 @@ it. Once a provider release reads these fields over GraphQL
 remove `-refresh=false` so plans show drift again, and decide whether to keep
 the daily check (#41).
 
-Only roots listed in `infra/services/github/ci-roots` run in CI. Both Apps
-must be installed on each listed repository. An apply job skips its root when
-a later commit on `main` has changed it, so an older run never overwrites newer
-configuration.
+CI uses `action-changed-objects` to identify changed paths. It runs the roots
+whose files or local module changed. A Nix toolchain change affects all roots,
+and a policy change plans all roots. Daily drift checks discover every root
+under `infra/services/github/repositories/`. Both Apps need access to each
+existing repository. An apply job skips its root when a later commit on
+`main` has changed its inputs.
 
 ### Failure notifications
 
