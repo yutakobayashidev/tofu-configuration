@@ -164,34 +164,16 @@ resource "cloudflare_email_routing_catch_all" "this" {
   zone_id = var.cloudflare_zone_id
 
   actions = [{
-    type = "drop"
+    type  = "worker"
+    value = ["core"]
   }]
 
   matchers = [{
     type = "all"
   }]
 
-  enabled = false
+  enabled = true
 
   # The API returns an empty name; leaving it unset shows an in-place update on every plan.
   name = ""
-}
-
-resource "cloudflare_email_routing_rule" "hi" {
-  zone_id = var.cloudflare_zone_id
-
-  actions = [{
-    type  = "worker"
-    value = ["core"]
-  }]
-
-  matchers = [{
-    type  = "literal"
-    field = "to"
-    value = "hi@yutakobayashi.dev"
-  }]
-
-  enabled  = true
-  name     = "Rule created at 2024-02-21T04:47:10.321Z"
-  priority = 0
 }
