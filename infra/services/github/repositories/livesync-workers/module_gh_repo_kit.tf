@@ -10,8 +10,8 @@ module "repository" {
   general = {
     auto_init = false
 
-    # Issues belong to the upstream repository.
-    has_issues = false
+    # Issues track deployment-specific work on this fork, such as backups.
+    has_issues = true
   }
 
   # Upstream has no ci-gate job, and merges from upstream are pushed to main.
