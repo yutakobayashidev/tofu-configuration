@@ -10,11 +10,10 @@ module "repository" {
 
     # Current GitHub settings that differ from the module defaults.
     # Align them with the defaults in later reviewed changes.
-    has_projects         = true
-    has_wiki             = true
-    allow_merge_commit   = true
-    allow_rebase_merge   = true
-    vulnerability_alerts = false
+    has_projects       = true
+    has_wiki           = true
+    allow_merge_commit = true
+    allow_rebase_merge = true
   }
 
   # Preserve the current unprotected state. Enable the standard ruleset per

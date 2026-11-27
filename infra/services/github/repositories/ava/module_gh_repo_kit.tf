@@ -10,13 +10,12 @@ module "repository" {
 
     # Current GitHub settings that differ from the module defaults.
     # Align them with the defaults in later reviewed changes.
-    homepage_url         = "https://ava-dusky-gamma.vercel.app"
-    topics               = ["adhd", "ai", "devtools", "hono", "mcp", "mcp-server", "model-context-protocol", "neurodiversity", "nextjs", "productivity"]
-    has_projects         = true
-    has_wiki             = true
-    allow_merge_commit   = true
-    allow_rebase_merge   = true
-    vulnerability_alerts = false
+    homepage_url       = "https://ava-dusky-gamma.vercel.app"
+    topics             = ["adhd", "ai", "devtools", "hono", "mcp", "mcp-server", "model-context-protocol", "neurodiversity", "nextjs", "productivity"]
+    has_projects       = true
+    has_wiki           = true
+    allow_merge_commit = true
+    allow_rebase_merge = true
   }
 
   # Preserve the current unprotected state. Enable the standard ruleset per

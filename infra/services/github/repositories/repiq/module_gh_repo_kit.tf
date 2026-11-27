@@ -10,11 +10,10 @@ module "repository" {
 
     # Current GitHub settings that differ from the module defaults.
     # Align them with the defaults in later reviewed changes.
-    topics               = ["agent-skills", "cli", "crates-io", "github", "go", "npm", "oss-metrics", "pypi"]
-    has_projects         = true
-    has_wiki             = true
-    allow_rebase_merge   = true
-    vulnerability_alerts = false
+    topics             = ["agent-skills", "cli", "crates-io", "github", "go", "npm", "oss-metrics", "pypi"]
+    has_projects       = true
+    has_wiki           = true
+    allow_rebase_merge = true
   }
 
   # Preserve the current unprotected state. Enable the standard ruleset per
