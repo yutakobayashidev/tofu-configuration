@@ -11,7 +11,7 @@ OpenTofu configurations for managing cloud infrastructure.
 Cloudflare
 ├── DNS (yutakobayashi.com)
 ├── Email Routing
-├── R2 (Mastodon media / Obsidian backup)
+├── R2 (Mastodon media / Obsidian backup / livesync-workers search index)
 ├── API Tokens
 └── Notification Policies
 
@@ -191,7 +191,7 @@ scripts/
 | Cloudflare    | Response headers | Gitea `X-Robots-Tag: noindex`; see [configuration and verification](docs/gitea-noindex.md) |
 | Cloudflare    | Email Routing    | hi@yutakobayashi.com and hi@yutakobayashi.dev to Worker core, disabled catch-all rules                                                                                                                                                              |
 | Cloudflare    | Email Sending    | Sending subdomains fedi.yutakobayashi.com (Mastodon) and git.yutakobayashi.com (Gitea), and an SMTP token for each |
-| Cloudflare    | R2 buckets       | fediverse (Mastodon media), obsidian (backup), nix-cache-niks3 (Nix cache), homelab-infra-state (dotnix state)                                                                                                                                       |
+| Cloudflare    | R2 buckets       | fediverse (Mastodon media), obsidian (backup), nix-cache-niks3 (Nix cache), homelab-infra-state (dotnix state), garden (livesync-workers search index)                                                                                                                                       |
 | Cloudflare    | R2 tokens        | mastodon-r2, obsidian-r2, nix-cache, homelab-infra-state-r2                                                                                                                                                                                         |
 | Cloudflare    | R2 custom domain | fedi-files.yutakobayashi.com                                                                                                                                                                                                                        |
 | Cloudflare    | Notifications    | Access service token expiration, passive origin monitoring, Web Analytics metrics, Tunnel Health for B450M-Pro4, R2 usage alerts, Discord status webhook delivery, API-managed budget alerts (`docs/cloudflare-budget-alerts.md`)                    |
