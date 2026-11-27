@@ -5,6 +5,7 @@ module "repository" {
   description = ""
   visibility  = "public"
 
+  # Keep the settings captured at import until comore adopts the standard module.
   settings = {
     default_branch         = "main"
     is_template            = false
