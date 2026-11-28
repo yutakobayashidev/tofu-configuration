@@ -182,3 +182,40 @@ resource "cloudflare_notification_policy" "billing_usage" {
     ]
   }
 }
+
+# Account-wide usage-based spend budget alerts. Previously managed through the
+# Alerting API because the provider rejected billing_budget_alert and the
+# total_spend_dollars filter (see docs/cloudflare-budget-alerts.md).
+#
+# BLOCKED: this resource fails `tofu validate` on provider v5.28.1/v5.29.0.
+# Unblock once billing_budget_alert is supported (issue #7438, expected v5.30.0),
+# then import the existing policies as described in docs/cloudflare-budget-alerts.md.
+resource "cloudflare_notification_policy" "billing_budget" {
+  for_each = {
+    "1" = {
+      name        = "Billing Budget Alert $1"
+      description = "Notify when account-wide usage-based spend reaches $1 in the billing period"
+    }
+    "5" = {
+      name        = "Billing Budget Alert $5"
+      description = "Notify when account-wide usage-based spend reaches $5 in the billing period"
+    }
+    "20" = {
+      name        = "Billing Budget Alert $20"
+      description = "Notify when account-wide usage-based spend reaches $20 in the billing period"
+    }
+  }
+
+  account_id  = var.cloudflare_account_id
+  alert_type  = "billing_budget_alert"
+  name        = each.value.name
+  description = each.value.description
+  mechanisms = {
+    email = [{
+      id = local.notification_email
+    }]
+  }
+  filters = {
+    total_spend_dollars = [each.key]
+  }
+}
