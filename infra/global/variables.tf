@@ -53,6 +53,12 @@ variable "cloudflare_zone_id" {
   default     = null
 }
 
+variable "pocket_id_client_secret" {
+  description = "Pocket ID OIDC client secret for the Cloudflare Access identity provider"
+  type        = string
+  sensitive   = true
+}
+
 # Mastodon
 
 variable "mastodon_ip" {
