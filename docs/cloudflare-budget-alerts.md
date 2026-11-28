@@ -96,10 +96,26 @@ and set `filters.total_spend_dollars` to the desired threshold.
 
 ## Migration To OpenTofu
 
-When the Cloudflare provider supports `billing_budget_alert` and
-`total_spend_dollars`, move these policies into
-`infra/global/notification_policies.tf` and import the existing policy IDs into
-state.
+`cloudflare_notification_policy.billing_budget` in
+`infra/global/notification_policies.tf` declares these three policies. It is
+blocked until the provider supports `billing_budget_alert` and the
+`total_spend_dollars` filter
+(cloudflare/terraform-provider-cloudflare#7438, expected in v5.30.0). The
+resource fails `tofu validate` on v5.28.1/v5.29.0, so this is held in a draft
+PR until the release lands.
+
+Once the provider release is available:
+
+1. `tofu -chdir=infra/global init -upgrade`
+2. Import each existing policy (import ID is `<account_id>/<policy_id>`):
+
+   ```sh
+   tofu -chdir=infra/global import 'cloudflare_notification_policy.billing_budget["1"]' '<account_id>/21cc4c13a97e4fb5b0a400fa69fc7f16'
+   tofu -chdir=infra/global import 'cloudflare_notification_policy.billing_budget["5"]' '<account_id>/cbdeeef616d44ef197baa5c3b892d8ee'
+   tofu -chdir=infra/global import 'cloudflare_notification_policy.billing_budget["20"]' '<account_id>/353f9d6e1727438cb70f431480e9d2ac'
+   ```
+
+3. `tofu -chdir=infra/global plan` should show no diff, then `apply`.
 
 Relevant Cloudflare docs:
 
