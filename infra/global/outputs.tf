@@ -99,6 +99,22 @@ output "restic_backup_bucket_name" {
   value       = module.services.restic_backup_bucket_name
 }
 
+output "livesync_backup_access_key_id" {
+  description = "LiveSync バックアップ用 R2 アクセスキー ID"
+  value       = module.services.livesync_backup_access_key_id
+}
+
+output "livesync_backup_secret_access_key" {
+  description = "LiveSync バックアップ用 R2 シークレットアクセスキー"
+  value       = module.services.livesync_backup_secret_access_key
+  sensitive   = true
+}
+
+output "livesync_backup_bucket_name" {
+  description = "LiveSync バックアップ用 R2 バケット名"
+  value       = module.services.livesync_backup_bucket_name
+}
+
 output "gitea_email_sending_token" {
   description = "Cloudflare Email Sending API token for Gitea SMTP"
   value       = module.services.gitea_email_sending_token
